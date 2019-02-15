@@ -1,0 +1,4 @@
+2019-01-19
+
+- Bugs in xkbhit(), outtext(), and outtextxy() fixed;
+  patches provided by Szymon Dowkontt
