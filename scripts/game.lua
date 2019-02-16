@@ -12,11 +12,13 @@ project "platchamer"
     }
 
     PLATCHAMER_SRC_DIR = path.join(PROJECT_DIR, "src") 
+    PLATCHAMER_INC_DIR = path.join(PROJECT_DIR, "include") 
 
     includedirs {
         "/usr/include",
+        PLATCHAMER_INC_DIR,
         PLATCHAMER_SRC_DIR,
-        XBGI_SRC_DIR,
+        -- XBGI_SRC_DIR,
         -- path.join(XBGI_SRC_DIR, "common"),
     }
     
@@ -28,7 +30,7 @@ project "platchamer"
     links {
         -- "xbgi",
         "sdl_bgi",
-        "sdl2",
+        "SDL2",
     }
     
     buildoptions {

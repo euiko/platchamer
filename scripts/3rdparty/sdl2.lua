@@ -33,6 +33,7 @@ sdl2 = dependency(nil, "SDL2")
         }
     
     SDL2_DIR = path.join(GAME_3RDPARTY_DIR, "sdl2")
+    SDL2_INC_DIR = path.join(SDL2_DIR, "include")
 	
 	-- defaultConfigurations()
 	files { 
@@ -86,5 +87,10 @@ sdl2 = dependency(nil, "SDL2")
 	configuration { }
 		
 	defines { "_CRT_SECURE_NO_WARNINGS", "HAVE_LIBC" }
-	excludes { path.join( SDL2_DIR, "src/main/**") }
-    includedirs { path.join( SDL2_DIR, "include") }
+    
+    excludes { path.join( SDL2_DIR, "src/main/**") }
+    
+    includedirs { 
+        SDL2_INC_DIR,
+        include_files(sdl2, os.matchfiles(SDL2_INC_DIR .. "/*.h")),
+    }

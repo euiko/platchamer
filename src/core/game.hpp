@@ -1,6 +1,10 @@
 #ifndef GAME_HPP
 #define GAME_HPP
+
 #include <iostream>
+#include <SDL2/SDL.h>
+#include "../graphics/window.hpp"
+#include "../core/ecs/registry.hpp"
 
 class Game
 {
@@ -16,7 +20,7 @@ private:
 
 private:
     Window m_window;
-    entt::DefaultRegistry m_registry;
-}
+    ecs::Registry* m_registry;
+};
 
 #endif
