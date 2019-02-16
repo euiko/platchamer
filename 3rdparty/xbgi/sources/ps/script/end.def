@@ -1,0 +1,3 @@
+#define END \
+"xbgisavedpage restore\n"\
+"end\n"

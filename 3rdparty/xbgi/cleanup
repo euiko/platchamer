@@ -1,0 +1,23 @@
+#!/bin/sh
+# clean
+find . -name X11 -print -exec rm -rf {} \;
+find . -name shared -print -exec rm -rf {} \;
+find . -name unshared -print -exec rm -rf {} \;
+find . -name exports -print -exec rm -rf {} \;
+find . -name 'lib*.a' -print -exec rm -rf {} \;
+find . -name 'lib*.so*' -o -name 'lib*.dylib*' -print -exec rm -rf {} \;
+find . -name tmp -print -exec rm -rf {} \;
+find . -iname Makefile ! -path ./doc/makefile -print -exec rm -f {} \;
+find . -name MapfileName -print -exec rm -f {} \;
+find . -name '*.log' -print -exec rm -f {} \;
+#find . -name '*~' -print -exec rm -f {} \;
+find . -name '*.bak' -print -exec rm -f {} \;
+find . -name '*.o' -o -name '*.exe' -print -exec rm -f {} \;
+# let upcase for from dos
+find . -name imakefil -print -exec mv -f {} Imakefile \;
+#cp doc/readme.doc  README
+#cp doc/copying.doc COPYING
+#cp doc/install.doc INSTALL
+#cp doc/readmej.doc  READMEJ
+#cp doc/copyingj.doc COPYINGJ
+#cp doc/installj.doc INSTALLJ

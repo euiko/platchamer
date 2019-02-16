@@ -1,0 +1,13 @@
+{/* as Simplex Font */
+  { "Courier-MediumRoman", { {16, 0,0}, {16, 0,0} } },
+  { "Courier-MediumRoman", { { 8, 0,0}, { 8, 0,0} } },
+  { "Courier-MediumRoman", { {10, 0,0}, {10, 0,0} } },
+  { "Courier-MediumRoman", { {12, 0,0}, {12, 0,0} } },
+  { "Courier-MediumRoman", { {14, 0,0}, {14, 0,0} } },
+  { "Courier-MediumRoman", { {18, 0,0}, {18, 0,0} } },
+  { "Courier-MediumRoman", { {24, 0,0}, {24, 0,0} } },
+  { "Courier-MediumRoman", { {34, 0,0}, {24, 0,0} } },
+  { "Courier-MediumRoman", { {34, 0,0}, {24, 0,0} } },
+  { "Courier-MediumRoman", { {34, 0,0}, {24, 0,0} } },
+  { "Courier-MediumRoman", { {34, 0,0}, {24, 0,0} } },
+},

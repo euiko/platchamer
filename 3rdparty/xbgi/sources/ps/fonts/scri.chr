@@ -1,0 +1,13 @@
+{/* as Script Font */
+  { "Courier-MediumOblique", { {16, 0,0}, {16, 0,0} } },
+  { "Courier-MediumOblique", { { 8, 0,0}, { 8, 0,0} } },
+  { "Courier-MediumOblique", { {10, 0,0}, {10, 0,0} } },
+  { "Courier-MediumOblique", { {12, 0,0}, {12, 0,0} } },
+  { "Courier-MediumOblique", { {14, 0,0}, {14, 0,0} } },
+  { "Courier-MediumOblique", { {18, 0,0}, {18, 0,0} } },
+  { "Courier-MediumOblique", { {24, 0,0}, {24, 0,0} } },
+  { "Courier-MediumOblique", { {34, 0,0}, {24, 0,0} } },
+  { "Courier-MediumOblique", { {34, 0,0}, {24, 0,0} } },
+  { "Courier-MediumOblique", { {34, 0,0}, {24, 0,0} } },
+  { "Courier-MediumOblique", { {34, 0,0}, {24, 0,0} } },
+},

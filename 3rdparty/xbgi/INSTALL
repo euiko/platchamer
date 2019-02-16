@@ -1,0 +1,76 @@
+Install & test
+
+  To build and install after the manner of X style, please type as follows:
+
+    % xmkmf -a
+    % make
+    % make install
+
+  If you want to customize to build, you should edit ``config.h''.
+  In ``config.h'', following definitions are used.
+
+    * EnableXpmlib         -- if you have pixmap library in your system.
+    * EnableBilingual      -- if you use Japanese in place of Multilingual.
+    * EnableMultilingual   -- if you use your Language by X11R5 Multilingual.
+    * BuildConcatenatedLib -- build a concatenated all ``devices'' library.
+    * BuildStandaloneLibs  -- build stand-alone ``device'' libraries.
+
+  As you had repaired ``config.h'', you must clean and do it all over again.
+
+    % make clean
+    % xmkmf -a
+    % make
+    % make install
+
+  You'll find following targets after ``make install''.
+
+    $(USRLIBDIR)/libxbgi.a
+    $(USRLIBDIR)/libxbgi.so
+    $(USRLIBDIR)/libxbgi.so.$(REV)
+
+    $(INCDIR)/xbgi/graphics.h
+    $(INCDIR)/xbgi/graphix.h and so on.
+
+    $(BINDIR)/gcb
+    $(BINDIR)/gxb
+
+  In the case of BuildStandaloneLibs definition, You'll find following targets
+  (* means a device driver name).
+
+    $(USRLIBDIR)/libxbgi_*.a
+    $(USRLIBDIR)/libxbgi_*.so
+    $(USRLIBDIR)/libxbgi_*.so.$(REV)
+
+  When you want to confirm whether installation was completed exactly or not,
+  you can make and execute a sample program as follows:
+
+    % cd samples
+    % xmkmf
+    % make hello
+    % hello
+
+  If you need internationalization of X11's multi-lingual for example Japanese,
+  you try to execute Japanese example program ``hello2'' as follows:
+
+    % make hello2
+    % hello2
+
+  ``Imakefile'' in samples directory will teach you how to compile your
+  program with this graphics library. You may also use easy compiling scripts,
+  ``gcb'' and ``gxb'' installed in $(BINDIR) for your simple programs.
+  ``gcb'' is for C compiling. ``gxb'' is for C++ compiling.
+
+  [5/26/2000] Since 10/27/1999, ``gcb'' and ``gxb'' are abolished.
+  For substitutes, please use ``makefile-c'' and ``makefile-cxx'' which are
+  automatically generated in samples/mkfiles/. For an usage, in the case of
+  C source file:
+
+    % make -f mkfiles/makefile-c hello
+
+  In the case of C++ file:
+
+    % make -f mkfiles/makefile-cxx julia
+
+  ``makefile-cxx'' presumes that the suffix of C++ source is ``.cxx''.
+
+  Please write me if you have problem in your installing and using.

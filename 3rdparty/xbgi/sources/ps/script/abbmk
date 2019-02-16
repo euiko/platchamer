@@ -1,0 +1,2 @@
+#!/bin/sh
+abbchk | gawk 'BEGIN {print "#define ABBREV \\"}{gsub(/"/,""); print "\"/"$3" {"tolower($2)"} bind def\\n\"\\"}END{print "\"%% "NR" defined\\n\""}' > abbrev.def

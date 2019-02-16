@@ -4,12 +4,16 @@ dofile "3rdparty/xbgi.lua"
 project "platchamer"
   	language "C++"
     kind     "ConsoleApp"
+    defines {
+        "STB_IMAGE_IMPLEMENTATION=1",
+    }
 
     PLATCHAMER_SRC_DIR = path.join(PROJECT_DIR, "src") 
 
     includedirs {
+        "/usr/include",
         PLATCHAMER_SRC_DIR,
-        XBGI_SRC_DIR,
+        path.join(XBGI_SRC_DIR, "common"),
     }
     
     files {

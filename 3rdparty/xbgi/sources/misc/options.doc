@@ -1,0 +1,62 @@
+OPTIONS
+
+NAME
+  set_options   - options entry routine
+  set_option    - a option entry routine
+  scan_options  - options analyze routine
+  is_option     - analyze result return routine
+  reset_options - clear internal buffer routine
+
+SYNOPSIS
+  ! #include <options.h>
+
+  ! void set_options( n, options )
+  ! int n;                   -- the number of key to entry
+  ! option_record options[]; -- array of struct in which is key and so on
+
+  ! option_complex *set_option( key, ... )
+  ! char *key, ... -- string which includes key and argument list
+        
+  ! option_complex *alias_option( key, alias )
+  ! char *key;   -- already entried key
+  ! char *alias; -- its alias name
+        
+  ! void scan_options( argc, argv )
+  ! int argc;     -- the number of command line arguments
+  ! char *argv[]; -- command line argument variable
+
+  ! int is_option( key )
+  ! char *key; -- string which includes key
+        
+  ! int reset_options()
+        
+DESCRIPTION
+  These routines are for analyzing command line arguments by
+  keys entried by 'option_record' structure or the procedure.
+
+  First, you entry keys by using 'set_option' or 'set_options'.
+  Next, you execute 'scan_options' and variables are setted by keys.
+  You can get each result of key in analyzing.
+  Last, please execute 'reset_options' to be free
+  internal memory area used by these routines.
+        
+  For an example, sample procedures of analyzing options is as follows;
+  | option_record options[] = {
+  |   { "-number %d", &number },
+  |   { "-weight %f", &weight },
+  | };
+  | set_options( 2, options );
+  | set_option( "-help" );
+  | set_option( "-geom %dx%d", &W, &H );
+  | alias_option( "-geom", "-geometry" );
+  | set_option( "-flag[-]", &flag );
+  | set_option( "-enum BLACK BLUE RED", &color );
+  | scan_options( argc, argv );
+  | if ( is_option( "-help" ) )
+  |   show_help();
+  | reset_options(); 
+ 
+  The key format is compatible with option.h, see manual of option.h about it.
+
+SEEALSO
+  option(3)

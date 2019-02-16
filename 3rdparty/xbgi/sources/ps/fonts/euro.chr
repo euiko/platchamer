@@ -1,0 +1,13 @@
+{/* as European Font */
+  { "Helvetica-BoldOblique", { {16, 0,0}, {16, 0,0} } },
+  { "Helvetica-BoldOblique", { { 8, 0,0}, { 8, 0,0} } },
+  { "Helvetica-BoldOblique", { {10, 0,0}, {10, 0,0} } },
+  { "Helvetica-BoldOblique", { {12, 0,0}, {12, 0,0} } },
+  { "Helvetica-BoldOblique", { {14, 0,0}, {14, 0,0} } },
+  { "Helvetica-BoldOblique", { {18, 0,0}, {18, 0,0} } },
+  { "Helvetica-BoldOblique", { {24, 0,0}, {24, 0,0} } },
+  { "Helvetica-BoldOblique", { {34, 0,0}, {24, 0,0} } },
+  { "Helvetica-BoldOblique", { {34, 0,0}, {24, 0,0} } },
+  { "Helvetica-BoldOblique", { {34, 0,0}, {24, 0,0} } },
+  { "Helvetica-BoldOblique", { {34, 0,0}, {24, 0,0} } },
+},

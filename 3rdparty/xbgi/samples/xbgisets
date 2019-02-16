@@ -1,0 +1,43 @@
+#
+# Settings file < .xbgisets >
+#
+# Sample of environ set file: Borland Graphics Interface for UNIX
+#
+# Copyright (C) 1992-1995 Taiji Yamada, Tokyo Denki University
+# Copyright (C) 1996-1999 Taiji Yamada, AIHARA Electrical Engineering Co.,Ltd.
+#
+
+# Please put this file to ~/.xbgisets, if you want.
+
+#
+# Null primary design settings
+#
+		-title XDEF	\
+		-ncolor  16 -color  15 -bkcolor  0 -geometry  640x480 -npage 1\
+		-fn lucidasans-bolditalic-12 -fg white -bg steelblue
+
+#
+# VGA settings
+#
+c:/borlandc/bgi	-title DOSV	\
+		-ncolor  16 -color  15 -bkcolor  0 -geometry  640x480 -npage 1
+
+#
+# PC-98 settings
+#
+a:/tc		-title PC98	\
+		-ncolor  16 -color  15 -bkcolor  0 -geometry  640x400 -npage 2
+
+#
+# High resolution and high color settings
+#
+d:/tc		-title HIGH	\
+		-ncolor 128 -color 127 -bkcolor  0 -geometry 1120x750 -npage 1
+
+#
+# Rapid startup settings by using only ascii characters
+#
+xwin		-title XWIN	\
+		-ncolor  16 -color   0 -bkcolor 15 -geometry  800x800 -npage 1\
+		-fn lucidasans-bolditalic-10 -fg white -bg steelblue\
+		-l10n- -backing-

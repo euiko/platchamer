@@ -1,0 +1,63 @@
+OPTIONS
+
+名前
+  set_options   - 複数の高度なオプション登録ルーチン
+  set_option    - 高度なオプション登録ルーチン
+  alias_option  - オプションのエイリアス登録ルーチン
+  scan_options  - 複数のオプション解析ルーチン
+  is_option     - コマンドライン解析結果取得ルーチン
+  reset_options - 内部記憶領域クリアルーチン
+
+形式
+  ! #include <options.h>
+
+  ! void set_options( n, options )
+  ! int n;                   -- 登録するキーの数
+  ! option_record options[]; -- 登録するキーなどを格納した構造体の配列
+
+  ! option_complex *set_option( key, ... )
+  ! char *key, ... -- キーを表す文字列と可変引数
+        
+  ! option_complex *alias_option( key, alias )
+  ! char *key;   -- 既に登録されているキーを表す文字列
+  ! char *alias; -- その別名
+        
+  ! void scan_options( argc, argv )
+  ! int argc;     -- コマンドライン引数の数
+  ! char *argv[]; -- コマンドライン引数
+
+  ! int is_option( key );
+  ! char *key; -- キーを表す文字列
+        
+  ! int reset_options()
+        
+説明
+  コマンドラインキーをオプション構造体もしくは手続きで登録し,
+  登録されたキーをコマンドラインから解析するルーチン群です.
+
+  set_option もしくは set_options でキーを登録し、
+  scan_options で解析と変数への代入などを行います.
+  個々のキーに関する解析結果は is_option で取得できます.
+  また, これらのルーチンはメモリを内部確保するので,
+  使用後には reset_options を実行して下さい.
+        
+  例えば以下はオプション解析の一連の手続き例です.
+  | option_record options[] = {
+  |   { "-number %d", &number },
+  |   { "-weight %f", &weight },
+  | };
+  | set_options( 2, options );
+  | set_option( "-help" );
+  | set_option( "-geom %dx%d", &W, &H );
+  | alias_option( "-geom", "-geometry" );
+  | set_option( "-flag[-]", &flag );
+  | set_option( "-enum BLACK BLUE RED", &color );
+  | scan_options( argc, argv );
+  | if ( is_option( "-help" ) )
+  |   show_help();
+  | reset_options(); 
+
+  キーの形式は option.h 準拠ですので、そちらを参考にして下さい。
+
+参照
+  option(3)

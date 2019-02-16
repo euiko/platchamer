@@ -1,0 +1,17 @@
+/*
+ * Make makefiles, the top of Imakefiles < Imakefile >
+ *
+ * Borland Graphics Interface libraries for X11, PostScript
+ *
+ * Copyright (C) 1992-1994,1995 Taiji Yamada, Tokyo Denki University
+ * Copyright (C) 1995-1999 Taiji Yamada, AIHARA Electrical Engineering Co.,Ltd.
+ */
+#include "config.h"
+
+#define IHaveSubdirs
+SUBDIRS = sources graffit samples samples/mkfiles
+/*SUBDIRS = sources graffit samples samples/mkfiles samples/xview*/
+
+#define PassCDebugFlags
+MakeSubdirs($(SUBDIRS))
+DependSubdirs($(SUBDIRS))

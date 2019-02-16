@@ -1,0 +1,97 @@
+/*
+ * Make makefile for the X11 library < Imakefile >
+ *
+ * Target x11/libxbgi_x11.a and .so: Borland Graphics Interface for X11
+ *
+ * Copyright (C) 1992-1994,1995 Taiji Yamada, Tokyo Denki University
+ * Copyright (C) 1995-1999 Taiji Yamada, AIHARA Electrical Engineering Co.,Ltd.
+ */
+#include "../../config.h"
+
+INSTALLFLAGS = -c $(INSTINCFLAGS)
+
+#include "define.h"
+
+INCLUDES = -I.
+LINTLIBS = $(LINTXTOLL) $(LINTXLIB)
+EXTRA_INCLUDES = -I../common -I../misc
+HEADERS = $(X11_HEADERS)
+SRCS = $(X11_SRCS)
+OBJS = $(X11_OBJS)
+
+#ifdef DarwinArchitecture
+REQUIREDLIBS = -flat_namespace -undefined suppress
+#endif
+#ifdef RsArchitecture
+REQUIREDLIBS = $(XTOOLLIB) $(XPMLIB) $(XLIB) -lm
+#endif
+#ifdef AlphaArchitecture
+SO_REQLIBS = $(XTOOLLIB) $(XPMLIB) $(XLIB) -lm -lc
+#endif
+
+#ifndef DoSharedLib
+#define DoSharedLib (HasSharedLibraries && \
+		     !(defined(SGIArchitecture) && !SystemV4))
+#endif
+#ifndef DoNormalLib
+#define DoNormalLib YES
+#endif
+
+#if (ProjectX < 5)
+  STD_DEFINES = LibraryDefines
+  CDEBUGFLAGS = LibraryCDebugFlags
+#else
+#define LibName xbgi_x11
+#define SoRev XBGILIBREV
+#define SHLIBDIR XBGILIBDIR
+#define USRLIBDIR XBGILIBDIR
+#ifdef InstallHome
+#define INCDIR LOCALINC
+#endif
+#include <Library.tmpl>
+XCOMM CC=gcc
+XCOMM PICFLAGS=-fpic
+#endif
+
+#if defined(BuildStandaloneLibs)
+STD_DEFINES += -DBUILD_STANDALONE
+#endif
+
+#if (ProjectX < 6)
+
+#if (ProjectX < 5)
+
+#if DoSharedLib
+SharedLibraryObjectRule()
+NormalSharedLibraryTarget(xbgi_x11,$(XBGILIBREV),$(OBJS))
+InstallSharedLibrary(xbgi_x11,$(XBGILIBREV),$(XBGILIBDIR))
+#else
+NormalLibraryObjectRule()
+#endif
+NormalLibraryTarget(xbgi_x11,$(OBJS))
+InstallLibrary(xbgi_x11,$(XBGILIBDIR))
+
+#else /* (ProjectX < 5) */
+
+LibraryObjectRule()
+
+#if DoSharedLib
+SharedLibraryTarget(xbgi_x11,$(XBGILIBREV),$(OBJS),shared,..)
+InstallSharedLibrary(xbgi_x11,$(XBGILIBREV),$(XBGILIBDIR))
+#endif
+#if DoNormalLib
+NormalLibraryTarget(xbgi_x11,$(OBJS))
+InstallLibrary(xbgi_x11,$(XBGILIBDIR))
+#endif
+
+#endif /* (ProjectX < 5) */
+
+InstallMultiple($(HEADERS),$(XBGIINCDIR))
+BuildIncludes($(HEADERS),.,.)
+
+#endif /* (ProjectX < 6) */
+
+LintLibraryTarget(xbgi_x11,$(SRCS))
+InstallLintLibrary(xbgi_x11,$(LINTLIBDIR))
+DependTarget()
+NormalLintTarget($(SRCS))

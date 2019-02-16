@@ -1,0 +1,35 @@
+サンプルプログラム
+
+   sampleディレクトリにあるプログラムはライブラリxbgiとgraffitのサンプル
+  プログラムです。 それぞれの実行形式はxbgiのトップディレクトリで``xmkmf
+  -a; make''を実行したときに生成されるでしょう。
+
+   もし、インストール済みのライブラリxbgiとgraffitで生成したいときは
+  sampleディレクトリで以下のようにタイプして下さい。
+
+    % imake -DUseInstalled -DUseInstalledXBGI -I<xlibdir>/config
+
+   ``<xlibdir>''はX11のライブラリディレクトリのことで、例えば
+  ``/usr/X11R6/lib/X11''です。 もしそのディレクトリを知りたければ以下の
+  ようにタイプして下さい。
+
+    % xmkmf
+    mv -f Makefile Makefile.bak
+    imake -DUseInstalled -I/usr/X11R6/lib/X11/config
+
+国際化機能
+
+   プログラム``hello2.c''、``hello2-sj.c''と``hello2-jis.c'は日本語漢字コー
+  ドの種類がそれぞれ``euc''、``mscode(shift-jis)''、``jis(7bit)''である
+  同じサンプルプログラムです。もし、あなたのXサーバが国際化機能と日本の
+  ロケールをサポートしているのなら、以下のように試して下さい。
+
+    % env LANG=japanese hello2 
+    % env LANG=ja hello2
+    % env LANG=ja_JP.ujis hello2
+    % env LANG=ja_JP.mscode hello2-sj
+    % env LANG=ja_JP.jis7 hello2-jis
+
+   上記のような環境変数LANGで失敗したのなら、``<xlibdir>/nls''と
+  ``<xlibdir>/nls/nls.alias''に記述されているロケールと日本語漢字コード
+  に対応するその別名を調べる必要があるでしょう。

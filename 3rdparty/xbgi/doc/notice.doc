@@ -1,0 +1,18 @@
+Notice
+
+About a sample program using XView
+
+  In making of xvsample/sponge.c, you may fail to built it by cause of SunOS's
+  version and X11's version or not. I don't know the origin of failing.
+  Error message is as follows:
+
+    | ld: Undefined symbol
+    |   _cm_close
+    |   _cm_put
+    |   _cm_open
+    | collect2: ld returned 2 exit status
+    | *** Error code 1
+
+  By the way, in the case of undefined ``XFontSet'' in Xlib.h such as X11R4 or
+  old OpenWindow, please don't define ``EnableMultilingual'' in ``configre.h''.
+  You must define ``EnableBilingual'' in it's place for using your language.

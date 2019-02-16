@@ -1,0 +1,13 @@
+{/* as Triplex Script Fonts */
+  { "Times-BoldItalic", { {16, 0,0}, {16, 0,0} } },
+  { "Times-BoldItalic", { { 8, 0,0}, { 8, 0,0} } },
+  { "Times-BoldItalic", { {10, 0,0}, {10, 0,0} } },
+  { "Times-BoldItalic", { {12, 0,0}, {12, 0,0} } },
+  { "Times-BoldItalic", { {14, 0,0}, {14, 0,0} } },
+  { "Times-BoldItalic", { {18, 0,0}, {18, 0,0} } },
+  { "Times-BoldItalic", { {24, 0,0}, {24, 0,0} } },
+  { "Times-BoldItalic", { {34, 0,0}, {24, 0,0} } },
+  { "Times-BoldItalic", { {34, 0,0}, {24, 0,0} } },
+  { "Times-BoldItalic", { {34, 0,0}, {24, 0,0} } },
+  { "Times-BoldItalic", { {34, 0,0}, {24, 0,0} } },
+},

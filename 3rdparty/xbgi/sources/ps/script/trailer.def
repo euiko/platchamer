@@ -1,0 +1,3 @@
+#define TRAILER \
+"%%%%Trailer\n" \
+"%%%%EOF\n"

@@ -1,0 +1,110 @@
+/*
+ * Make makefile for sample programs with xbgi and XView
+ *
+ * Example of xbgi with X tool kit
+ *
+ * Copyright (C) 1992-1994,1995 Taiji Yamada, Tokyo Denki Uniersity
+ * Copyright (C) 1995-1999 Taiji Yamada, AIHARA Electrical Engineering Co.,Ltd.
+ */
+#include "../../config.h"
+
+EXTRA_INCLUDES = -I../../sources/common -I../../sources/x11 -I../../sources/ps -I../../sources/misc -I../../graffit/sources -I/usr/openwin/include -UX_WCHAR
+
+#if defined(BuildConcatenatedLib)
+
+#if defined(UseInstalledXBGI)
+
+EXTRA_LOAD_FLAGS += -L/usr/openwin/lib
+LOCAL_LIBRARIES = $(GRAFFITLIB) $(XBGILIB) $(XTOOLLIB) $(XPMLIB) -lxview -lolgx $(XLIB)
+
+#else /* !defined(UseInstalledXBGI) */
+
+#if DoSharedLib && !defined(LinuxArchitecture) && !defined(DarwinArchitecture)
+
+all:: libgraffit.so libxbgi.so
+
+libgraffit.so:
+	$(RM) $@*
+	$(LN) ../../graffit/sources/libgraffit.so* .
+	-if [ ! -f $@ ]; then $(LN) $@* $@; fi
+
+libxbgi.so:
+	$(RM) $@*
+	$(LN) ../../sources/libxbgi.so* .
+	-if [ ! -f $@ ]; then $(LN) $@* $@; fi
+
+clean::
+	$(RM) ./libgraffit.so* ./libxbgi.so*
+
+LOCAL_LDFLAGS = -L.
+EXTRA_LOAD_FLAGS += -L/usr/openwin/lib
+LOCAL_LIBRARIES = $(GRAFFITLIB) $(XBGILIB) $(XTOOLLIB) $(XPMLIB) -lxview -lolgx $(XLIB)
+
+#else /* !DoSharedLib */
+
+EXTRA_LOAD_FLAGS += -L/usr/openwin/lib
+LOCAL_LIBRARIES = ../../graffit/sources/libgraffit.a ../../sources/libxbgi.a $(XTOOLLIB) $(XPMLIB) -lxview -lolgx $(XLIB)
+
+#endif /* DoSharedLib */
+
+#endif /* defined(UseInstalledXBGI) */
+
+#else /* !defined(BuildConcatenatedLib) */
+
+#ifdef DarwinArchitecture
+LOCAL_LDFLAGS = -undefined dynamic_lookup
+#endif
+
+#if defined(UseInstalledXBGI)
+
+EXTRA_LOAD_FLAGS += -L/usr/openwin/lib
+LOCAL_LIBRARIES = $(GRAFFITLIB) $(XBGILIB) $(XTOOLLIB) $(XPMLIB) -lxview -lolgx $(XLIB)
+
+#else /* !defined(UseInstalledXBGI) */
+
+#if DoSharedLib && !defined(LinuxArchitecture) && !defined(DarwinArchitecture)
+
+all:: libgraffit.so libxbgi_common.so libxbgi_$(DefaultStandaloneLib).so libxbgi_misc.so
+
+libgraffit.so:
+	$(RM) $@*
+	$(LN) ../../graffit/sources/libgraffit.so* .
+	-if [ ! -f $@ ]; then $(LN) $@* $@; fi
+
+libxbgi_$(DefaultStandaloneLib).so:
+	$(RM) $@*
+	$(LN) ../../sources/$(DefaultStandaloneLib)/libxbgi_$(DefaultStandaloneLib).so .
+	-if [ ! -f $@ ]; then $(LN) $@* $@; fi
+
+libxbgi_common.so:
+	$(RM) $@*
+	$(LN) ../../sources/common/libxbgi_common.so* .
+	-if [ ! -f $@ ]; then $(LN) $@* $@; fi
+
+libxbgi_misc.so:
+	$(RM) $@*
+	$(LN) ../../sources/misc/libxbgi_misc.so* .
+	-if [ ! -f $@ ]; then $(LN) $@* $@; fi
+
+clean::
+	$(RM) ./libxbgi_common.so* ./libxbgi_misc.so*
+
+LOCAL_LDFLAGS = -L.
+EXTRA_LOAD_FLAGS += -L/usr/openwin/lib
+LOCAL_LIBRARIES = $(GRAFFITLIB) $(XBGILIB) $(XTOOLLIB) $(XPMLIB) -lxview -lolgx $(XLIB)
+
+#else /* !DoSharedLib */
+
+EXTRA_LOAD_FLAGS += -L/usr/openwin/lib
+LOCAL_LIBRARIES = ../../graffit/sources/libgraffit.a ../../sources/common/libxbgi_common.a ../../sources/$(DefaultStandaloneLib)/libxbgi_$(DefaultStandaloneLib).a ../../sources/misc/libxbgi_misc.a $(XTOOLLIB) $(XPMLIB) -lxview -lolgx $(XLIB)
+
+#endif /* DoSharedLib */
+
+#endif /* defined(UseInstalledXBGI) */
+
+#endif /* defined(BuildConcatenatedLib) */
+
+SRCS = sponge.c
+OBJS = sponge.o
+
+ComplexProgramTarget(sponge)

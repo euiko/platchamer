@@ -1,0 +1,30 @@
+OPTION
+
+NAME
+  scan_option - analyze command line options routine
+
+SYNOPSIS
+  ! #include <option.h>
+  ! int scan_option( argc, argv, key, ... )
+  ! int argc;      -- the number of command line arguments
+  ! char *argv[];  -- command line arguments
+  ! char *key, ... -- string which express ``key'' and arguments
+
+DESCRIPTION
+  + If there is key to scan in command line options, true(=!0) is returned.
+    For an example, if there is "-help" in command line options,
+    scan_option( argc, argv, "-help" ) returns !0.
+  + If there is key to scan with "scanf format",
+    variable(s) is(are) scanned and !0 is returned.
+    For an example, if there is "-geom 100x100" in command line options,
+    scan_option( argc, argv, "-geom %dx%d", &W, &H ) returns !0 and
+    sets 100 and 100 in W and H, respectively.
+  + If key is like "-on[-]", it is considered to be flag,
+    multi-variable argument needs a int* type pointer.
+    In this case, there is "-on" or "-on-" in command line, thie routine
+    substitutes !0, 0 to the address of a int* type pointer.
+  + If key is like "-enum BLACK BLUE RED", which includes space and not
+    scanf format, it is considered to be enumerate,
+    multi-variable argument needs a int* type pointer.
+    In this case, there is "-enum RED" in command line,
+    thie routine substitutes 2 the address of a int* type pointer.
