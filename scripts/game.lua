@@ -6,6 +6,7 @@ project "platchamer"
     kind     "ConsoleApp"
     defines {
         "STB_IMAGE_IMPLEMENTATION=1",
+        "ECS_NO_RTTI",
     }
 
     PLATCHAMER_SRC_DIR = path.join(PROJECT_DIR, "src") 
