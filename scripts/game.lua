@@ -1,5 +1,7 @@
 group "3rdparty"
-dofile "3rdparty/xbgi.lua"
+-- dofile "3rdparty/xbgi.lua"
+dofile "3rdparty/sdl_bgi.lua"
+dofile "3rdparty/sdl2.lua"
 
 project "platchamer"
   	language "C++"
@@ -24,7 +26,9 @@ project "platchamer"
     }
 
     links {
-        "xbgi",
+        -- "xbgi",
+        "sdl_bgi",
+        "sdl2",
     }
     
     buildoptions {
@@ -34,12 +38,11 @@ project "platchamer"
     configuration "linux or bsd"
         linkoptions { "-fPIC" }
         initX11()
-        -- links {
-        --     "dl",
-        --     "GL",
-        --     "GLU",
-        --     "glut",
-        --     "EGL",
-        --     "GLESv2",
-        -- }
+        links {
+            "GL",
+            "GLU",
+            "glut",
+            "EGL",
+            "GLESv2",
+        }
     
