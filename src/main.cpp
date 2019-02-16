@@ -1,9 +1,13 @@
 extern "C" {
-    #include <graphics.h>
+    #include <common/graphix.h>
+    #include <misc/dos.h>
 }
 #include <iostream>
-// #include "utils/stb_image.h"
-#include <X11/bitmaps/xlogo16> 
+#include "libs/stb_image.h"
+#include <x11/x11.h> 
+#include <X11/X.h> 
+#include <vector> 
+
 
 int main(void)
 {
@@ -11,16 +15,18 @@ int main(void)
     int gd = DETECT, gm, errorcode;
     int midx, midy, radius = 100;
     
-    initgraph(&gd, &gm, "-geometry 400x400");
-
-
-    // int width, height, channels, channelCount = utils::STBI_rgb_alpha;
-    // unsigned char* image = utils::stbi_load("player_01.png", &width, &height, &channels, channelCount);
-    // if(image == NULL)
-    // {
-    //     std::cout << "Image cannot be opened";
-    //     return 1;
-    // }
+    xbgi* XBGI = creategraph(&gd, &gm, "-geometry 1366x768 -direct-color");
+    int width, height, channels, channelCount = STBI_rgb_alpha;
+    unsigned char* raw = stbi_load("logo.png", &width, &height, &channels, channelCount);
+    if(raw == NULL)
+    {
+        std::cout << "Image cannot be opened";
+        return 1;
+    }
+    
+    // std::vector<unsigned char> image;
+    // image.assign(raw, raw+(width*height*4));
+    
     // uint32_t bitmap[width*height];
     // int pixelIndex = 0;
     // for(int x = 0; x < width; x++) {
@@ -39,19 +45,29 @@ int main(void)
 
     // int max = DefaultDepthOfScreen(DefaultScreenOfDisplay(dpy));
 
+    // Display* d = XBGIDisplay;
+    // Visual* v = XBGIVisual;
     // bgi_image img;
     // img.height = height;
     // img.width = width;
     // Pixmap pix = XCreatePixmap(dpy, drawable, 16, 16, 24);
-    // XImage* image = XCreateImage(dpy, CopyFromParent, 24, ZPixmap, 0, (char*) image,);
+    XImage* img = XCreateImage(XBGIDisplay, CopyFromParent, 24, ZPixmap, 0, (char*) raw, width, height, 32, width*4);
     // img.pixmap = pix;
-
+    // image.insert(image.begin(), height);
+    // image.insert(image.begin(), width);
     // setcolor(getmaxcolor());
-    // while(!kbhit()) {
-    //     cleardevice();
-    //     putimage(50, 50, (void*)&img, COPY_PUT);
-    //     delay(15);
-    // }
+    int x = 10; int i = 1;
+    while(!kbhit()) {
+        cleardevice();
+        XPutImage(XBGIDisplay, XBGIWins[XBGI->apage], DefaultGC(XBGIDisplay, XBGIScreen), img, 0,0,0,0, width, height);
+        x+= (i * 5);
+        if(x > getmaxx() || x < 0)
+            i *= -1;
+        delay(15);
+    }
+
+    XDestroyImage( img );
+
     // XFreePixmap(dpy, img.pixmap);
 
     closegraph();

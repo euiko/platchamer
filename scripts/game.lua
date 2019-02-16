@@ -13,7 +13,8 @@ project "platchamer"
     includedirs {
         "/usr/include",
         PLATCHAMER_SRC_DIR,
-        path.join(XBGI_SRC_DIR, "common"),
+        XBGI_SRC_DIR,
+        -- path.join(XBGI_SRC_DIR, "common"),
     }
     
     files {

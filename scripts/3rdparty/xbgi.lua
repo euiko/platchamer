@@ -2,7 +2,7 @@ xbgi =  dependency(nil, "xbgi")
   	language "C"
   	kind "StaticLib"
     defines {
-        "ENABLE_XPMLIB",
+        -- "ENABLE_XPMLIB",
         "XBGI_DEFAULT_DRIVER=x11_driver",
         "M_PI=3.14159265358979323846",
     }
@@ -18,15 +18,12 @@ xbgi =  dependency(nil, "xbgi")
     }
 
     files {
-        path.join(XBGI_SRC_DIR, "common/**"),
-        path.join(XBGI_SRC_DIR, "misc/**"),
-        -- path.join(XBGI_SRC_DIR, "ps/**"),
-        path.join(XBGI_SRC_DIR, "x11/**"),
+        path.join(XBGI_SRC_DIR, "**"),
     }
 
     excludes {
-        path.join(XBGI_SRC_DIR, "demo.c"),
-        path.join(XBGI_SRC_DIR, "usleep.c"),
+        path.join(XBGI_SRC_DIR, "x11/event-19991027.c"),
+        -- path.join(XBGI_SRC_DIR, "usleep.c"),
     }
 
     buildoptions_c {

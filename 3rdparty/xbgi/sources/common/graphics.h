@@ -61,17 +61,17 @@ inline int atoi( const char *__s )
 
 #else
 
-#ifndef random
-#  define random(num) (int)(((long)rand()*(num))/(RAND_MAX+1))
-#endif
-#ifndef randomize
-#  define randomize() srand((unsigned)time(NULL))
-#endif
+// #ifndef random
+// #  define random(num) (int)(((long)rand()*(num))/(RAND_MAX+1))
+// #endif
+// #ifndef randomize
+// #  define randomize() srand((unsigned)time(NULL))
+// #endif
 #ifndef max
-#  define max(a,b) (((a)>(b))?(a):(b))
+#  define max(a,b) ((a>b)?(a):(b))
 #endif
 #ifndef min
-#  define min(a,b) (((a)>(b))?(b):(a))
+#  define min(a,b) ((a>b)?(b):(a))
 #endif
 #ifdef NO_ATOI
 #ifndef atoi
