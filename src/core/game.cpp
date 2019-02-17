@@ -2,10 +2,17 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <vector>
+extern "C" {
+    #include <sdl_bgi/graphics.h>
+}
 #include "game.hpp"
 #include "../libs/stb_image.h"
 #include "../components/position_component.hpp"
 #include "../components/vector_component.hpp"
+
+ECS_TYPE_IMPLEMENTATION;
+ECS_DEFINE_TYPE(VectorComponent);
+ECS_DEFINE_TYPE(PositionComponent);
 
 Game::Game(const std::string& title, int w, int h, Uint32 flags)
     :m_window(title, w, h, flags)
@@ -13,15 +20,15 @@ Game::Game(const std::string& title, int w, int h, Uint32 flags)
     m_registry = ecs::Registry::createRegistry();
     ecs::Entity* player = m_registry->create();
     player->assign<PositionComponent>(50.0f, 50.0f);
-    std::vector<float> shape = {
-        0, 0,
-        50, 0,
-        50, 50,
-        0, 50,
+    std::vector<Vect2> shape = {
+        {0, 0},
+        {50, 0},
+        {50, 50},
+        {0, 50},
     };
     
     player->assign<VectorComponent>(shape);
-    
+
 }
 
 int Game::run() {
@@ -37,6 +44,7 @@ int Game::run() {
     const double deltaTime = 1000.0 / 60.0;
 
     double currentTime = SDL_GetTicks();
+    SDL_SetRenderDrawColor(m_window.getRenderer(), 0, 0, 0, 0);
     // std::unique_ptr<std::thread> renderThread;
     while (m_window.m_isOpen)
     {
@@ -60,6 +68,8 @@ int Game::run() {
         std::cout << "TIME: " << time << "\n";
         std::cout << "ACCM: " << accumulator << "\n";
     }
+    m_registry->cleanup();
+    m_registry->destroyRegistry();
 
     return EXIT_SUCCESS;
 }
@@ -89,10 +99,16 @@ void Game::event()
 
 void Game::update(double time)
 {
-
+    m_registry->tick(time);   
 }
 
 void Game::render()
 {
-    
+    cleardevice();
+    SDL_RenderClear(m_window.getRenderer());
+
+    m_renderer_system.render(&m_window, m_registry);
+
+    refresh();
+    SDL_RenderPresent(m_window.getRenderer());
 }

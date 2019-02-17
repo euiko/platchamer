@@ -15,6 +15,5 @@ struct PositionComponent
     Vect2 pos;
 };
 
-ECS_DEFINE_TYPE(PositionComponent);
 
 #endif

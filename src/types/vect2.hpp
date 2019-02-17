@@ -20,7 +20,23 @@ struct Vect2 {
     Vect2 operator* (float s) {
         return Vect2(this->x * s, this->y * s);
     }
-    
+
+    Vect2 operator+ (float s) {
+        return Vect2(this->x + s, this->y + s);
+    }
+
+    Vect2 operator- (float s) {
+        return Vect2(this->x - s, this->y - s);
+    }
+
+    Vect2 operator+ (const Vect2& v) {
+        return Vect2(this->x + v.x, this->y + v.y);
+    }
+
+    Vect2 operator- (const Vect2& v) {
+        return Vect2(this->x - v.x, this->y - v.y);
+    }
+
     void normalize() {
         float inv_len = 1 / length();
         x *= inv_len; y *= inv_len;

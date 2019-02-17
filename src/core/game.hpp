@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include "../graphics/window.hpp"
 #include "../core/ecs/registry.hpp"
+#include "../systems/renderer_system.hpp"
 
 class Game
 {
@@ -21,6 +22,7 @@ private:
 private:
     Window m_window;
     ecs::Registry* m_registry;
+    RendererSystem m_renderer_system;
 };
 
 #endif

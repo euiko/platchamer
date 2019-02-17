@@ -24,11 +24,10 @@
 #define ECS_TYPE_IMPLEMENTATION
 
 #else
-
-#define ECS_TYPE_IMPLEMENTATION \
-	ECS::TypeIndex ecs::core::TypeRegistry::nextIndex = 1; \
-	\
-	ECS_DEFINE_TYPE(ecs::events::OnEntityCreated);\
+#warning "RTTI Disabled"
+#define ECS_TYPE_IMPLEMENTATION  \
+	ecs::TypeIndex ecs::core::TypeRegistry::nextIndex = 1; \
+	ECS_DEFINE_TYPE(ecs::events::OnEntityCreated); \
 	ECS_DEFINE_TYPE(ecs::events::OnEntityDestroyed); \
 
 #endif

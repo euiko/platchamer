@@ -9,6 +9,9 @@ solution "platchamer_sln"
 	}
 
 	language "C++"
+	-- flags {
+	-- 	"RTTI",
+	-- }
 
 	
 PROJECT_DIR = path.getabsolute("..")

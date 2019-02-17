@@ -3,17 +3,16 @@
 
 #include <vector>
 #include "../core/ecs/registry.hpp"
+#include "../types/vect2.hpp"
 
 struct VectorComponent
 {
     ECS_DECLARE_TYPE;
-    VectorComponent(std::vector<float> points): points(points)
+    VectorComponent(std::vector<Vect2> points): points(points)
     {
     }
 
-    std::vector<float> points;
+    std::vector<Vect2> points;
 };
-
-ECS_DEFINE_TYPE(VectorComponent);
 
 #endif
