@@ -1,12 +1,27 @@
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "../libs/stb_image.h"
+
+#include <vector>
 #include "game.hpp"
+#include "../libs/stb_image.h"
+#include "../components/position_component.hpp"
+#include "../components/vector_component.hpp"
 
 Game::Game(const std::string& title, int w, int h, Uint32 flags)
     :m_window(title, w, h, flags)
 {
     m_registry = ecs::Registry::createRegistry();
+    ecs::Entity* player = m_registry->create();
+    player->assign<PositionComponent>(50.0f, 50.0f);
+    std::vector<float> shape = {
+        0, 0,
+        50, 0,
+        50, 50,
+        0, 50,
+    };
+    
+    player->assign<VectorComponent>(shape);
+    
 }
 
 int Game::run() {
