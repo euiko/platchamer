@@ -5,14 +5,15 @@
 #include "../core/ecs/registry.hpp"
 #include "../types/vect2.hpp"
 
-struct VectorComponent
+struct PolygonComponent
 {
     ECS_DECLARE_TYPE;
-    VectorComponent(std::vector<Vect2> points): points(points)
+    PolygonComponent(std::vector<Vect2> points): points(points)
     {
     }
 
     std::vector<Vect2> points;
+    Vect2 centroid;
 };
 
 #endif

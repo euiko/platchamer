@@ -7,19 +7,21 @@ extern "C" {
 }
 #include "game.hpp"
 #include "../libs/stb_image.h"
+#include "../systems/polygon_system.hpp"
 #include "../components/position_component.hpp"
-#include "../components/vector_component.hpp"
+#include "../components/polygon_component.hpp"
 
 ECS_TYPE_IMPLEMENTATION;
-ECS_DEFINE_TYPE(VectorComponent);
+ECS_DEFINE_TYPE(PolygonComponent);
 ECS_DEFINE_TYPE(PositionComponent);
 
 Game::Game(const std::string& title, int w, int h, Uint32 flags)
     :m_window(title, w, h, flags)
 {
     m_registry = ecs::Registry::createRegistry();
+    m_registry->registerSystem(new PolygonSystem());
     ecs::Entity* player = m_registry->create();
-    player->assign<PositionComponent>(50.0f, 50.0f);
+    player->assign<PositionComponent>(getmaxx() / 2, getmaxy() / 2, 45.0f);
     std::vector<Vect2> shape = {
         {0, 0},
         {50, 0},
@@ -27,20 +29,15 @@ Game::Game(const std::string& title, int w, int h, Uint32 flags)
         {0, 50},
     };
     
-    player->assign<VectorComponent>(shape);
+    player->assign<PolygonComponent>(shape);
 
 }
 
 int Game::run() {
-    // This is a fixed-step gameloop.
-    // See https://gafferongames.com/post/fix_your_timestep/
-    // For an explanation.
 
     double time = 0;
     double accumulator = 0.0;
 
-    // 60 updates per second. We divide 1000 by 60 instead of 1 because sdl operates on milliseconds 
-    // not nanoseconds.
     const double deltaTime = 1000.0 / 60.0;
 
     double currentTime = SDL_GetTicks();

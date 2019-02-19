@@ -8,11 +8,12 @@ struct PositionComponent
 {
     ECS_DECLARE_TYPE;
     
-    PositionComponent(float x, float y) : pos(x, y)
+    PositionComponent(float x, float y, float rotation = 0) : pos(x, y), rotation(rotation)
     {
     }
 
     Vect2 pos;
+    float rotation;
 };
 
 

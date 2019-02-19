@@ -6,6 +6,10 @@
 struct Vect2 {
     float x, y;
 
+    Vect2(): x(0), y(0)
+    {
+    }
+
     Vect2(float x, float y) : x(x), y(y)
     {
     }

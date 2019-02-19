@@ -5,21 +5,28 @@ extern "C" {
 }
 #include "renderer_system.hpp"
 #include "../components/position_component.hpp"
-#include "../components/vector_component.hpp"
+#include "../components/polygon_component.hpp"
 
 void RendererSystem::render(Window* window, ecs::Registry* registry)
 {
-    registry->each<PositionComponent, VectorComponent>([&](ecs::Entity* entity, 
-        ecs::ComponentHandle<PositionComponent> pc, ecs::ComponentHandle<VectorComponent> vc) 
+    registry->each<PositionComponent, PolygonComponent>([&](ecs::Entity* entity, 
+        ecs::ComponentHandle<PositionComponent> pc, ecs::ComponentHandle<PolygonComponent> vc) 
     {
         int bgiPoints[vc->points.size()*2];
-        int i = 0;        
+        int i = 0;
+        Vect2 centroid = vc->centroid + pc->pos;
+        float angle = pc->rotation * M_PI/180;
+        float save;
         for(Vect2& point: vc->points) {
             
             bgiPoints[i*2] = point.x + pc->pos.x;
             bgiPoints[i*2+1] = point.y + pc->pos.y;
+            save = bgiPoints[i*2];
+            bgiPoints[i*2] = bgiPoints[i*2]*cos(angle) - bgiPoints[i*2+1]*sin(angle) + centroid.x - centroid.x*cos(angle) + centroid.y*sin(angle);
+            bgiPoints[i*2+1] = save*sin(angle) + bgiPoints[i*2+1]*cos(angle) + centroid.y - centroid.x*sin(angle) - centroid.y*cos(angle);
             i++;
         }
+        // pc->rotation++;
         fillpoly(vc->points.size(), bgiPoints);
     });
 }

@@ -265,7 +265,6 @@ namespace ecs {
 
     namespace events
 	{
-		// Called when a new entity is created.
 		struct OnEntityCreated
 		{
 			ECS_DECLARE_TYPE;
@@ -273,7 +272,6 @@ namespace ecs {
 			Entity* entity;
 		};
 
-		// Called when an entity is about to be destroyed.
 		struct OnEntityDestroyed
 		{
 			ECS_DECLARE_TYPE;
@@ -281,7 +279,6 @@ namespace ecs {
 			Entity* entity;
 		};
 
-		// Called when a component is assigned (not necessarily created).
 		template<typename T>
 		struct OnComponentAssigned
 		{
@@ -290,8 +287,6 @@ namespace ecs {
 			Entity* entity;
 			ComponentHandle<T> component;
 		};
-
-		// Called when a component is removed
 		template<typename T>
 		struct OnComponentRemoved
 		{
