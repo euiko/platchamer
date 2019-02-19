@@ -4,9 +4,14 @@
 #include "../types/shape.hpp"
 #include "../types/vect2.hpp"
 
-struct PhysicsComponent : Shape
+struct PhysicsComponent
 {
-  PhysicsComponent( Shape *shape_, uint32_t x, uint32_t y );
+  PhysicsComponent( float mass, float inertia, float staticFriction, float dynamicFriction, float restitution )
+    : static_friction(staticFriction), dynamic_friction(dynamicFriction), restitution(restitution),
+      torque(0), angularVelocity(0), velocity({0, 0})
+  {
+
+  }
 
   void ApplyForce( const Vect2& f )
   {
@@ -15,41 +20,35 @@ struct PhysicsComponent : Shape
 
   void ApplyImpulse( const Vect2& impulse, const Vect2& contactVector )
   {
-    velocity += im * impulse;
-    angularVelocity += iI * contactVector.cross( impulse );
+    velocity += inverse_mass * impulse;
+    angularVelocity += inverse_inertia * (contactVector.cross( impulse ));
   }
 
   void SetStatic( void )
   {
-    I = 0.0f;
-    iI = 0.0f;
-    m = 0.0f;
-    im = 0.0f;
+    inertia = 0.0f;
+    inverse_inertia = 0.0f;
+    mass = 0.0f;
+    inverse_mass = 0.0f;
   }
 
-  void SetOrient( float radians );
 
-  Vect2 position;
   Vect2 velocity;
 
   float angularVelocity;
   float torque;
-  float orient; // radians
 
   Vect2 force;
 
-  // Set by shape
-  float I;  // moment of inertia
-  float iI; // inverse inertia
-  float m;  // mass
-  float im; // inverse masee
+  float inertia;  
+  float inverse_inertia; 
+  float mass;  
+  float inverse_mass; 
 
-  // http://gamedev.tutsplus.com/tutorials/implementation/how-to-create-a-custom-2d-physics-engine-friction-scene-and-jump-table/
-  float staticFriction;
-  float dynamicFriction;
+  float static_friction;
+  float dynamic_friction;
   float restitution;
 
-  // Shape interface
   Shape *shape;
 
 };
