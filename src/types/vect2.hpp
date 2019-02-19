@@ -37,6 +37,12 @@ struct Vect2 {
         return Vect2(this->x + v.x, this->y + v.y);
     }
 
+    void operator+=( const Vect2& v )
+    {
+        x += v.x;
+        y += v.y;
+    }
+
     Vect2 operator- (const Vect2& v) {
         return Vect2(this->x - v.x, this->y - v.y);
     }
@@ -51,15 +57,23 @@ struct Vect2 {
     }
     
     // Two crossed vectors return a scalar pointing in the z direction
-    float cross(Vect2 a, Vect2 b) {
-        return a.x * b.y - a.y * b.x;
+    float cross(Vect2 b) {
+        return x * b.y - y * b.x;
     }
     //A vector crossed with a scalar (z-axis) will return a vector on the 2D Cartesian plane
-    Vect2 cross(Vect2 a, float s) {
-        return Vect2(s * a.y, -s * a.x);
-    }
-    Vect2 cross(float s, Vect2 a) {
-        return Vect2(-s * a.y, s * a.x);
+    Vect2 cross(float s) {
+        return Vect2(s * y, -s * x);
     }
 };
+
+inline Vect2 operator*( float s, const Vect2& v )
+{
+  return Vect2( s * v.x, s * v.y );
+};
+
+inline Vect2 cross(float s, Vect2 a) 
+{
+    return Vect2(-s * a.y, s * a.x);
+};
+
 #endif

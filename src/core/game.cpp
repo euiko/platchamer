@@ -22,6 +22,7 @@ Game::Game(const std::string& title, int w, int h, Uint32 flags)
     m_registry->registerSystem(new PolygonSystem());
     ecs::Entity* player = m_registry->create();
     player->assign<PositionComponent>(getmaxx() / 2, getmaxy() / 2, 45.0f);
+    //Kotak biasa
     std::vector<Vect2> shape = {
         {0, 0},
         {50, 0},

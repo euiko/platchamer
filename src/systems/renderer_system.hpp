@@ -11,9 +11,6 @@ class RendererSystem {
 
         void render(Window* window, ecs::Registry* registry);
         
-        void render_sprite(Window* window, ecs::Registry* registry);
-
-        void render_vector(Window* window, ecs::Registry* registry);
 };
 
 #endif

@@ -26,7 +26,6 @@ void RendererSystem::render(Window* window, ecs::Registry* registry)
             bgiPoints[i*2+1] = save*sin(angle) + bgiPoints[i*2+1]*cos(angle) + centroid.y - centroid.x*sin(angle) - centroid.y*cos(angle);
             i++;
         }
-        // pc->rotation++;
         fillpoly(vc->points.size(), bgiPoints);
     });
 }
