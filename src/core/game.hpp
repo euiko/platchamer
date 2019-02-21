@@ -22,7 +22,7 @@ private:
 
 private:
     Window m_window;
-    std::unique_ptr<ecs::Registry> m_registry;
+    ecs::Registry* m_registry;
     RendererSystem m_renderer_system;
 };
 

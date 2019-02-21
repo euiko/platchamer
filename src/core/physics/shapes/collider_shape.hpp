@@ -15,8 +15,17 @@ struct ColliderShape
 
   ColliderShape( ) {}
   virtual ColliderShape *Clone( void ) const = 0;
-  virtual RigidBody computeMass( float density ) = 0;
+  virtual void initialize( void ) = 0;
+  virtual void computeMass( float density ) = 0;
+  virtual void setOrient( float radians ) = 0;
   virtual Type getType( void ) const = 0;
+
+
+  RigidBody *body;
+  // For circle shape
+  float radius;
+  // For Polygon shape
+  Matrix2 u; // Orientation matrix from model to world
 
 };
 

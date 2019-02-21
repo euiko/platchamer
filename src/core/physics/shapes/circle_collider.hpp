@@ -16,17 +16,21 @@ struct CircleCollider : public ColliderShape
         return new CircleCollider( radius );
     }
 
-    RigidBody computeMass( float density )
+
+    void initialize( void )
     {
-        RigidBody rigidBody;
-        rigidBody.mass = M_PI * radius * radius * density;
-        rigidBody.inverse_mass = rigidBody.mass ? 1.0f / rigidBody.mass : 0.0f;
-        rigidBody.inertia = rigidBody.mass * radius * radius;
-        rigidBody.inverse_inertia = rigidBody.inertia ? 1.0f / rigidBody.inertia : 0.0f;
-        return rigidBody;
+        computeMass( 1.0f );
     }
 
-    void SetOrient( real radians )
+    void computeMass( float density )
+    {
+        body->m = M_PI * radius * radius * density;
+        body->im = (body->m) ? 1.0f / body->m : 0.0f;
+        body->I = body->m * radius * radius;
+        body->iI = (body->I) ? 1.0f / body->I : 0.0f;
+    }
+
+    void setOrient( float radians )
     {
     }
 
