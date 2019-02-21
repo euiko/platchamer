@@ -56,11 +56,10 @@ struct Vect2 {
         return a.x * b.x + a.y * b.y;
     }
     
-    // Two crossed vectors return a scalar pointing in the z direction
     float cross(const Vect2& b) {
         return x * b.y - y * b.x;
     }
-    //A vector crossed with a scalar (z-axis) will return a vector on the 2D Cartesian plane
+    
     Vect2 cross(float s) {
         return Vect2(s * y, -s * x);
     }

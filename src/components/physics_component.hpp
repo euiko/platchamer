@@ -6,50 +6,22 @@
 
 struct PhysicsComponent
 {
-  PhysicsComponent( float mass, float inertia, float staticFriction, float dynamicFriction, float restitution )
-    : static_friction(staticFriction), dynamic_friction(dynamicFriction), restitution(restitution),
-      torque(0), angularVelocity(0), velocity({0, 0})
-  {
+    PhysicsComponent( float mass, float inertia, float static_friction, float dynamic_friction, float restitution, bool is_static = false )
+        : static_friction(static_friction), dynamic_friction(dynamic_friction), restitution(restitution),
+        is_static(is_static), torque(0), angular_velocity(0), velocity({0, 0})
+    {
+    }
 
-  }
+    Vect2 velocity;
+    float angular_velocity;
+    float torque;
+    Vect2 force;
 
-  void ApplyForce( const Vect2& f )
-  {
-    force += f;
-  }
+    bool is_static;
 
-  void ApplyImpulse( const Vect2& impulse, const Vect2& contactVector )
-  {
-    velocity += inverse_mass * impulse;
-    angularVelocity += inverse_inertia * (contactVector.cross( impulse ));
-  }
-
-  void SetStatic( void )
-  {
-    inertia = 0.0f;
-    inverse_inertia = 0.0f;
-    mass = 0.0f;
-    inverse_mass = 0.0f;
-  }
-
-
-  Vect2 velocity;
-
-  float angularVelocity;
-  float torque;
-
-  Vect2 force;
-
-  float inertia;  
-  float inverse_inertia; 
-  float mass;  
-  float inverse_mass; 
-
-  float static_friction;
-  float dynamic_friction;
-  float restitution;
-
-  Shape *shape;
+    float static_friction;
+    float dynamic_friction;
+    float restitution;
 
 };
 

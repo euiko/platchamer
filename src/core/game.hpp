@@ -2,6 +2,7 @@
 #define GAME_HPP
 
 #include <iostream>
+#include <memory>
 #include <SDL2/SDL.h>
 #include "../graphics/window.hpp"
 #include "../core/ecs/registry.hpp"
@@ -21,7 +22,7 @@ private:
 
 private:
     Window m_window;
-    ecs::Registry* m_registry;
+    std::unique_ptr<ecs::Registry> m_registry;
     RendererSystem m_renderer_system;
 };
 
