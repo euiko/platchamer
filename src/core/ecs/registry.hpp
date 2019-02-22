@@ -164,6 +164,8 @@ namespace ecs {
 
 			EntityComponentIterator<Types...>& operator++();
 
+			EntityComponentIterator<Types...>& operator+(size_t v);
+
 		private:
 			bool m_bIsEnd = false;
 			size_t m_index;
@@ -182,7 +184,17 @@ namespace ecs {
 				return m_firstItr;
 			}
 
+			EntityComponentIterator<Types...>& begin()
+			{
+				return m_firstItr;
+			}
+
 			const EntityComponentIterator<Types...>& end() const
+			{
+				return m_lastItr;
+			}
+
+			EntityComponentIterator<Types...>& end()
 			{
 				return m_lastItr;
 			}
@@ -974,6 +986,21 @@ namespace ecs {
 		EntityComponentIterator<Types...>& EntityComponentIterator<Types...>::operator++()
 		{
 			++m_index;
+			while (m_index < m_registry->getCount() && (get() == nullptr || !get()->template has<Types...>() || (get()->isPendingDestroy() && !m_bIncludePendingDestroy)))
+			{
+				++m_index;
+			}
+
+			if (m_index >= m_registry->getCount())
+				m_bIsEnd = true;
+
+			return *this;
+		}
+
+		template<typename... Types>
+		EntityComponentIterator<Types...>& EntityComponentIterator<Types...>::operator+(size_t v)
+		{
+			m_index += v;
 			while (m_index < m_registry->getCount() && (get() == nullptr || !get()->template has<Types...>() || (get()->isPendingDestroy() && !m_bIncludePendingDestroy)))
 			{
 				++m_index;

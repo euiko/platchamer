@@ -2,7 +2,9 @@
 #define COLLIDER_SHAPE_HPP
 
 #include "../../../types/matrix2.hpp"
-#include "../rigid_body.hpp"
+// #include "../rigid_body.hpp"
+
+struct RigidBody;
 
 struct ColliderShape
 {
