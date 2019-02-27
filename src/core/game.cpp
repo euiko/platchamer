@@ -34,11 +34,25 @@ Game::Game(const std::string& title, int w, int h, Uint32 flags)
         {50, 50},
         {0, 50},
     };
-    
     player->assign<PolygonComponent>(shape);
     PolygonCollider collider;
     collider.set(shape.data(), shape.size());
     player->assign<PhysicsComponent>(&collider, (int)(getmaxx() / 2), (int)(getmaxy() / 2));
+    m_registry->registerSystem(new PhysicsSystem());
+
+    ecs::Entity* player2 = m_registry->create();
+    player2->assign<PositionComponent>(getmaxx() / 2, getmaxy() / 2, 45.0f);
+    //Kotak biasa
+    std::vector<Vect2> shape2 = {
+        {0, 0},
+        {700, 0},
+        {700, 100},
+        {0, 100},
+    };
+    player2->assign<PolygonComponent>(shape2);
+    PolygonCollider collider2;
+    collider2.set(shape2.data(), shape2.size());
+    player2->assign<PhysicsComponent>(&collider2, (int)(getmaxx() / 2), (int)(getmaxy() / 2) + 250, true);
 
 }
 

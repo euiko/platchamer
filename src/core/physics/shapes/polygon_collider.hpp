@@ -207,7 +207,7 @@ struct PolygonCollider : public ColliderShape
 
     Type getType( void ) const
     {
-        return colliderCircle;
+        return colliderPoly;
     }
 
     uint32_t m_vertexCount;

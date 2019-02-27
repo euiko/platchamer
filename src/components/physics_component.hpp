@@ -9,12 +9,13 @@
 struct PhysicsComponent
 {
     ECS_DECLARE_TYPE;
-    PhysicsComponent( ColliderShape *collider_shape, uint32_t x, uint32_t y )
-        : rigid_body(collider_shape, x, y)
+    PhysicsComponent( ColliderShape *collider_shape, uint32_t x, uint32_t y, bool is_static = false )
+        : rigid_body(new RigidBody(collider_shape, x, y)), is_static(is_static)
     {
     }
 
-    RigidBody rigid_body;
+    RigidBody* rigid_body;
+    bool is_static;
 
 };
 

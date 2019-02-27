@@ -28,13 +28,13 @@ void PhysicsSystem::tick(Registry* registry, float deltaTime)
     {
         count++;
         ComponentHandle<PhysicsComponent> pcA = ent->get<PhysicsComponent>();
-        RigidBody *A = &pcA->rigid_body;
+        RigidBody *A = pcA->rigid_body;
 
         for(auto nextEnttIter = entityIter.begin() + count; nextEnttIter != entityIter.end(); ++nextEnttIter)
         {
             auto nextEntt = nextEnttIter.get();
             ComponentHandle<PhysicsComponent> pcB = nextEntt->get<PhysicsComponent>();
-            RigidBody *B = &pcB->rigid_body;
+            RigidBody *B = pcB->rigid_body;
 
             if(A->im == 0 && B->im == 0)
                 continue;
@@ -47,7 +47,7 @@ void PhysicsSystem::tick(Registry* registry, float deltaTime)
 
     // Integrate forces
     for(auto ent: registry->each<PhysicsComponent>())
-        integrateForces( &ent->get<PhysicsComponent>().get().rigid_body, m_dt );
+        integrateForces( ent->get<PhysicsComponent>().get().rigid_body, m_dt );
 
     // Initialize collision
     for(uint32_t i = 0; i < contacts.size( ); ++i)
@@ -60,7 +60,7 @@ void PhysicsSystem::tick(Registry* registry, float deltaTime)
 
     // Integrate velocities
     for(auto ent: registry->each<PhysicsComponent>())
-        integrateVelocity( &ent->get<PhysicsComponent>().get().rigid_body, m_dt );
+        integrateVelocity( ent->get<PhysicsComponent>().get().rigid_body, m_dt );
 
     // Correct positions
     for(uint32_t i = 0; i < contacts.size( ); ++i)
@@ -70,7 +70,7 @@ void PhysicsSystem::tick(Registry* registry, float deltaTime)
     for(auto ent: registry->each<PhysicsComponent>())
     {
         ComponentHandle<PhysicsComponent> pcB = ent->get<PhysicsComponent>();
-        RigidBody *b = &pcB->rigid_body;
+        RigidBody *b = pcB->rigid_body;
         b->force= { 0, 0 };
         b->torque = 0;
     }
@@ -79,17 +79,15 @@ void PhysicsSystem::tick(Registry* registry, float deltaTime)
 void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigned<PhysicsComponent>& event)
 {
     ComponentHandle<PhysicsComponent> physicsComponent = event.component;
-    physicsComponent->rigid_body.SetOrient( generateRandom( -M_PI, M_PI ) );
-    physicsComponent->rigid_body.restitution = 0.2f;
-    physicsComponent->rigid_body.dynamic_friction = 0.2f;
-    physicsComponent->rigid_body.static_friction = 0.4f;
-    // if (physicsComponent->is_static)
-    // {
-    //     physicsComponent->inertia = 0.0f;
-    //     physicsComponent->inverse_inertia = 0.0f;
-    //     physicsComponent->mass = 0.0f;
-    //     physicsComponent->inverse_mass = 0.0f;
-    // }
+    physicsComponent->rigid_body->SetOrient( generateRandom( -M_PI, M_PI ) );
+    physicsComponent->rigid_body->restitution = 0.2f;
+    physicsComponent->rigid_body->dynamic_friction = 0.2f;
+    physicsComponent->rigid_body->static_friction = 0.4f;
+    if (physicsComponent->is_static)
+    {
+        physicsComponent->rigid_body->SetOrient( 0.0f);
+        physicsComponent->rigid_body->SetStatic();
+    }
     
 }
 

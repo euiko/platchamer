@@ -258,7 +258,7 @@ void PolygontoPolygon( Manifold *m, RigidBody *a, RigidBody *b )
   m->contact_count = 0;
 
   // Check for a separating axis with A's face planes
-  uint32_t faceA;
+  uint32_t faceA; 
   float penetrationA = FindAxisLeastPenetration( &faceA, A, B );
   if(penetrationA >= 0.0f)
     return;
