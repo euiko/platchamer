@@ -11,23 +11,24 @@ extern "C" {
 
 void RendererSystem::render(Window* window, ecs::Registry* registry)
 {
-    registry->each<PhysicsComponent, PolygonComponent>([&](ecs::Entity* entity, 
-        ecs::ComponentHandle<PhysicsComponent> pc, ecs::ComponentHandle<PolygonComponent> vc) 
+    registry->each<PositionComponent, PolygonComponent>([&](ecs::Entity* entity, 
+        ecs::ComponentHandle<PositionComponent> pc, ecs::ComponentHandle<PolygonComponent> vc) 
     {
         int bgiPoints[vc->points.size()*2];
-        
-        Vect2 centroid = vc->centroid + pc->rigid_body->position;
-        float angle = pc->rigid_body->orient;
-        PolygonCollider* collider = reinterpret_cast<PolygonCollider *>(pc->rigid_body->shape);
+        int i = 0;
+        Vect2 centroid = vc->centroid + pc->pos;
+        float angle = pc->rotation * M_PI/180;
         float save;
-        for(int i = 0; i < collider->m_vertexCount; i++) {
-            Vect2 point = collider->m_vertices[i];
-            Vect2 v = pc->rigid_body->position + pc->rigid_body->shape->u * point;
-            bgiPoints[i*2] = v.x;
-            bgiPoints[i*2+1] = v.y;
-            // save = bgiPoints[i*2];
-            // bgiPoints[i*2] = bgiPoints[i*2]*cos(angle) - bgiPoints[i*2+1]*sin(angle) + centroid.x - centroid.x*cos(angle) + centroid.y*sin(angle);
-            // bgiPoints[i*2+1] = save*sin(angle) + bgiPoints[i*2+1]*cos(angle) + centroid.y - centroid.x*sin(angle) - centroid.y*cos(angle);
+        setfillstyle(SOLID_FILL, vc->color);
+        setcolor(vc->color);
+        for(Vect2& point: vc->points) {
+            
+            bgiPoints[i*2] = point.x + pc->pos.x;
+            bgiPoints[i*2+1] = point.y + pc->pos.y;
+            save = bgiPoints[i*2];
+            bgiPoints[i*2] = bgiPoints[i*2]*cos(angle) - bgiPoints[i*2+1]*sin(angle) + centroid.x - centroid.x*cos(angle) + centroid.y*sin(angle);
+            bgiPoints[i*2+1] = save*sin(angle) + bgiPoints[i*2+1]*cos(angle) + centroid.y - centroid.x*sin(angle) - centroid.y*cos(angle);
+            i++;
         }
         fillpoly(vc->points.size(), bgiPoints);
     });

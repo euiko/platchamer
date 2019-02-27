@@ -23,6 +23,11 @@ void PolygonSystem::tick(Registry* registry, float deltaTime)
 void PolygonSystem::receive(Registry* registry, const events::OnComponentAssigned<PolygonComponent>& event)
 {
     ComponentHandle<PolygonComponent> pc = event.component;
+    for(Vect2& point: pc->points)
+    {
+        point.x *= pc->scale;
+        point.y *= pc->scale;
+    }
     pc->centroid = _calculate_centroid(pc);
 }
 
