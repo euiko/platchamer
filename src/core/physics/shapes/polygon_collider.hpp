@@ -8,8 +8,9 @@
 #include "../rigid_body.hpp"
 #include "../../../types/vect2.hpp"
 
-
+#ifndef MaxPolyVertexCount
 #define MaxPolyVertexCount 64
+#endif
 
 struct PolygonCollider : public ColliderShape
 {
@@ -42,31 +43,26 @@ struct PolygonCollider : public ColliderShape
 
         for(uint32_t i1 = 0; i1 < m_vertexCount; ++i1)
         {
-        // Triangle vertices, third vertex implied as (0, 0)
-        Vect2 p1( m_vertices[i1] );
-        uint32_t i2 = i1 + 1 < m_vertexCount ? i1 + 1 : 0;
-        Vect2 p2( m_vertices[i2] );
+            Vect2 p1( m_vertices[i1] );
+            uint32_t i2 = i1 + 1 < m_vertexCount ? i1 + 1 : 0;
+            Vect2 p2( m_vertices[i2] );
 
-        float D = p1.cross(p2);
-        float triangleArea = 0.5f * D;
+            float D = p1.cross(p2);
+            float triangleArea = 0.5f * D;
 
-        area += triangleArea;
+            area += triangleArea;
 
-        // Use area to weight the centroid average, not just vertex position
-        c += triangleArea * k_inv3 * (p1 + p2);
+            c += triangleArea * k_inv3 * (p1 + p2);
 
-        float intx2 = p1.x * p1.x + p2.x * p1.x + p2.x * p2.x;
-        float inty2 = p1.y * p1.y + p2.y * p1.y + p2.y * p2.y;
-        I += (0.25f * k_inv3 * D) * (intx2 + inty2);
+            float intx2 = p1.x * p1.x + p2.x * p1.x + p2.x * p2.x;
+            float inty2 = p1.y * p1.y + p2.y * p1.y + p2.y * p2.y;
+            I += (0.25f * k_inv3 * D) * (intx2 + inty2);
         }
 
         c *= 1.0f / area;
 
-        // Translate vertices to centroid (make the centroid (0, 0)
-        // for the polygon in model space)
-        // Not floatly necessary, but I like doing this anyway
         for(uint32_t i = 0; i < m_vertexCount; ++i)
-        m_vertices[i] -= c;
+            m_vertices[i] -= c;
 
         body->m = density * area;
         body->im = (body->m) ? 1.0f / body->m : 0.0f;

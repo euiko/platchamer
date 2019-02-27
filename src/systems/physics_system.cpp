@@ -1,4 +1,6 @@
 #include "physics_system.hpp"
+#include "../components/polygon_collider_component.hpp"
+#include "../core/physics/ecs/rigid_body.hpp"
 
 PhysicsSystem::PhysicsSystem() : gravity( 0, 10.0f * gravityScale )
 {
@@ -12,6 +14,7 @@ PhysicsSystem::~PhysicsSystem()
 void PhysicsSystem::configure(Registry* registry)
 {
     registry->subscribe<events::OnComponentAssigned<PhysicsComponent>>(this);
+    registry->subscribe<events::OnComponentAssigned<RigidBodyComponent>>(this);
 }
 
 void PhysicsSystem::unconfigure(Registry* registry)
@@ -91,6 +94,11 @@ void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigne
     
 }
 
+void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigned<RigidBodyComponent>& event)
+{
+    computeMass(event.entity, event.component);
+}
+
 void PhysicsSystem::integrateForces( RigidBody *b, float dt )
 {
     if(b->im == 0.0f)
@@ -121,4 +129,13 @@ void PhysicsSystem::applyImpulse(const ComponentHandle<PhysicsComponent>& physic
 void PhysicsSystem::applyForce(const ComponentHandle<PhysicsComponent>& physicsComponent, const Vect2& f )
 {
     // physicsComponent->force += f;
+}
+
+void PhysicsSystem::computeMass(Entity* entity, const ComponentHandle<RigidBodyComponent>& rigid_body )
+{
+    if(entity->has<PolygonColliderComponent>())
+    {
+        const ComponentHandle<PolygonColliderComponent> polygonCollider = entity->get<PolygonColliderComponent>();
+        physics::ecs::computePolygonMass(polygonCollider, rigid_body, 1.0f);
+    }
 }

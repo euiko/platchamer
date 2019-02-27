@@ -1,6 +1,8 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
+#define MaxPolyVertexCount 64
+
 #include <iostream>
 #include <memory>
 #include <SDL2/SDL.h>

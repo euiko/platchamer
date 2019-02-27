@@ -13,11 +13,15 @@ extern "C" {
 #include "../components/position_component.hpp"
 #include "../components/physics_component.hpp"
 #include "../components/polygon_component.hpp"
+#include "../components/polygon_collider_component.hpp"
+#include "../components/rigid_body_component.hpp"
 
 ECS_TYPE_IMPLEMENTATION;
 ECS_DEFINE_TYPE(PolygonComponent);
 ECS_DEFINE_TYPE(PositionComponent);
 ECS_DEFINE_TYPE(PhysicsComponent);
+ECS_DEFINE_TYPE(PolygonColliderComponent);
+ECS_DEFINE_TYPE(RigidBodyComponent);
 
 Game::Game(const std::string& title, int w, int h, Uint32 flags)
     :m_window(title, w, h, flags)
@@ -38,7 +42,6 @@ Game::Game(const std::string& title, int w, int h, Uint32 flags)
     PolygonCollider collider;
     collider.set(shape.data(), shape.size());
     player->assign<PhysicsComponent>(&collider, (int)(getmaxx() / 2), (int)(getmaxy() / 2));
-    m_registry->registerSystem(new PhysicsSystem());
 
     ecs::Entity* player2 = m_registry->create();
     player2->assign<PositionComponent>(getmaxx() / 2, getmaxy() / 2, 45.0f);
