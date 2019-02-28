@@ -3,6 +3,7 @@ extern "C" {
 }
 
 #include "player_control_system.hpp"
+#include "../core/factories.hpp"
 #include "../components/position_component.hpp"
 #include "../tags/player_tag.hpp"
 
@@ -26,7 +27,7 @@ void PlayerControlSystem::tick(Registry* registry, float deltaTime)
 
 }
 
-void PlayerControlSystem::receive(class Registry* registry, const KeyboardEvent& event)
+void PlayerControlSystem::receive(Registry* registry, const KeyboardEvent& event)
 {
     registry->each<PlayerTag, PositionComponent>(
         [&](Entity* entity, ComponentHandle<PlayerTag> player_tag, 
@@ -40,6 +41,8 @@ void PlayerControlSystem::receive(class Registry* registry, const KeyboardEvent&
                 position_component->pos.y += 20;
             if(event.keycode == SDLK_d)
                 position_component->pos.x += 20;
+            if(event.keycode == SDLK_SPACE)
+                makeBullet(registry, entity);
                    
         }
     );

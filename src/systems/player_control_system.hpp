@@ -17,7 +17,7 @@ public:
 
 	virtual void tick(Registry* registry, float deltaTime) override;
 
-    virtual void receive(class Registry* world, const KeyboardEvent& event) override;
+    virtual void receive(Registry* world, const KeyboardEvent& event) override;
 };
 
 #endif
