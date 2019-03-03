@@ -79,10 +79,14 @@ void PhysicsSystem::tick(Registry* registry, float deltaTime)
 void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigned<PolygonColliderComponent>& event)
 {
     physics::ecs::computePolygonMass(event.entity, 1.0f);
+
+    physics::ecs::initPolygonVertices(event.entity);
 }
 
 void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigned<RigidBodyComponent>& event)
 {
+    physics::ecs::computePolygonMass(event.entity, 1.0f);
+    
     setOrient( event.entity, generateRandom( -M_PI, M_PI ) );
     ComponentHandle<RigidBodyComponent> rigid_body = event.entity->get<RigidBodyComponent>();
     if(!rigid_body.isValid())
@@ -94,9 +98,10 @@ void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigne
     if (rigid_body->is_static)
     {
         setOrient(event.entity, 0.0f);
-        rigid_body->restitution = 0.0f;
-        rigid_body->dynamic_friction = 0.0f;
-        rigid_body->static_friction = 0.0f;
+        rigid_body->inertia = 0.0f;
+        rigid_body->inverse_inertia = 0.0f;
+        rigid_body->mass = 0.0f;
+        rigid_body->inverse_mass = 0.0f;
     }
 }
 

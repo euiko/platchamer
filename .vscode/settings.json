@@ -58,5 +58,6 @@
         "__nullptr": "cpp",
         "compare": "cpp",
         "algorithm": "cpp"
-    }
+    },
+    "search.usePCRE2": true
 }

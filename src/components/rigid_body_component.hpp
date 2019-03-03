@@ -9,6 +9,10 @@ struct RigidBodyComponent
     
     ECS_DECLARE_TYPE;
 
+    RigidBodyComponent(bool is_static = false) : is_static(is_static)
+    {
+    }
+
     Vect2 velocity;
     float angular_velocity;
     float torque;

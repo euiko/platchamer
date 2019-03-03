@@ -10,6 +10,9 @@ namespace physics
 {
     namespace ecs
     {
+
+        void initPolygonVertices(::ecs::Entity* entity);
+
         void computePolygonMass(::ecs::Entity* entity, float density);
 
         void applyForce( const ::ecs::ComponentHandle<RigidBodyComponent>& rigid_body, const Vect2& f );

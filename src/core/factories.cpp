@@ -8,10 +8,10 @@
 #include "../tags/player_tag.hpp"
 #include "../tags/bullet_tag.hpp"
 
-ecs::Entity* makePlayer(ecs::Registry* registry) 
+ecs::Entity* makePlayer(ecs::Registry* registry, float x, float y) 
 {
     ecs::Entity* player = registry->create();
-    player->assign<PositionComponent>(0, 0, 0.0f);
+    player->assign<PositionComponent>(x, y, 0.0f);
     //Kotak biasa
     std::vector<Vect2> shape = {
         {109.58, 54.65},
@@ -92,4 +92,20 @@ ecs::Entity* makeBullet(ecs::Registry* registry, ecs::Entity* player)
     bullet->assign<PolygonComponent>(shape, 15, 1.0f);
     bullet->assign<BulletTag>();
     return bullet;
+}
+
+ecs::Entity* makeBlock(ecs::Registry* registry, float x, float y)
+{
+    ecs::Entity* block = registry->create();
+    block->assign<PositionComponent>(x, y, 0.0f);
+    std::vector<Vect2> shape = {
+        {0, 0},
+        {200, 0},
+        {200, 20},
+        {0, 20},
+    };
+    block->assign<PolygonComponent>(shape, 15, 1.0f);
+    block->assign<PolygonColliderComponent>(shape.size(), shape, shape.size());
+    block->assign<RigidBodyComponent>(true);
+    return block;
 }

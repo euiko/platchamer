@@ -1,3 +1,4 @@
+#include <cassert>
 #include "rigid_body.hpp"
 #include "../../../components/polygon_component.hpp"
 
@@ -5,6 +6,103 @@ namespace physics
 {
     namespace ecs
     {
+
+        void initPolygonVertices(::ecs::Entity* entity)
+        {
+            ::ecs::ComponentHandle<PolygonColliderComponent> pollygonCollider = entity->get<PolygonColliderComponent>();
+            int count = pollygonCollider->m_vertexCount;
+            Vect2 vertices[count];
+            std::copy(pollygonCollider->m_vertices.begin(), pollygonCollider->m_vertices.end(), vertices);
+            // No hulls with less than 3 vertices (ensure actual polygon)
+            assert( count > 2 && count <= MaxPolyVertexCount );
+            count = std::min( (int32_t)count, MaxPolyVertexCount );
+
+            // Find the right most point on the hull
+            int32_t rightMost = 0;
+            float highestXCoord = vertices[0].x;
+            for(uint32_t i = 1; i < count; ++i)
+            {
+                float x = vertices[i].x;
+                if(x > highestXCoord)
+                {
+                    highestXCoord = x;
+                    rightMost = i;
+                }
+
+                // If matching x then take farthest negative y
+                else if(x == highestXCoord)
+                    if(vertices[i].y < vertices[rightMost].y)
+                        rightMost = i;
+            }
+
+            int32_t hull[MaxPolyVertexCount];
+            int32_t outCount = 0;
+            int32_t indexHull = rightMost;
+
+            for (;;)
+            {
+                hull[outCount] = indexHull;
+
+                // Search for next index that wraps around the hull
+                // by computing cross products to find the most counter-clockwise
+                // vertex in the set, given the previos hull index
+                int32_t nextHullIndex = 0;
+                for(int32_t i = 1; i < (int32_t)count; ++i)
+                {
+                    // Skip if same coordinate as we need three unique
+                    // points in the set to perform a cross product
+                    if(nextHullIndex == indexHull)
+                    {
+                        nextHullIndex = i;
+                        continue;
+                    }
+
+                    // Cross every set of three unique vertices
+                    // Record each counter clockwise third vertex and add
+                    // to the output hull
+                    // See : http://www.oocities.org/pcgpe/math2d.html
+                    Vect2 e1 = vertices[nextHullIndex] - vertices[hull[outCount]];
+                    Vect2 e2 = vertices[i] - vertices[hull[outCount]];
+                    float c = e1.cross(e2);
+                    if(c < 0.0f)
+                        nextHullIndex = i;
+
+                    // Cross product is zero then e vectors are on same line
+                    // therefor want to record vertex farthest along that line
+                    if(c == 0.0f && e2.sqrLength( ) > e1.sqrLength( ))
+                        nextHullIndex = i;
+                }
+                
+                ++outCount;
+                indexHull = nextHullIndex;
+
+                // Conclude algorithm upon wrap-around
+                if(nextHullIndex == rightMost)
+                {
+                    pollygonCollider->m_vertexCount = outCount;
+                    break;
+                }
+            }
+
+            // Copy vertices into shape's vertices
+            for(uint32_t i = 0; i < pollygonCollider->m_vertexCount; ++i)
+                pollygonCollider->m_vertices[i] = vertices[hull[i]];
+
+            // Compute face normals
+            for(uint32_t i1 = 0; i1 < pollygonCollider->m_vertexCount; ++i1)
+            {
+                uint32_t i2 = i1 + 1 < pollygonCollider->m_vertexCount ? i1 + 1 : 0;
+                Vect2 face = pollygonCollider->m_vertices[i2] - pollygonCollider->m_vertices[i1];
+
+                // Ensure no zero-length edges, because that's bad
+                assert( face.sqrLength( ) > EPSILON * EPSILON );
+
+                // Calculate normal with 2D cross product between vector and scalar
+                pollygonCollider->m_normals[i1] = Vect2( face.y, -face.x );
+                pollygonCollider->m_normals[i1].normalize( );
+            }
+        }
+
         void computePolygonMass(::ecs::Entity* entity, float density)
         {
             ::ecs::ComponentHandle<PolygonColliderComponent> collider = entity->get<PolygonColliderComponent>();
