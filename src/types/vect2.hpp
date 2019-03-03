@@ -1,5 +1,5 @@
-#ifndef VECT2_HPP
-#define VECT2_HPP
+#ifndef TYPES_VECT2_HPP
+#define TYPES_VECT2_HPP
 
 #include <math.h>
 

@@ -3,7 +3,6 @@
 #include <stdint.h>
 #include "../core/physics/shapes/collider_shape.hpp"
 #include "../core/physics/rigid_body.hpp"
-#include "../types/shape.hpp"
 #include "../types/vect2.hpp"
 
 struct PhysicsComponent

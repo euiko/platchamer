@@ -1,3 +1,6 @@
+#ifndef TYPES_MATRIX2_HPP
+#define TYPES_MATRIX2_HPP
+
 #include "vect2.hpp"
 
 struct Matrix2
@@ -38,3 +41,5 @@ struct Matrix2
       m[1][0] * rhs.m[0][0] + m[1][1] * rhs.m[1][0], m[1][0] * rhs.m[0][1] + m[1][1] * rhs.m[1][1]);
     }
 };
+
+#endif

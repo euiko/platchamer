@@ -1,12 +1,15 @@
 #include "rigid_body.hpp"
+#include "../../../components/polygon_component.hpp"
 
 namespace physics
 {
     namespace ecs
     {
-        void computePolygonMass(const ::ecs::ComponentHandle<PolygonColliderComponent>& collider, 
-            const ::ecs::ComponentHandle<RigidBodyComponent>& rigid_body, float density)
+        void computePolygonMass(::ecs::Entity* entity, float density)
         {
+            ::ecs::ComponentHandle<PolygonColliderComponent> collider = entity->get<PolygonColliderComponent>();
+            ::ecs::ComponentHandle<RigidBodyComponent> rigid_body = entity->get<RigidBodyComponent>();
+            
             Vect2 c( 0.0f, 0.0f ); // centroid
             float area = 0.0f;
             float I = 0.0f;
@@ -34,11 +37,49 @@ namespace physics
 
             for(uint32_t i = 0; i < collider->m_vertexCount; ++i)
                 collider->m_vertices[i] -= c;
+            
+            ::ecs::ComponentHandle<PolygonComponent> polygon = entity->get<PolygonComponent>();
+            if(polygon.isValid())
+            {
+                polygon->points = collider->m_vertices;
+            }
 
             rigid_body->mass = density * area;
             rigid_body->inverse_mass = (rigid_body->mass) ? 1.0f / rigid_body->mass : 0.0f;
             rigid_body->inertia = I * density;
             rigid_body->inverse_inertia = rigid_body->inertia ? 1.0f / rigid_body->inertia : 0.0f;
+        }
+
+        void applyForce( const ::ecs::ComponentHandle<RigidBodyComponent>& rigid_body, const Vect2& f )
+        {
+            rigid_body->force += f;
+        }
+
+        void applyImpulse ( const ::ecs::ComponentHandle<RigidBodyComponent>& rigid_body, const Vect2& impulse, const Vect2& contactVector )
+        {
+            rigid_body->velocity += rigid_body->inverse_mass * impulse;
+            float result = cross(contactVector, impulse );
+            rigid_body->angular_velocity += rigid_body->inverse_inertia * result;
+        }
+
+        Vect2 getPolygonSupport( const ::ecs::ComponentHandle<PolygonColliderComponent> collider, const Vect2& dir )
+        {
+            float bestProjection = -FLT_MAX;
+            Vect2 bestVertex;
+
+            for(uint32_t i = 0; i < collider->m_vertexCount; ++i)
+            {
+                Vect2 v = collider->m_vertices[i];
+                float projection = v.dot(dir);
+
+                if(projection > bestProjection)
+                {
+                    bestVertex = v;
+                    bestProjection = projection;
+                }
+            }
+
+            return bestVertex;
         }
     }
 }

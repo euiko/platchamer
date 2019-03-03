@@ -9,6 +9,7 @@ struct RigidBodyComponent
     
     ECS_DECLARE_TYPE;
 
+    Vect2 velocity;
     float angular_velocity;
     float torque;
     float orient;

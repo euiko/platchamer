@@ -13,7 +13,7 @@ PhysicsSystem::~PhysicsSystem()
 
 void PhysicsSystem::configure(Registry* registry)
 {
-    registry->subscribe<events::OnComponentAssigned<PhysicsComponent>>(this);
+    registry->subscribe<events::OnComponentAssigned<PolygonColliderComponent>>(this);
     registry->subscribe<events::OnComponentAssigned<RigidBodyComponent>>(this);
 }
 
@@ -25,71 +25,74 @@ void PhysicsSystem::unconfigure(Registry* registry)
 void PhysicsSystem::tick(Registry* registry, float deltaTime)
 {
     contacts.clear( );
-    auto entityIter = registry->each<PhysicsComponent>();
+    auto colliderEntites = registry->each<PolygonColliderComponent>();
     size_t count = 0;
-    for(auto ent: entityIter)
+    for(auto colliderEntity: colliderEntites)
     {
         count++;
-        ComponentHandle<PhysicsComponent> pcA = ent->get<PhysicsComponent>();
-        RigidBody *A = pcA->rigid_body;
+        ComponentHandle<PolygonColliderComponent> polygonColliderA = colliderEntity->get<PolygonColliderComponent>();
 
-        for(auto nextEnttIter = entityIter.begin() + count; nextEnttIter != entityIter.end(); ++nextEnttIter)
+        for(auto anotherColliderEntityIteration = colliderEntites.begin() + count; anotherColliderEntityIteration != colliderEntites.end(); ++anotherColliderEntityIteration)
         {
-            auto nextEntt = nextEnttIter.get();
-            ComponentHandle<PhysicsComponent> pcB = nextEntt->get<PhysicsComponent>();
-            RigidBody *B = pcB->rigid_body;
+            auto anotherColliderEntity = anotherColliderEntityIteration.get();
 
-            if(A->im == 0 && B->im == 0)
+            if(colliderEntity->get<RigidBodyComponent>()->inverse_mass == 0 
+                && anotherColliderEntity->get<RigidBodyComponent>()->inverse_mass == 0)
                 continue;
-            Manifold m( A, B );
-            m.Solve( );
+            physics::ecs::Manifold m( colliderEntity, anotherColliderEntity );
+            m.solve( );
             if(m.contact_count)
                 contacts.emplace_back( m );
         }
     }
 
     // Integrate forces
-    for(auto ent: registry->each<PhysicsComponent>())
-        integrateForces( ent->get<PhysicsComponent>().get().rigid_body, m_dt );
+    for(auto entity: registry->each<RigidBodyComponent>())
+        integrateForces( entity->get<RigidBodyComponent>(), m_dt );
 
     // Initialize collision
     for(uint32_t i = 0; i < contacts.size( ); ++i)
-        contacts[i].Initialize( );
+        contacts[i].initialize( );
 
     // Solve collisions
     for(uint32_t j = 0; j < m_iterations; ++j)
         for(uint32_t i = 0; i < contacts.size( ); ++i)
-        contacts[i].ApplyImpulse( );
+        contacts[i].applyImpulse( );
 
     // Integrate velocities
-    for(auto ent: registry->each<PhysicsComponent>())
-        integrateVelocity( ent->get<PhysicsComponent>().get().rigid_body, m_dt );
+    for(auto entity: registry->each<PolygonColliderComponent>())
+        integrateVelocity( entity, m_dt );
 
     // Correct positions
     for(uint32_t i = 0; i < contacts.size( ); ++i)
-        contacts[i].PositionalCorrection( );
+        contacts[i].positionalCorrection( );
 
     // Clear all forces
-    for(auto ent: registry->each<PhysicsComponent>())
+    for(auto entity: registry->each<RigidBodyComponent>())
     {
-        ComponentHandle<PhysicsComponent> pcB = ent->get<PhysicsComponent>();
-        RigidBody *b = pcB->rigid_body;
-        b->force= { 0, 0 };
-        b->torque = 0;
+        ComponentHandle<RigidBodyComponent> rigidBodyB = entity->get<RigidBodyComponent>();
+        rigidBodyB->force= { 0, 0 };
+        rigidBodyB->torque = 0;
     }
 }
 
-void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigned<PhysicsComponent>& event)
+void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigned<PolygonColliderComponent>& event)
 {
-    ComponentHandle<PhysicsComponent> physicsComponent = event.component;
-    physicsComponent->rigid_body->SetOrient( generateRandom( -M_PI, M_PI ) );
-    physicsComponent->rigid_body->restitution = 0.2f;
-    physicsComponent->rigid_body->dynamic_friction = 0.2f;
-    physicsComponent->rigid_body->static_friction = 0.4f;
-    if (physicsComponent->is_static)
+    ComponentHandle<PolygonColliderComponent> physicsComponent = event.component;
+    setOrient( event.entity, generateRandom( -M_PI, M_PI ) );
+    ComponentHandle<RigidBodyComponent> rigid_body = event.entity->get<RigidBodyComponent>();
+    if(!rigid_body.isValid())
+        return;
+    rigid_body->restitution = 0.2f;
+    rigid_body->dynamic_friction = 0.2f;
+    rigid_body->static_friction = 0.4f;
+
+    if (rigid_body->is_static)
     {
-        physicsComponent->rigid_body->SetOrient( 0.0f);
-        physicsComponent->rigid_body->SetStatic();
+        setOrient(event.entity, 0.0f);
+        rigid_body->restitution = 0.0f;
+        rigid_body->dynamic_friction = 0.0f;
+        rigid_body->static_friction = 0.0f;
     }
     
 }
@@ -99,43 +102,56 @@ void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigne
     computeMass(event.entity, event.component);
 }
 
-void PhysicsSystem::integrateForces( RigidBody *b, float dt )
+void PhysicsSystem::integrateForces( ComponentHandle<RigidBodyComponent> rigid_body, float dt )
 {
-    if(b->im == 0.0f)
+    if(rigid_body->inverse_mass == 0.0f)
         return;
 
-    b->velocity += (b->force * b->im + gravity) * (dt / 2.0f);
-    b->angular_velocity += b->torque * b->iI * (dt / 2.0f);
+    rigid_body->velocity += (rigid_body->force * rigid_body->inverse_mass + gravity) * (dt / 2.0f);
+    rigid_body->angular_velocity += rigid_body->torque * rigid_body->inverse_inertia * (dt / 2.0f);
 }
 
-void PhysicsSystem::integrateVelocity( RigidBody *b, float dt )
+void PhysicsSystem::integrateVelocity( Entity* entity, float dt )
 {
-    if(b->im == 0.0f)
+    ComponentHandle<RigidBodyComponent> rigid_body = entity->get<RigidBodyComponent>();
+    if(rigid_body->inverse_mass == 0.0f)
         return;
 
-    b->position += b->velocity * dt;
-    b->orient += b->angular_velocity * dt;
-    b->SetOrient( b->orient );
-    integrateForces( b, dt );
+    ComponentHandle<PositionComponent> position = entity->get<PositionComponent>();
+    position->pos += rigid_body->velocity * dt;
+    rigid_body->orient += rigid_body->angular_velocity * dt;
+    setOrient( entity, rigid_body->orient );
+    integrateForces( rigid_body, dt );
 }
 
-void PhysicsSystem::applyImpulse(const ComponentHandle<PhysicsComponent>& physicsComponent, const Vect2& impulse, const Vect2& contact_vector )
-{
-    // physicsComponent->velocity += physicsComponent->inverse_mass * impulse;
-    // physicsComponent->angular_velocity += physicsComponent->inverse_inertia * contact_vector.cross(impulse);
-}
+// void PhysicsSystem::applyImpulse(const ComponentHandle<PolygonColliderComponent>& physicsComponent, const Vect2& impulse, const Vect2& contact_vector )
+// {
+//     // physicsComponent->velocity += physicsComponent->inverse_mass * impulse;
+//     // physicsComponent->angular_velocity += physicsComponent->inverse_inertia * contact_vector.cross(impulse);
+// }
 
 
-void PhysicsSystem::applyForce(const ComponentHandle<PhysicsComponent>& physicsComponent, const Vect2& f )
-{
-    // physicsComponent->force += f;
-}
+// void PhysicsSystem::applyForce(const ComponentHandle<PolygonColliderComponent>& physicsComponent, const Vect2& f )
+// {
+//     // physicsComponent->force += f;
+// }
 
 void PhysicsSystem::computeMass(Entity* entity, const ComponentHandle<RigidBodyComponent>& rigid_body )
 {
     if(entity->has<PolygonColliderComponent>())
     {
         const ComponentHandle<PolygonColliderComponent> polygonCollider = entity->get<PolygonColliderComponent>();
-        physics::ecs::computePolygonMass(polygonCollider, rigid_body, 1.0f);
+        physics::ecs::computePolygonMass(entity, 1.0f);
+    }
+}
+
+void PhysicsSystem::setOrient(Entity* entity, float radians )
+{
+    ComponentHandle<RigidBodyComponent> rigid_body = entity->get<RigidBodyComponent>();
+    rigid_body->orient = radians;
+    if(entity->has<PolygonColliderComponent>())
+    {
+        ComponentHandle<PolygonColliderComponent> polygon_collider = entity->get<PolygonColliderComponent>();
+        polygon_collider->orientation_matrix = { radians };
     }
 }

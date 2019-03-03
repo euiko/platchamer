@@ -4,9 +4,8 @@
 #include <vector>
 #include "../core/ecs/registry.hpp"
 #include "../types/vect2.hpp"
-#include "../types/shape.hpp"
 
-struct PolygonComponent: Shape
+struct PolygonComponent
 {
     ECS_DECLARE_TYPE;
     PolygonComponent(std::vector<Vect2> points, uint32_t color = 0xFF999999, float scale = 1.0f)
