@@ -78,7 +78,11 @@ void PhysicsSystem::tick(Registry* registry, float deltaTime)
 
 void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigned<PolygonColliderComponent>& event)
 {
-    ComponentHandle<PolygonColliderComponent> physicsComponent = event.component;
+    physics::ecs::computePolygonMass(event.entity, 1.0f);
+}
+
+void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigned<RigidBodyComponent>& event)
+{
     setOrient( event.entity, generateRandom( -M_PI, M_PI ) );
     ComponentHandle<RigidBodyComponent> rigid_body = event.entity->get<RigidBodyComponent>();
     if(!rigid_body.isValid())
@@ -94,12 +98,6 @@ void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigne
         rigid_body->dynamic_friction = 0.0f;
         rigid_body->static_friction = 0.0f;
     }
-    
-}
-
-void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigned<RigidBodyComponent>& event)
-{
-    computeMass(event.entity, event.component);
 }
 
 void PhysicsSystem::integrateForces( ComponentHandle<RigidBodyComponent> rigid_body, float dt )
@@ -135,15 +133,6 @@ void PhysicsSystem::integrateVelocity( Entity* entity, float dt )
 // {
 //     // physicsComponent->force += f;
 // }
-
-void PhysicsSystem::computeMass(Entity* entity, const ComponentHandle<RigidBodyComponent>& rigid_body )
-{
-    if(entity->has<PolygonColliderComponent>())
-    {
-        const ComponentHandle<PolygonColliderComponent> polygonCollider = entity->get<PolygonColliderComponent>();
-        physics::ecs::computePolygonMass(entity, 1.0f);
-    }
-}
 
 void PhysicsSystem::setOrient(Entity* entity, float radians )
 {

@@ -10,7 +10,7 @@ struct Collider
         ColliderCount
     };
 
-    const Type colliderType;
+    Type colliderType;
 };
 
 #endif

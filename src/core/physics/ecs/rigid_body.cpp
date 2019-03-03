@@ -44,10 +44,13 @@ namespace physics
                 polygon->points = collider->m_vertices;
             }
 
-            rigid_body->mass = density * area;
-            rigid_body->inverse_mass = (rigid_body->mass) ? 1.0f / rigid_body->mass : 0.0f;
-            rigid_body->inertia = I * density;
-            rigid_body->inverse_inertia = rigid_body->inertia ? 1.0f / rigid_body->inertia : 0.0f;
+            if(rigid_body.isValid())
+            {
+                rigid_body->mass = density * area;
+                rigid_body->inverse_mass = (rigid_body->mass) ? 1.0f / rigid_body->mass : 0.0f;
+                rigid_body->inertia = I * density;
+                rigid_body->inverse_inertia = rigid_body->inertia ? 1.0f / rigid_body->inertia : 0.0f;
+            }
         }
 
         void applyForce( const ::ecs::ComponentHandle<RigidBodyComponent>& rigid_body, const Vect2& f )

@@ -41,7 +41,7 @@ Game::Game(const std::string& title, int w, int h, Uint32 flags)
     m_registry->registerSystem(new PolygonSystem());
     m_registry->registerSystem(new PlayerControlSystem());
     m_registry->registerSystem(new BulletSystem());
-    // m_registry->registerSystem(new PhysicsSystem());
+    m_registry->registerSystem(new PhysicsSystem());
     makePlayer(m_registry);
 }
 

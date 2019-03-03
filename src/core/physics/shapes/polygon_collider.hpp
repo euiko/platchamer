@@ -21,8 +21,8 @@ struct PolygonCollider : public ColliderShape
         poly->u = u;
         for(uint32_t i = 0; i < m_vertexCount; ++i)
         {
-        poly->m_vertices[i] = m_vertices[i];
-        poly->m_normals[i] = m_normals[i];
+            poly->m_vertices[i] = m_vertices[i];
+            poly->m_normals[i] = m_normals[i];
         }
         poly->m_vertexCount = m_vertexCount;
         return poly;

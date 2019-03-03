@@ -1,5 +1,13 @@
 #include "factories.hpp"
 
+#include "../types/vect2.hpp"
+#include "../components/position_component.hpp"
+#include "../components/polygon_component.hpp"
+#include "../components/polygon_collider_component.hpp"
+#include "../components/rigid_body_component.hpp"
+#include "../tags/player_tag.hpp"
+#include "../tags/bullet_tag.hpp"
+
 ecs::Entity* makePlayer(ecs::Registry* registry) 
 {
     ecs::Entity* player = registry->create();
@@ -63,6 +71,8 @@ ecs::Entity* makePlayer(ecs::Registry* registry)
         {109.58, 54.65},
     };
     player->assign<PolygonComponent>(shape, 10, 1.0f);
+    player->assign<PolygonColliderComponent>(shape.size(), shape, shape.size());
+    player->assign<RigidBodyComponent>();
     player->assign<PlayerTag>();
     return player;
 }

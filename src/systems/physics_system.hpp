@@ -37,8 +37,6 @@ private:
 	void integrateForces( ComponentHandle<RigidBodyComponent> rigid_body, float dt );
 	
 	void integrateVelocity( Entity *entity, float dt );
-	
-	void computeMass(Entity* entity, const ComponentHandle<RigidBodyComponent>& rigid_body );
 
 	void setOrient(Entity* entity, float radians );
 	
