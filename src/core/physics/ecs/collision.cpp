@@ -166,28 +166,21 @@ namespace physics
             
             for(uint32_t i = 0; i < polygonColliderA->m_vertexCount; ++i)
             {
-                // Retrieve a face normal from A
                 Vect2 n = polygonColliderA->m_normals[i];
                 Vect2 nw = polygonColliderA->orientation_matrix * n;
 
-                // Transform face normal into B's model space
                 Matrix2 buT = polygonColliderB->orientation_matrix.transpose( );
                 n = buT * nw;
 
-                // Retrieve support point from B along -n
-                Vect2 s =  getPolygonSupport(polygonColliderB, -n);
+                Vect2 s = getPolygonSupport(polygonColliderB, -n);
 
-                // Retrieve vertex on face from A, transform into
-                // B's model space
                 Vect2 v = polygonColliderA->m_vertices[i];
                 v = polygonColliderA->orientation_matrix * v + entity_A->get<PositionComponent>()->pos;
                 v -= entity_B->get<PositionComponent>()->pos;
                 v = buT * v;
 
-                // Compute penetration distance (in B's model space)
                 float d = n.dot( s - v );
 
-                // Store greatest distance
                 if(d > bestDistance)
                 {
                     bestDistance = d;
@@ -207,11 +200,9 @@ namespace physics
             ::ecs::ComponentHandle<PositionComponent> positionInc = inc_entity->get<PositionComponent>();
             Vect2 referenceNormal = polygonColliderRef->m_normals[referenceIndex];
 
-            // Calculate normal in incident's frame of reference
-            referenceNormal = polygonColliderRef->orientation_matrix * referenceNormal; // To world space
-            referenceNormal = polygonColliderInc->orientation_matrix.transpose( ) * referenceNormal; // To incident's model space
+            referenceNormal = polygonColliderRef->orientation_matrix * referenceNormal;
+            referenceNormal = polygonColliderInc->orientation_matrix.transpose( ) * referenceNormal;
 
-            // Find most anti-normal face on incident polygon
             int32_t incidentFace = 0;
             float minDot = FLT_MAX;
             for(uint32_t i = 0; i < polygonColliderInc->m_vertexCount; ++i)
@@ -224,39 +215,31 @@ namespace physics
                 }
             }
 
-            // Assign face vertices for incidentFace
             v[0] = polygonColliderInc->orientation_matrix * polygonColliderInc->m_vertices[incidentFace] + positionInc->pos;
             incidentFace = (incidentFace + 1 >= (int32_t)polygonColliderInc->m_vertexCount) ? 0 : incidentFace + 1;
             v[1] = polygonColliderInc->orientation_matrix * polygonColliderInc->m_vertices[incidentFace] + positionInc->pos;
-            }
+        }
 
-            int32_t Clip( Vect2 n, float c, Vect2 *face )
-            {
+        int32_t Clip( Vect2 n, float c, Vect2 *face )
+        {
             uint32_t sp = 0;
             Vect2 out[2] = {
                 face[0],
                 face[1]
             };
 
-            // Retrieve distances from each endpoint to the line
-            // d = ax + by - c
             float d1 = n.dot( face[0] ) - c;
             float d2 = n.dot( face[1] ) - c;
 
-            // If negative (behind plane) clip
             if(d1 <= 0.0f) out[sp++] = face[0];
             if(d2 <= 0.0f) out[sp++] = face[1];
-            
-            // If the points are on different sides of the plane
-            if(d1 * d2 < 0.0f) // less than to ignore -0.0f
+            if(d1 * d2 < 0.0f)
             {
-                // Push interesection point
                 float alpha = d1 / (d1 - d2);
                 out[sp] = face[0] + alpha * (face[1] - face[0]);
                 ++sp;
             }
-
-            // Assign our new converted values
+            
             face[0] = out[0];
             face[1] = out[1];
 
@@ -271,25 +254,22 @@ namespace physics
             ::ecs::ComponentHandle<PolygonColliderComponent> B = b->get<PolygonColliderComponent>();
             m->contact_count = 0;
 
-            // Check for a separating axis with A's face planes
             uint32_t faceA; 
             float penetrationA = FindAxisLeastPenetration( &faceA, a, b );
             if(penetrationA >= 0.0f)
                 return;
 
-            // Check for a separating axis with B's face planes
             uint32_t faceB;
             float penetrationB = FindAxisLeastPenetration( &faceB, b, a );
             if(penetrationB >= 0.0f)
                 return;
 
             uint32_t referenceIndex;
-            bool flip; // Always point from a to b
+            bool flip;
 
             ::ecs::Entity *refEntity; // Reference
             ::ecs::Entity *incEntity; // Incident
 
-            // Determine which ColliderShape contains reference face
             if(biasGreaterThan( penetrationA, penetrationB ))
             {
                 refEntity = a;
@@ -306,61 +286,35 @@ namespace physics
                 flip = true;
             }
 
-            // World space incident face
             Vect2 incidentFace[2];
             FindIncidentFace( incidentFace, refEntity, incEntity, referenceIndex );
-
-            //        y
-            //        ^  ->n       ^
-            //      +---c ------posPlane--
-            //  x < | i |\
-            //      +---+ c-----negPlane--
-            //             \       v
-            //              r
-            //
-            //  r : reference face
-            //  i : incident poly
-            //  c : clipped point
-            //  n : incident normal
-
 
             ::ecs::ComponentHandle<PolygonColliderComponent> polygonColliderRef = refEntity->get<PolygonColliderComponent>();
             ::ecs::ComponentHandle<PositionComponent> positionRef = refEntity->get<PositionComponent>();
 
-            // Setup reference face vertices
             Vect2 v1 = polygonColliderRef->m_vertices[referenceIndex];
             referenceIndex = referenceIndex + 1 == polygonColliderRef->m_vertexCount ? 0 : referenceIndex + 1;
             Vect2 v2 = polygonColliderRef->m_vertices[referenceIndex];
 
-            // Transform vertices to world space
             v1 = polygonColliderRef->orientation_matrix * v1 + positionRef->pos;
             v2 = polygonColliderRef->orientation_matrix * v2 + positionRef->pos;
 
-            // Calculate reference face side normal in world space
             Vect2 sidePlaneNormal = (v2 - v1);
             sidePlaneNormal.normalize( );
 
-            // Orthogonalize
             Vect2 refFaceNormal( sidePlaneNormal.y, -sidePlaneNormal.x );
 
-            // ax + by = c
-            // c is distance from origin
             float refC = refFaceNormal.dot( v1 );
             float negSide = -(sidePlaneNormal.dot( v1 ));
             float posSide =  sidePlaneNormal.dot( v2 );
 
-            // Clip incident face to reference face side planes
             if(Clip( -sidePlaneNormal, negSide, incidentFace ) < 2)
-                return; // Due to floating point error, possible to not have required points
-
+                return;
             if(Clip(  sidePlaneNormal, posSide, incidentFace ) < 2)
-                return; // Due to floating point error, possible to not have required points
-
-            // Flip
+                return;
             m->normal = flip ? -refFaceNormal : refFaceNormal;
 
-            // Keep points behind reference face
-            uint32_t cp = 0; // clipped points behind reference face
+            uint32_t cp = 0;
             float separation = refFaceNormal.dot( incidentFace[0] ) - refC;
             if(separation <= 0.0f)
             {
@@ -379,7 +333,6 @@ namespace physics
                 m->penetration += -separation;
                 ++cp;
 
-                // Average penetration
                 m->penetration /= (float)cp;
             }
 

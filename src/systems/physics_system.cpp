@@ -78,23 +78,30 @@ void PhysicsSystem::tick(Registry* registry, float deltaTime)
 
 void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigned<PolygonColliderComponent>& event)
 {
+    physics::ecs::initPolygonVertices(event.entity);
+    
     physics::ecs::computePolygonMass(event.entity, 1.0f);
 
-    physics::ecs::initPolygonVertices(event.entity);
 }
 
 void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigned<RigidBodyComponent>& event)
 {
     physics::ecs::computePolygonMass(event.entity, 1.0f);
     
-    setOrient( event.entity, generateRandom( -M_PI, M_PI ) );
-    ComponentHandle<RigidBodyComponent> rigid_body = event.entity->get<RigidBodyComponent>();
-    if(!rigid_body.isValid())
-        return;
-    rigid_body->restitution = 0.2f;
-    rigid_body->dynamic_friction = 0.2f;
-    rigid_body->static_friction = 0.4f;
+    ComponentHandle<RigidBodyComponent> rigid_body = event.component;
 
+    // rigid_body->restitution = 0.2f;
+    // rigid_body->dynamic_friction = 0.2f;
+    // rigid_body->static_friction = 0.4f;
+
+    rigid_body->velocity = {0, 0};
+    rigid_body->angular_velocity = 0;
+    rigid_body->torque = 0;
+    rigid_body->force = { 0, 0 };
+    rigid_body->static_friction = 0.5f;
+    rigid_body->dynamic_friction = 0.3f;
+    rigid_body->restitution = 0.2f;
+    setOrient( event.entity, generateRandom( -M_PI, M_PI ) );
     if (rigid_body->is_static)
     {
         setOrient(event.entity, 0.0f);

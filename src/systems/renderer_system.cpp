@@ -16,9 +16,6 @@ void RendererSystem::render(Window* window, ecs::Registry* registry)
     {
         int bgiPoints[vc->points.size()*2];
         int i = 0;
-        Vect2 centroid = vc->centroid + pc->pos;
-        float angle = pc->rotation * M_PI/180;
-        float save;
         setfillstyle(SOLID_FILL, vc->color);
         setcolor(vc->color);
         for(Vect2& point: vc->points) {
