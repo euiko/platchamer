@@ -1,4 +1,5 @@
 #include <cassert>
+#include <algorithm>
 #include "rigid_body.hpp"
 #include "../../../components/polygon_component.hpp"
 
@@ -120,7 +121,10 @@ namespace physics
             ::ecs::ComponentHandle<PolygonComponent> polygon = entity->get<PolygonComponent>();
             if(polygon.isValid())
             {
-                polygon->points = collider->m_vertices;
+                ::std::transform(polygon->points.begin(), polygon->points.end(), polygon->points.begin(), [&](Vect2& point)
+                {
+                    return point - c;
+                });
             }
 
             if(rigid_body.isValid())
