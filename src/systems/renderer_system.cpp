@@ -5,7 +5,7 @@ extern "C" {
 }
 #include "renderer_system.hpp"
 #include "../components/position_component.hpp"
-#include "../components/physics_component.hpp"
+#include "../components/polygon_collider_component.hpp"
 #include "../components/polygon_component.hpp"
 #include "../core/physics/shapes/polygon_collider.hpp"
 
@@ -16,12 +16,18 @@ void RendererSystem::render(Window* window, ecs::Registry* registry)
     {
         int bgiPoints[vc->points.size()*2];
         int i = 0;
+        ecs::ComponentHandle<PolygonColliderComponent> polygonCollider = entity->get<PolygonColliderComponent>();
         setfillstyle(SOLID_FILL, vc->color);
         setcolor(vc->color);
         for(Vect2& point: vc->points) {
-            
-            bgiPoints[i*2] = point.x + pc->pos.x;
-            bgiPoints[i*2+1] = point.y + pc->pos.y;
+            Vect2 v = point;
+            if(polygonCollider.isValid())
+            {
+                v = polygonCollider->orientation_matrix * point;
+            }
+            v = pc->pos + v;
+            bgiPoints[i*2] = v.x;
+            bgiPoints[i*2+1] = v.y;
             // save = bgiPoints[i*2];
             // bgiPoints[i*2] = bgiPoints[i*2]*cos(angle) - bgiPoints[i*2+1]*sin(angle) + centroid.x - centroid.x*cos(angle) + centroid.y*sin(angle);
             // bgiPoints[i*2+1] = save*sin(angle) + bgiPoints[i*2+1]*cos(angle) + centroid.y - centroid.x*sin(angle) - centroid.y*cos(angle);
