@@ -7,7 +7,6 @@ extern "C" {
 }
 #include "game.hpp"
 #include "../libs/stb_image.h"
-#include "physics/shapes/polygon_collider.hpp"
 #include "factories.hpp"
 #include "../systems/bullet_system.hpp"
 #include "../systems/polygon_system.hpp"
@@ -15,7 +14,6 @@ extern "C" {
 #include "../systems/player_control_system.hpp"
 #include "../events/keyboard_event.hpp"
 #include "../components/position_component.hpp"
-#include "../components/physics_component.hpp"
 #include "../components/polygon_component.hpp"
 #include "../components/polygon_collider_component.hpp"
 #include "../components/rigid_body_component.hpp"
@@ -25,7 +23,6 @@ extern "C" {
 ECS_TYPE_IMPLEMENTATION;
 ECS_DEFINE_TYPE(PolygonComponent);
 ECS_DEFINE_TYPE(PositionComponent);
-ECS_DEFINE_TYPE(PhysicsComponent);
 ECS_DEFINE_TYPE(PolygonColliderComponent);
 ECS_DEFINE_TYPE(RigidBodyComponent);
 

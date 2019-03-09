@@ -7,7 +7,6 @@ extern "C" {
 #include "../components/position_component.hpp"
 #include "../components/polygon_collider_component.hpp"
 #include "../components/polygon_component.hpp"
-#include "../core/physics/shapes/polygon_collider.hpp"
 
 void RendererSystem::render(Window* window, ecs::Registry* registry)
 {
