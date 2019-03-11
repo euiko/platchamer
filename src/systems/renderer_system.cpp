@@ -8,7 +8,7 @@ extern "C" {
 #include "../components/polygon_collider_component.hpp"
 #include "../components/polygon_component.hpp"
 
-void RendererSystem::render(Window* window, ecs::Registry* registry)
+void RendererSystem::render(platchamer::graphics::Window* window, ecs::Registry* registry)
 {
     registry->each<PositionComponent, PolygonComponent>([&](ecs::Entity* entity, 
         ecs::ComponentHandle<PositionComponent> pc, ecs::ComponentHandle<PolygonComponent> vc) 

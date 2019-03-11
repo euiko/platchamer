@@ -9,7 +9,7 @@ class RendererSystem {
         RendererSystem() = default;
         ~RendererSystem() = default;
 
-        void render(Window* window, ecs::Registry* registry);
+        void render(platchamer::graphics::Window* window, ecs::Registry* registry);
         
 };
 

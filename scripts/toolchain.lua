@@ -1334,3 +1334,6 @@ function strip()
 
 	configuration {} -- reset configuration
 end
+
+function copyLib()
+end

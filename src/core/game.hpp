@@ -23,7 +23,7 @@ private:
     void render();
 
 private:
-    Window m_window;
+    platchamer::graphics::Window m_window;
     ecs::Registry* m_registry;
     RendererSystem m_renderer_system;
 };

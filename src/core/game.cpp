@@ -2,6 +2,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <vector>
+#include <bgfx/bgfx.h>
 extern "C" {
     #include <sdl_bgi/graphics.h>
 }
@@ -75,6 +76,9 @@ int Game::run() {
         std::cout << "TIME: " << time << "\n";
         std::cout << "ACCM: " << accumulator << "\n";
     }
+
+	
+    bgfx::shutdown();
     m_registry->cleanup();
     m_registry->destroyRegistry();
 
