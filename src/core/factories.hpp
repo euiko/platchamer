@@ -9,4 +9,6 @@ ecs::Entity* makeBullet(ecs::Registry* registry, ecs::Entity* player);
 
 ecs::Entity* makeBlock(ecs::Registry* registry, float x, float y);
 
+ecs::Entity* makeEnemy(ecs::Registry* registry, float x, float y);
+
 #endif

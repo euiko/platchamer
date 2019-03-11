@@ -57,7 +57,10 @@
         "__config": "cpp",
         "__nullptr": "cpp",
         "compare": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "bitset": "cpp",
+        "unordered_set": "cpp",
+        "iomanip": "cpp"
     },
     "search.usePCRE2": true
 }

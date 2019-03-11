@@ -6,6 +6,7 @@
 #include "../components/polygon_collider_component.hpp"
 #include "../components/rigid_body_component.hpp"
 #include "../tags/player_tag.hpp"
+#include "../tags/enemy_tag.hpp"
 #include "../tags/bullet_tag.hpp"
 
 ecs::Entity* makePlayer(ecs::Registry* registry, float x, float y) 
@@ -104,12 +105,29 @@ ecs::Entity* makeBlock(ecs::Registry* registry, float x, float y)
     block->assign<PositionComponent>(x, y, 0.0f);
     std::vector<Vect2> shape = {
         {0, 0},
-        {200, 0},
-        {200, 20},
+        {500, 0},
+        {500, 20},
         {0, 20},
     };
     block->assign<PolygonComponent>(shape, 15, 1.0f);
     block->assign<PolygonColliderComponent>(shape.size(), shape, shape.size());
     block->assign<RigidBodyComponent>(true);
     return block;
+}
+
+ecs::Entity* makeEnemy(ecs::Registry* registry, float x, float y)
+{
+    ecs::Entity* enemy = registry->create();
+    enemy->assign<PositionComponent>(x, y, 0.0f);
+    std::vector<Vect2> shape = {
+        {0, 0},
+        {100, 0},
+        {100, 100},
+        {0, 100},
+    };
+    enemy->assign<PolygonComponent>(shape, 14, 1.0f);
+    enemy->assign<PolygonColliderComponent>(shape.size(), shape, shape.size());
+    enemy->assign<RigidBodyComponent>();
+    enemy->assign<EnemyTag>();
+    return enemy;
 }

@@ -19,6 +19,7 @@ extern "C" {
 #include "../components/polygon_collider_component.hpp"
 #include "../components/rigid_body_component.hpp"
 #include "../tags/player_tag.hpp"
+#include "../tags/enemy_tag.hpp"
 #include "../tags/bullet_tag.hpp"
 
 ECS_TYPE_IMPLEMENTATION;
@@ -28,6 +29,7 @@ ECS_DEFINE_TYPE(PolygonColliderComponent);
 ECS_DEFINE_TYPE(RigidBodyComponent);
 
 ECS_DEFINE_TYPE(PlayerTag);
+ECS_DEFINE_TYPE(EnemyTag);
 ECS_DEFINE_TYPE(BulletTag);
 
 ECS_DEFINE_TYPE(KeyboardEvent);
@@ -40,7 +42,8 @@ Game::Game(const std::string& title, int w, int h, Uint32 flags)
     m_registry->registerSystem(new PlayerControlSystem());
     m_registry->registerSystem(new BulletSystem());
     m_registry->registerSystem(new PhysicsSystem());
-    makePlayer(m_registry, getmaxx() / 2, getmaxy() / 2);
+    makePlayer(m_registry, getmaxx() / 2-100, getmaxy() / 2);
+    makeEnemy(m_registry, getmaxx() / 2 + 50, getmaxy() / 2 + 100);
     makeBlock(m_registry, getmaxx() / 2, getmaxy() - 100);
 }
 

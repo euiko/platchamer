@@ -787,6 +787,7 @@ namespace ecs {
 		{
 			if (immediate)
 			{
+				m_entities.erase(m_entities.begin() + 10);
 				m_entities.erase(std::remove(m_entities.begin(), m_entities.end(), ent), m_entities.end());
 				std::allocator_traits<EntityAllocator>::destroy(m_entAlloc, ent);
 				std::allocator_traits<EntityAllocator>::deallocate(m_entAlloc, ent, 1);

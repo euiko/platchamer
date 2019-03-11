@@ -1,6 +1,7 @@
 #include "physics_system.hpp"
 #include "../components/polygon_collider_component.hpp"
 #include "../core/physics/ecs/rigid_body.hpp"
+#include "../tags/enemy_tag.hpp"
 
 PhysicsSystem::PhysicsSystem() : gravity( 0, 10.0f * gravityScale )
 {
@@ -25,15 +26,15 @@ void PhysicsSystem::unconfigure(Registry* registry)
 void PhysicsSystem::tick(Registry* registry, float deltaTime)
 {
     contacts.clear( );
-    auto colliderEntites = registry->each<PolygonColliderComponent>();
     size_t count = 0;
-    for(auto colliderEntity: colliderEntites)
+    for(auto colliderEntity: registry->each<PolygonColliderComponent>())
     {
-        count++;
         ComponentHandle<PolygonColliderComponent> polygonColliderA = colliderEntity->get<PolygonColliderComponent>();
-
-        for(auto anotherColliderEntityIteration = colliderEntites.begin() + count; anotherColliderEntityIteration != colliderEntites.end(); ++anotherColliderEntityIteration)
-        {
+        auto colliderEntites = registry->each<PolygonColliderComponent>();
+        if(colliderEntites.begin() + count  == colliderEntites.end())
+            break;
+        auto anotherColliderEntityIteration = colliderEntites.begin() + 1;
+        while (anotherColliderEntityIteration != colliderEntites.end()){
             auto anotherColliderEntity = anotherColliderEntityIteration.get();
 
             if(colliderEntity->get<RigidBodyComponent>()->inverse_mass == 0 
@@ -43,7 +44,10 @@ void PhysicsSystem::tick(Registry* registry, float deltaTime)
             m.solve( );
             if(m.contact_count)
                 contacts.emplace_back( m );
-        }
+
+            ++anotherColliderEntityIteration;
+        };
+        count++;
     }
 
     // Integrate forces
