@@ -147,10 +147,6 @@ namespace physics
             rigid_body->velocity += rigid_body->inverse_mass * impulse;
             float result = cross(contactVector, impulse );
             rigid_body->angular_velocity += rigid_body->inverse_inertia * result;
-
-            bool is_nan = false;
-            is_nan = isnan(rigid_body->angular_velocity);
-            is_nan = false;
         }
 
         Vect2 getPolygonSupport( const ::ecs::ComponentHandle<PolygonColliderComponent> collider, const Vect2& dir )

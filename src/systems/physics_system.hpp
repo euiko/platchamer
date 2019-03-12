@@ -13,10 +13,9 @@ class PhysicsSystem: public EntitySystem,
 {
 public:
 
-	const float gravityScale = 5.0f;
 	const Vect2 gravity;
 	
-	PhysicsSystem();
+	PhysicsSystem(const float& gravity_scale = 5.0f);
 
 	virtual ~PhysicsSystem();
 

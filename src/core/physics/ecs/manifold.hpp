@@ -13,13 +13,7 @@ namespace physics
     {
         struct Manifold
         {
-            Manifold( ::ecs::Entity* a, ::ecs::Entity* b )
-                : entity_A(a), entity_B(b)
-                , rigid_body_A(a->get<RigidBodyComponent>()), rigid_body_B(b->get<RigidBodyComponent>())
-                , polygon_collider_A(a->get<PolygonColliderComponent>()), polygon_collider_B(b->get<PolygonColliderComponent>())
-                , position_A(a->get<PositionComponent>()), position_B(b->get<PositionComponent>())
-            {
-            }
+            Manifold( ::ecs::Entity* a, ::ecs::Entity* b, const Vect2& gravity = { 0.0f, 10.0f } );
 
             void solve( void );                 // Generate contact information
             void initialize( void );            // Precalculations for impulse solving
@@ -46,6 +40,10 @@ namespace physics
             float e;               // Mixed restitution
             float df;              // Mixed dynamic friction
             float sf;
+
+
+            const Vect2 gravity;
+            const float dt = 1.0f / 60.0f;
         };
     }
 }

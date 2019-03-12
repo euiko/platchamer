@@ -6,10 +6,13 @@ namespace physics
 {
     namespace ecs
     {
-
-        const float gravityScale = 5.0f;
-        const Vect2 gravity( 0, 10.0f * gravityScale );
-        const float dt = 1.0f / 60.0f;
+        Manifold::Manifold( ::ecs::Entity* a, ::ecs::Entity* b, const Vect2& gravity )
+            : entity_A(a), entity_B(b)
+            , rigid_body_A(a->get<RigidBodyComponent>()), rigid_body_B(b->get<RigidBodyComponent>())
+            , polygon_collider_A(a->get<PolygonColliderComponent>()), polygon_collider_B(b->get<PolygonColliderComponent>())
+            , position_A(a->get<PositionComponent>()), position_B(b->get<PositionComponent>()), gravity(gravity)
+        {
+        }
         
         void Manifold::solve( void )
         {

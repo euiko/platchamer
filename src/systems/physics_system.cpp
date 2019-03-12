@@ -3,9 +3,8 @@
 #include "../core/physics/ecs/rigid_body.hpp"
 #include "../tags/enemy_tag.hpp"
 
-PhysicsSystem::PhysicsSystem() : gravity( 0, 10.0f * gravityScale )
+PhysicsSystem::PhysicsSystem(const float& gravity_scale) : gravity( 0, 10.0f * gravity_scale )
 {
-
 }
 
 PhysicsSystem::~PhysicsSystem()
@@ -40,7 +39,7 @@ void PhysicsSystem::tick(Registry* registry, float deltaTime)
             if(colliderEntity->get<RigidBodyComponent>()->inverse_mass == 0 
                 && anotherColliderEntity->get<RigidBodyComponent>()->inverse_mass == 0)
                 continue;
-            physics::ecs::Manifold m( colliderEntity, anotherColliderEntity );
+            physics::ecs::Manifold m( colliderEntity, anotherColliderEntity, gravity );
             m.solve( );
             if(m.contact_count)
                 contacts.emplace_back( m );
@@ -92,10 +91,6 @@ void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigne
 {
     ComponentHandle<RigidBodyComponent> rigid_body = event.component;
     physics::ecs::computePolygonMass(event.entity, rigid_body->density);
-    
-    // rigid_body->restitution = 0.2f;
-    // rigid_body->dynamic_friction = 0.2f;
-    // rigid_body->static_friction = 0.4f;
 
     rigid_body->velocity = {0, 0};
     rigid_body->angular_velocity = 0;
@@ -125,10 +120,6 @@ void PhysicsSystem::integrateForces( ComponentHandle<RigidBodyComponent> rigid_b
     rigid_body->velocity += (rigid_body->force * rigid_body->inverse_mass + gravity) * (dt / 2.0f);
     rigid_body->angular_velocity += rigid_body->torque * rigid_body->inverse_inertia * (dt / 2.0f);
 
-    bool is_nan = false;
-    is_nan = isnan(rigid_body->angular_velocity);
-    is_nan = false;
-
 }
 
 void PhysicsSystem::integrateVelocity( Entity* entity, float dt )
@@ -143,18 +134,6 @@ void PhysicsSystem::integrateVelocity( Entity* entity, float dt )
     setOrient( entity, rigid_body->orient );
     integrateForces( rigid_body, dt );
 }
-
-// void PhysicsSystem::applyImpulse(const ComponentHandle<PolygonColliderComponent>& physicsComponent, const Vect2& impulse, const Vect2& contact_vector )
-// {
-//     // physicsComponent->velocity += physicsComponent->inverse_mass * impulse;
-//     // physicsComponent->angular_velocity += physicsComponent->inverse_inertia * contact_vector.cross(impulse);
-// }
-
-
-// void PhysicsSystem::applyForce(const ComponentHandle<PolygonColliderComponent>& physicsComponent, const Vect2& f )
-// {
-//     // physicsComponent->force += f;
-// }
 
 void PhysicsSystem::setOrient(Entity* entity, float radians )
 {
