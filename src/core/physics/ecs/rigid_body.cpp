@@ -66,6 +66,7 @@ namespace physics
                 if(nextHullIndex == rightMost)
                 {
                     pollygonCollider->m_vertexCount = outCount;
+                    pollygonCollider->m_normals.resize(outCount);
                     break;
                 }
             }
@@ -130,9 +131,9 @@ namespace physics
             if(rigid_body.isValid())
             {
                 rigid_body->mass = density * area;
-                rigid_body->inverse_mass = (rigid_body->mass) ? 1.0f / rigid_body->mass : 0.0f;
+                rigid_body->inverse_mass = (rigid_body->mass) ? 10.0f / rigid_body->mass : 0.0f;
                 rigid_body->inertia = I * density;
-                rigid_body->inverse_inertia = rigid_body->inertia ? 1.0f / rigid_body->inertia : 0.0f;
+                rigid_body->inverse_inertia = rigid_body->inertia ? 10.0f / rigid_body->inertia : 0.0f;
             }
         }
 

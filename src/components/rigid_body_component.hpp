@@ -9,7 +9,16 @@ struct RigidBodyComponent
     
     ECS_DECLARE_TYPE;
 
-    RigidBodyComponent(bool is_static = false) : is_static(is_static)
+    RigidBodyComponent(bool is_static = false) 
+        : density(1.0f), static_friction(0.5f), dynamic_friction(0.3f),  
+        restitution(0.2f), is_static(is_static)
+    {
+    }
+
+    RigidBodyComponent(float density, float static_friction = 0.5f, 
+        float dynamic_friction = 0.3f, float restitution = 0.2f, bool is_static = false
+    ) : density(density), static_friction(static_friction), dynamic_friction(dynamic_friction),  
+        restitution(restitution), is_static(is_static)
     {
     }
 
@@ -20,6 +29,7 @@ struct RigidBodyComponent
     Vect2 force;
 
     bool is_static;
+    float density;
     
     float inertia;
     float inverse_inertia;

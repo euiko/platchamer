@@ -15,8 +15,8 @@
 struct PolygonColliderComponent : Collider
 {
 
-    PolygonColliderComponent(const uint32_t& _vertex_count, const std::vector<Vect2>& _vertices, int _normal_size) 
-        : Collider({PolygonCollider}), m_vertexCount(_vertex_count), m_vertices(_vertices), m_normals(_normal_size)
+    PolygonColliderComponent(const std::vector<Vect2>& _vertices) 
+        : Collider({PolygonCollider}), m_vertexCount(_vertices.size()), m_vertices(_vertices)
     {
     }
 

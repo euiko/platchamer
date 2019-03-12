@@ -90,10 +90,9 @@ void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigne
 
 void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigned<RigidBodyComponent>& event)
 {
-    physics::ecs::computePolygonMass(event.entity, 1.0f);
-    
     ComponentHandle<RigidBodyComponent> rigid_body = event.component;
-
+    physics::ecs::computePolygonMass(event.entity, rigid_body->density);
+    
     // rigid_body->restitution = 0.2f;
     // rigid_body->dynamic_friction = 0.2f;
     // rigid_body->static_friction = 0.4f;
@@ -102,10 +101,13 @@ void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigne
     rigid_body->angular_velocity = 0;
     rigid_body->torque = 0;
     rigid_body->force = { 0, 0 };
-    rigid_body->static_friction = 0.5f;
-    rigid_body->dynamic_friction = 0.3f;
-    rigid_body->restitution = 0.2f;
-    setOrient( event.entity, generateRandom( -M_PI, M_PI ) );
+    if(rigid_body->static_friction == 0)
+        rigid_body->static_friction = 1.5f;
+    if(rigid_body->dynamic_friction == 0)
+        rigid_body->dynamic_friction = 0.7f;
+    if(rigid_body->restitution == 0.0f)
+        rigid_body->restitution = 0.2f;
+    //setOrient( event.entity, generateRandom( -M_PI, M_PI ) );
     if (rigid_body->is_static)
     {
         setOrient(event.entity, 0.0f);

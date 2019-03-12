@@ -43,7 +43,7 @@ Game::Game(const std::string& title, int w, int h, Uint32 flags)
     m_registry->registerSystem(new BulletSystem());
     m_registry->registerSystem(new PhysicsSystem());
     makePlayer(m_registry, getmaxx() / 2-100, getmaxy() / 2);
-    makeEnemy(m_registry, getmaxx() / 2 + 50, getmaxy() / 2 + 100);
+    makeEnemy(m_registry, getmaxx() / 2 + 100, getmaxy() / 2 - 100);
     makeBlock(m_registry, getmaxx() / 2, getmaxy() - 100);
 }
 

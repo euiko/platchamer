@@ -17,7 +17,7 @@ ecs::Entity* makePlayer(ecs::Registry* registry, float x, float y)
     std::vector<Vect2> shape = {
         // {0, 0},
         // {80, 0},
-        // {80, 100},
+        // {80, 50},
         // {0, 50},
         {109.58, 54.65},
         {93.19, 49.34},
@@ -76,8 +76,8 @@ ecs::Entity* makePlayer(ecs::Registry* registry, float x, float y)
         {109.58, 54.65},
     };
     player->assign<PolygonComponent>(shape, 10, 1.0f);
-    player->assign<PolygonColliderComponent>(shape.size(), shape, shape.size());
-    player->assign<RigidBodyComponent>();
+    player->assign<PolygonColliderComponent>(shape);
+    player->assign<RigidBodyComponent>(1.0f);
     player->assign<PlayerTag>();
     return player;
 }
@@ -105,12 +105,12 @@ ecs::Entity* makeBlock(ecs::Registry* registry, float x, float y)
     block->assign<PositionComponent>(x, y, 0.0f);
     std::vector<Vect2> shape = {
         {0, 0},
-        {500, 0},
-        {500, 20},
+        {800, 0},
+        {800, 20},
         {0, 20},
     };
     block->assign<PolygonComponent>(shape, 15, 1.0f);
-    block->assign<PolygonColliderComponent>(shape.size(), shape, shape.size());
+    block->assign<PolygonColliderComponent>(shape);
     block->assign<RigidBodyComponent>(true);
     return block;
 }
@@ -121,13 +121,13 @@ ecs::Entity* makeEnemy(ecs::Registry* registry, float x, float y)
     enemy->assign<PositionComponent>(x, y, 0.0f);
     std::vector<Vect2> shape = {
         {0, 0},
-        {100, 0},
-        {100, 100},
-        {0, 100},
+        {200, 0},
+        {200, 200},
+        {0, 200},
     };
     enemy->assign<PolygonComponent>(shape, 14, 1.0f);
-    enemy->assign<PolygonColliderComponent>(shape.size(), shape, shape.size());
-    enemy->assign<RigidBodyComponent>();
+    enemy->assign<PolygonColliderComponent>(shape);
+    enemy->assign<RigidBodyComponent>(1.0f, 5.0f, 3.0f, 1.0f);
     enemy->assign<EnemyTag>();
     return enemy;
 }
