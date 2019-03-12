@@ -7,7 +7,7 @@ struct Matrix2
 {
     float m[2][2];
     
-    Matrix2( ) {}
+    Matrix2( ) { }
 
     Matrix2(float m00, float m01, float m10, float m11) 
     {

@@ -178,9 +178,7 @@ namespace physics
                 v = polygonColliderA->orientation_matrix * v + entity_A->get<PositionComponent>()->pos;
                 v -= entity_B->get<PositionComponent>()->pos;
                 v = buT * v;
-
                 float d = n.dot( s - v );
-
                 if(d > bestDistance)
                 {
                     bestDistance = d;

@@ -61,7 +61,7 @@ void PhysicsSystem::tick(Registry* registry, float deltaTime)
     // Solve collisions
     for(uint32_t j = 0; j < m_iterations; ++j)
         for(uint32_t i = 0; i < contacts.size( ); ++i)
-        contacts[i].applyImpulse( );
+            contacts[i].applyImpulse( );
 
     // Integrate velocities
     for(auto entity: registry->each<PolygonColliderComponent>())
@@ -122,9 +122,13 @@ void PhysicsSystem::integrateForces( ComponentHandle<RigidBodyComponent> rigid_b
 {
     if(rigid_body->inverse_mass == 0.0f)
         return;
-
     rigid_body->velocity += (rigid_body->force * rigid_body->inverse_mass + gravity) * (dt / 2.0f);
     rigid_body->angular_velocity += rigid_body->torque * rigid_body->inverse_inertia * (dt / 2.0f);
+
+    bool is_nan = false;
+    is_nan = isnan(rigid_body->angular_velocity);
+    is_nan = false;
+
 }
 
 void PhysicsSystem::integrateVelocity( Entity* entity, float dt )
@@ -154,11 +158,11 @@ void PhysicsSystem::integrateVelocity( Entity* entity, float dt )
 
 void PhysicsSystem::setOrient(Entity* entity, float radians )
 {
-    ComponentHandle<RigidBodyComponent> rigid_body = entity->get<RigidBodyComponent>();
-    rigid_body->orient = radians;
+    ComponentHandle<RigidBodyComponent> rigidBody = entity->get<RigidBodyComponent>();
+    rigidBody->orient = radians;
     if(entity->has<PolygonColliderComponent>())
     {
-        ComponentHandle<PolygonColliderComponent> polygon_collider = entity->get<PolygonColliderComponent>();
-        polygon_collider->orientation_matrix = { radians };
+        ComponentHandle<PolygonColliderComponent> polygonCollider = entity->get<PolygonColliderComponent>();
+        polygonCollider->orientation_matrix = { radians };
     }
 }

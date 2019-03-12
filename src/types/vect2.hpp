@@ -83,8 +83,13 @@ struct Vect2 {
     }
     void normalize() 
     {
-        float inv_len = 1 / length();
-        x *= inv_len; y *= inv_len;
+        float len = length();
+        if(len > EPSILON)
+        {
+            float inv_len = 1 / len;
+            x *= inv_len; y *= inv_len;
+        }
+        
     }
     
     float dot(Vect2 b) 

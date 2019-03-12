@@ -16,7 +16,7 @@ struct PolygonColliderComponent : Collider
 {
 
     PolygonColliderComponent(const std::vector<Vect2>& _vertices) 
-        : Collider({PolygonCollider}), m_vertexCount(_vertices.size()), m_vertices(_vertices)
+        : Collider({PolygonCollider}), m_vertexCount(_vertices.size()), m_vertices(_vertices), orientation_matrix(0.0f)
     {
     }
 
