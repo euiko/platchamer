@@ -79,6 +79,7 @@ ecs::Entity* makePlayer(ecs::Registry* registry, float x, float y)
     player->assign<PolygonColliderComponent>(shape);
     player->assign<RigidBodyComponent>(1.0f);
     player->assign<PlayerTag>();
+
     return player;
 }
 
@@ -99,10 +100,10 @@ ecs::Entity* makeBullet(ecs::Registry* registry, ecs::Entity* player)
     return bullet;
 }
 
-ecs::Entity* makeBlock(ecs::Registry* registry, float x, float y)
+ecs::Entity* makeBlock(ecs::Registry* registry, float x, float y, float rotation)
 {
     ecs::Entity* block = registry->create();
-    block->assign<PositionComponent>(x, y, 0.0f);
+    block->assign<PositionComponent>(x, y, rotation);
     std::vector<Vect2> shape = {
         {0, 0},
         {800, 0},
@@ -127,7 +128,7 @@ ecs::Entity* makeEnemy(ecs::Registry* registry, float x, float y)
     };
     enemy->assign<PolygonComponent>(shape, 14, 1.0f);
     enemy->assign<PolygonColliderComponent>(shape);
-    enemy->assign<RigidBodyComponent>(4.0f, 5.0f, 3.0f, 1.0f);
+    enemy->assign<RigidBodyComponent>(10.0f, 0.7, 0.5f, 0.1f);
     enemy->assign<EnemyTag>();
     return enemy;
 }

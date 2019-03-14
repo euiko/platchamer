@@ -25,27 +25,32 @@ void PlayerControlSystem::unconfigure(Registry* registry)
 
 void PlayerControlSystem::tick(Registry* registry, float deltaTime)
 {
-
-}
-
-void PlayerControlSystem::receive(Registry* registry, const KeyboardEvent& event)
-{
+    const Uint8 *keyboards = SDL_GetKeyboardState(NULL);
     registry->each<PlayerTag, RigidBodyComponent>(
         [&](Entity* entity, ComponentHandle<PlayerTag> player_tag, 
             ComponentHandle<RigidBodyComponent> rigid_body)
         {
-            if(event.keycode ==  SDLK_w)
-                rigid_body->velocity.y = -100.0f;
+            if(keyboards[SDL_SCANCODE_W])
+                rigid_body->velocity.y = -200.0f;
                 // position_component->pos.y -= 20;
-            if(event.keycode == SDLK_a)
-                rigid_body->velocity.x -= 20.0f;
-            if(event.keycode == SDLK_s)
-                rigid_body->velocity.y += 25.0f;
-            if(event.keycode == SDLK_d)
-                rigid_body->velocity.x += 20.0f;
-            if(event.keycode == SDLK_SPACE)
+            if(keyboards[SDL_SCANCODE_A])
+                rigid_body->velocity.x = -100.0f;
+            if(keyboards[SDL_SCANCODE_S])
+                rigid_body->velocity.y = 100.0f;
+            if(keyboards[SDL_SCANCODE_D])
+                rigid_body->velocity.x = 100.0f;
+
+            // if(rigid_body->velocity.y < -200.0f) rigid_body->velocity.y = -200.0f; 
+            // if(rigid_body->velocity.x > 200.0f) rigid_body->velocity.y = 200.0f; 
+            // if(rigid_body->velocity.x < -200.0f) rigid_body->velocity.y = 200.0f; 
+
+            if(keyboards[SDLK_SPACE])
                 makeBullet(registry, entity);
                    
         }
     );
+}
+
+void PlayerControlSystem::receive(Registry* registry, const KeyboardEvent& event)
+{
 }

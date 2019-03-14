@@ -16,6 +16,11 @@ namespace physics
         
         void Manifold::solve( void )
         {
+            // if(rigid_body_A.isValid() && rigid_body_B.isValid())
+            // {
+            //     if(rigid_body_A->is_static && rigid_body_B->is_static)
+            //         return;
+            // }
 
             Collider collider_A = entity_A->get<PolygonColliderComponent>().get();
             Collider collider_B = entity_A->get<PolygonColliderComponent>().get();

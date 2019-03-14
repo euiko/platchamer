@@ -32,19 +32,20 @@ void PhysicsSystem::tick(Registry* registry, float deltaTime)
         auto colliderEntites = registry->each<PolygonColliderComponent>();
         if(colliderEntites.begin() + count  == colliderEntites.end())
             break;
-        auto anotherColliderEntityIteration = colliderEntites.begin() + 1;
-        while (anotherColliderEntityIteration != colliderEntites.end()){
+        // auto anotherColliderEntityIteration = colliderEntites.begin() + 1;
+        for (auto anotherColliderEntityIteration = colliderEntites.begin() + 1; 
+            anotherColliderEntityIteration != colliderEntites.end(); 
+            ++anotherColliderEntityIteration
+        ){
             auto anotherColliderEntity = anotherColliderEntityIteration.get();
 
             if(colliderEntity->get<RigidBodyComponent>()->inverse_mass == 0 
                 && anotherColliderEntity->get<RigidBodyComponent>()->inverse_mass == 0)
-                continue;
+                    continue;
             physics::ecs::Manifold m( colliderEntity, anotherColliderEntity, gravity );
             m.solve( );
             if(m.contact_count)
                 contacts.emplace_back( m );
-
-            ++anotherColliderEntityIteration;
         };
         count++;
     }
@@ -90,6 +91,8 @@ void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigne
 void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigned<RigidBodyComponent>& event)
 {
     ComponentHandle<RigidBodyComponent> rigid_body = event.component;
+    ComponentHandle<PositionComponent> positionComponent = event.entity->get<PositionComponent>();
+
     physics::ecs::computePolygonMass(event.entity, rigid_body->density);
 
     rigid_body->velocity = {0, 0};
@@ -102,10 +105,10 @@ void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigne
         rigid_body->dynamic_friction = 0.7f;
     if(rigid_body->restitution == 0.0f)
         rigid_body->restitution = 0.2f;
-    //setOrient( event.entity, generateRandom( -M_PI, M_PI ) );
+    if(positionComponent.isValid())
+        setOrient( event.entity, positionComponent->rotation );
     if (rigid_body->is_static)
     {
-        setOrient(event.entity, 0.0f);
         rigid_body->inertia = 0.0f;
         rigid_body->inverse_inertia = 0.0f;
         rigid_body->mass = 0.0f;

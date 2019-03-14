@@ -5,6 +5,14 @@
 
 struct Matrix2
 {
+    enum RotationLock
+    {
+        NO_LOCK,
+        LOCK_X,
+        LOCK_Y,
+        LOCK_ALL,
+    } rotation_lock;
+
     float m[2][2];
     
     Matrix2( ) { }
@@ -19,11 +27,30 @@ struct Matrix2
     //Create from angle in radians
     Matrix2(float radians) 
     {
+        rotation_lock = RotationLock::NO_LOCK;
         float c = cos(radians);
         float s = sin(radians);
 
         m[0][0] = c; m[0][1] = -s;
         m[1][0] = s; m[1][1] =  c;
+    }
+
+    Matrix2(float radians, RotationLock rotation_lock ) :  rotation_lock(rotation_lock)
+    {
+        float rotationX = radians, rotationY = radians;
+        if(rotation_lock == RotationLock::LOCK_Y || rotation_lock == RotationLock::LOCK_ALL)
+        {
+            rotationY = 0;
+        }
+        if(rotation_lock == RotationLock::LOCK_X || rotation_lock == RotationLock::LOCK_ALL)
+        {
+            rotationX = 0;
+        }
+        // float c = cos(radians);
+        // float s = sin(radians);
+
+        m[0][0] = cos(rotationX); m[0][1] = -sin(rotationY);
+        m[1][0] = sin(rotationX); m[1][1] =  cos(rotationY);
     }
     
     Matrix2 transpose() {
