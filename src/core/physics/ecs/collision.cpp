@@ -4,6 +4,7 @@
 #include "collision.hpp"
 #include "rigid_body.hpp"
 #include "../../../components/polygon_collider_component.hpp"
+#include "../../../components/circle_collider_component.hpp"
 #include "../../../types/vect2.hpp"
 
 namespace physics
@@ -23,137 +24,131 @@ namespace physics
 
         void CircletoCircle( Manifold *m, ::ecs::Entity *a, ::ecs::Entity *b )
         {
-            // CircleCollider *A = reinterpret_cast<CircleCollider *>(a->shape);
-            // CircleCollider *B = reinterpret_cast<CircleCollider *>(b->shape);
+            ::ecs::ComponentHandle<CircleColliderComponent> A = a->get<CircleColliderComponent>();
+            ::ecs::ComponentHandle<CircleColliderComponent> B = b->get<CircleColliderComponent>();
 
-            // // Calculate translational vector, which is normal
-            // Vect2 normal = b->position - a->position;
+            ::ecs::ComponentHandle<PositionComponent> positionA = a->get<PositionComponent>();
+            ::ecs::ComponentHandle<PositionComponent> positionB = b->get<PositionComponent>();
 
-            // float dist_sqr = normal.sqrLength();
-            // float radius = A->radius + B->radius;
+            Vect2 normal = positionA->pos - positionB->pos;
 
-            // // Not in contact
-            // if(dist_sqr >= radius * radius)
-            // {
-            //     m->contact_count = 0;
-            //     return;
-            // }
+            float dist_sqr = normal.sqrLength();
+            float radius = A->radius + B->radius;
 
-            // float distance = std::sqrt( dist_sqr );
+            if(dist_sqr >= radius * radius)
+            {
+                m->contact_count = 0;
+                return;
+            }
 
-            // m->contact_count = 1;
+            float distance = std::sqrt( dist_sqr );
 
-            // if(distance == 0.0f)
-            // {
-            //     m->penetration = A->radius;
-            //     m->normal = Vect2( 1, 0 );
-            //     m->contacts [0] = a->position;
-            // }
-            // else
-            // {
-            //     m->penetration = radius - distance;
-            //     m->normal = normal / distance; // Faster than using normalized since we already performed sqrt
-            //     m->contacts[0] = m->normal * A->radius + a->position;
-            // }
+            m->contact_count = 1;
+
+            if(distance == 0.0f)
+            {
+                m->penetration = A->radius;
+                m->normal = Vect2( 1, 0 );
+                m->contacts [0] = positionA->pos;
+            }
+            else
+            {
+                m->penetration = radius - distance;
+                m->normal = normal / distance; 
+                m->contacts[0] = m->normal * A->radius + positionA->pos;
+            }
         }
 
         void CircletoPolygon( Manifold *m, ::ecs::Entity *a, ::ecs::Entity *b )
         {
-            // CircleCollider *A       = reinterpret_cast<CircleCollider *>      (a->shape);
-            // PolygonCollider *B = reinterpret_cast<PolygonCollider *>(b->shape);
+            ::ecs::ComponentHandle<CircleColliderComponent> A = a->get<CircleColliderComponent>();
+            ::ecs::ComponentHandle<PolygonColliderComponent> B = b->get<PolygonColliderComponent>();
 
-            // m->contact_count = 0;
+            ::ecs::ComponentHandle<PositionComponent> positionA = a->get<PositionComponent>();
+            ::ecs::ComponentHandle<PositionComponent> positionB = b->get<PositionComponent>();
 
-            // // Transform circle center to Polygon model space
-            // Vect2 center = a->position;
-            // center = B->u.transpose( ) * (center - b->position);
+            m->contact_count = 0;
 
-            // // Find edge with minimum penetration
-            // // Exact concept as using support points in Polygon vs Polygon
-            // float separation = -FLT_MAX;
-            // uint32_t faceNormal = 0;
-            // for(uint32_t i = 0; i < B->m_vertexCount; ++i)
-            // {
-            //     float s = B->m_normals[i].dot( center - B->m_vertices[i] );
+            Vect2 center = positionA->pos;
+            center = B->orientation_matrix.transpose( ) * (center - positionB->pos);
 
-            //     if(s > A->radius)
-            //     return;
+            float separation = -FLT_MAX;
+            uint32_t faceNormal = 0;
+            for(uint32_t i = 0; i < B->m_vertexCount; ++i)
+            {
+                float s = B->m_normals[i].dot( center - B->m_vertices[i] );
 
-            //     if(s > separation)
-            //     {
-            //     separation = s;
-            //     faceNormal = i;
-            //     }
-            // }
+                if(s > A->radius)
+                return;
 
-            // // Grab face's vertices
-            // Vect2 v1 = B->m_vertices[faceNormal];
-            // uint32_t i2 = faceNormal + 1 < B->m_vertexCount ? faceNormal + 1 : 0;
-            // Vect2 v2 = B->m_vertices[i2];
+                if(s > separation)
+                {
+                separation = s;
+                faceNormal = i;
+                }
+            }
 
-            // // Check to see if center is within polygon
-            // if(separation < EPSILON)
-            // {
-            //     m->contact_count = 1;
-            //     m->normal = -(B->u * B->m_normals[faceNormal]);
-            //     m->contacts[0] = m->normal * A->radius + a->position;
-            //     m->penetration = A->radius;
-            //     return;
-            // }
+            Vect2 v1 = B->m_vertices[faceNormal];
+            uint32_t i2 = faceNormal + 1 < B->m_vertexCount ? faceNormal + 1 : 0;
+            Vect2 v2 = B->m_vertices[i2];
 
-            // // Determine which voronoi region of the edge center of circle lies within
-            // float dot1 = dot( center - v1, v2 - v1 );
-            // float dot2 = dot( center - v2, v1 - v2 );
-            // m->penetration = A->radius - separation;
+            if(separation < EPSILON)
+            {
+                m->contact_count = 1;
+                m->normal = -(B->orientation_matrix * B->m_normals[faceNormal]);
+                m->contacts[0] = m->normal * A->radius + positionA->pos;
+                m->penetration = A->radius;
+                return;
+            }
 
-            // // Closest to v1
-            // if(dot1 <= 0.0f)
-            // {
-            //     if(distSqr( center, v1 ) > A->radius * A->radius)
-            //     return;
+            float dot1 = dot( center - v1, v2 - v1 );
+            float dot2 = dot( center - v2, v1 - v2 );
+            m->penetration = A->radius - separation;
 
-            //     m->contact_count = 1;
-            //     Vect2 n = v1 - center;
-            //     n = B->u * n;
-            //     n.normalize( );
-            //     m->normal = n;
-            //     v1 = B->u * v1 + b->position;
-            //     m->contacts[0] = v1;
-            // }
+            if(dot1 <= 0.0f)
+            {
+                if(distSqr( center, v1 ) > A->radius * A->radius)
+                return;
 
-            // // Closest to v2
-            // else if(dot2 <= 0.0f)
-            // {
-            //     if(distSqr( center, v2 ) > A->radius * A->radius)
-            //     return;
+                m->contact_count = 1;
+                Vect2 n = v1 - center;
+                n = B->orientation_matrix * n;
+                n.normalize( );
+                m->normal = n;
+                v1 = B->orientation_matrix * v1 + positionB->pos;
+                m->contacts[0] = v1;
+            }
 
-            //     m->contact_count = 1;
-            //     Vect2 n = v2 - center;
-            //     v2 = B->u * v2 + b->position;
-            //     m->contacts[0] = v2;
-            //     n = B->u * n;
-            //     n.normalize( );
-            //     m->normal = n;
-            // }
+            else if(dot2 <= 0.0f)
+            {
+                if(distSqr( center, v2 ) > A->radius * A->radius)
+                return;
 
-            // // Closest to face
-            // else
-            // {
-            //     Vect2 n = B->m_normals[faceNormal];
-            //     if(dot( center - v1, n ) > A->radius)
-            //     return;
+                m->contact_count = 1;
+                Vect2 n = v2 - center;
+                v2 = B->orientation_matrix * v2 + positionB->pos;
+                m->contacts[0] = v2;
+                n = B->orientation_matrix * n;
+                n.normalize( );
+                m->normal = n;
+            }
+            else
+            {
+                Vect2 n = B->m_normals[faceNormal];
+                if(dot( center - v1, n ) > A->radius)
+                return;
 
-            //     n = B->u * n;
-            //     m->normal = -n;
-            //     m->contacts[0] = m->normal * A->radius + a->position;
-            //     m->contact_count = 1;
-            // }
+                n = B->orientation_matrix * n;
+                m->normal = -n;
+                m->contacts[0] = m->normal * A->radius + positionA->pos;
+                m->contact_count = 1;
+            }
         }
 
         void PolygontoCircle( Manifold *m, ::ecs::Entity *a, ::ecs::Entity *b )
         {
-            // CircletoPolygon( m, b, a );
-            // m->normal = -m->normal;
+            CircletoPolygon( m, b, a );
+            m->normal = -m->normal;
         }
 
         float FindAxisLeastPenetration( uint32_t *faceIndex, ::ecs::Entity *entity_A, ::ecs::Entity *entity_B )

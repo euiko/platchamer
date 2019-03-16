@@ -16,7 +16,9 @@ extern "C" {
 #include "../events/keyboard_event.hpp"
 #include "../components/position_component.hpp"
 #include "../components/polygon_component.hpp"
+#include "../components/circle_component.hpp"
 #include "../components/polygon_collider_component.hpp"
+#include "../components/circle_collider_component.hpp"
 #include "../components/rigid_body_component.hpp"
 #include "../tags/player_tag.hpp"
 #include "../tags/enemy_tag.hpp"
@@ -24,6 +26,8 @@ extern "C" {
 
 ECS_TYPE_IMPLEMENTATION;
 ECS_DEFINE_TYPE(PolygonComponent);
+ECS_DEFINE_TYPE(CircleComponent);
+ECS_DEFINE_TYPE(CircleColliderComponent);
 ECS_DEFINE_TYPE(PositionComponent);
 ECS_DEFINE_TYPE(PolygonColliderComponent);
 ECS_DEFINE_TYPE(RigidBodyComponent);
@@ -49,8 +53,8 @@ Game::Game(const std::string& title, int w, int h, Uint32 flags)
     makeBlock(m_registry, getmaxx() / 2, getmaxy() - 100);
 }
 
-int Game::run() {
-
+int Game::run() 
+{
     double time = 0;
     double accumulator = 0.0;
 
