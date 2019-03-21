@@ -7,16 +7,17 @@ extern "C" {
 #include "../components/position_component.hpp"
 #include "../components/polygon_collider_component.hpp"
 #include "../components/polygon_component.hpp"
+#include "../components/circle_component.hpp"
 
 void RendererSystem::render(platchamer::graphics::Window* window, ecs::Registry* registry)
 {
     registry->each<PositionComponent, PolygonComponent>([&](ecs::Entity* entity, 
         ecs::ComponentHandle<PositionComponent> pc, ecs::ComponentHandle<PolygonComponent> vc) 
     {
+        setfillstyle(SOLID_FILL, vc->color);
         int bgiPoints[vc->points.size()*2];
         int i = 0;
         ecs::ComponentHandle<PolygonColliderComponent> polygonCollider = entity->get<PolygonColliderComponent>();
-        setfillstyle(SOLID_FILL, vc->color);
         setcolor(vc->color);
         for(Vect2& point: vc->points) {
             Vect2 v = point;
@@ -33,5 +34,14 @@ void RendererSystem::render(platchamer::graphics::Window* window, ecs::Registry*
             i++;
         }
         fillpoly(vc->points.size(), bgiPoints);
+    });
+
+
+    registry->each<PositionComponent, CircleComponent>([&](ecs::Entity* entity, 
+        ecs::ComponentHandle<PositionComponent> positionComponent, ecs::ComponentHandle<CircleComponent> circleComponent) 
+    {
+        setfillstyle(SOLID_FILL, circleComponent->color);
+        circle(positionComponent->pos.x * circleComponent->scale , 
+            positionComponent->pos.y * circleComponent->scale, circleComponent->radius);
     });
 }

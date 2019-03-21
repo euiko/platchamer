@@ -14,7 +14,7 @@ namespace physics
         {
         }
         
-        void Manifold::solve( void )
+        void Manifold::solve( Collider* collider_A, Collider* collider_B )
         {
             // if(rigid_body_A.isValid() && rigid_body_B.isValid())
             // {
@@ -22,9 +22,7 @@ namespace physics
             //         return;
             // }
 
-            Collider collider_A = entity_A->get<PolygonColliderComponent>().get();
-            Collider collider_B = entity_A->get<PolygonColliderComponent>().get();
-            Dispatch[collider_A.colliderType][collider_B.colliderType]( this, entity_A, entity_B );
+            Dispatch[collider_A->colliderType][collider_B->colliderType]( this, entity_A, entity_B );
         }
 
         void Manifold::initialize( void )

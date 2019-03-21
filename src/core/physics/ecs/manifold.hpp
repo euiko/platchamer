@@ -15,7 +15,7 @@ namespace physics
         {
             Manifold( ::ecs::Entity* a, ::ecs::Entity* b, const Vect2& gravity = { 0.0f, 10.0f } );
 
-            void solve( void );                 // Generate contact information
+            void solve( Collider* collider_A, Collider* collider_B );                 // Generate contact information
             void initialize( void );            // Precalculations for impulse solving
             void applyImpulse( void );          // Solve impulse and apply
             void positionalCorrection( void );  // Naive correction of positional penetration

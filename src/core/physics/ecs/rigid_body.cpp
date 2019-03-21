@@ -1,12 +1,15 @@
 #include <cassert>
 #include <algorithm>
 #include "rigid_body.hpp"
+#include "../../../components/circle_collider_component.hpp"
 #include "../../../components/polygon_component.hpp"
 
 namespace physics
 {
     namespace ecs
     {
+
+        ComputeMassCallback ComputeMass[Collider::ColliderCount] = { computeCircleMass, computePolygonMass };
 
         void initPolygonVertices(::ecs::Entity* entity)
         {
@@ -137,6 +140,21 @@ namespace physics
             }
         }
 
+        void computeCircleMass(::ecs::Entity* entity, float density)
+        {
+
+            ::ecs::ComponentHandle<CircleColliderComponent> collider = entity->get<CircleColliderComponent>();
+            ::ecs::ComponentHandle<RigidBodyComponent> rigid_body = entity->get<RigidBodyComponent>();
+
+            if(rigid_body.isValid())
+            {
+                rigid_body->mass = M_PI * collider->radius * collider->radius * density;
+                rigid_body->inverse_mass = (rigid_body->mass) ? 100.0f / rigid_body->mass : 0.0f;
+                rigid_body->inertia = rigid_body->mass * collider->radius * collider->radius;
+                rigid_body->inverse_inertia = (rigid_body->inertia) ? 100.0f / rigid_body->inertia : 0.0f;
+            }
+        }
+
         void applyForce( const ::ecs::ComponentHandle<RigidBodyComponent>& rigid_body, const Vect2& f )
         {
             rigid_body->force += f;
@@ -168,5 +186,6 @@ namespace physics
 
             return bestVertex;
         }
+
     }
 }

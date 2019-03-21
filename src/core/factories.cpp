@@ -3,7 +3,9 @@
 #include "../types/vect2.hpp"
 #include "../components/position_component.hpp"
 #include "../components/polygon_component.hpp"
+#include "../components/circle_component.hpp"
 #include "../components/polygon_collider_component.hpp"
+#include "../components/circle_collider_component.hpp"
 #include "../components/rigid_body_component.hpp"
 #include "../tags/player_tag.hpp"
 #include "../tags/enemy_tag.hpp"
@@ -75,8 +77,10 @@ ecs::Entity* makePlayer(ecs::Registry* registry, float x, float y)
         // {109.64, 54.82},
         // {109.58, 54.65},
     };
-    player->assign<PolygonComponent>(shape, 10, 1.0f);
-    player->assign<PolygonColliderComponent>(shape);
+
+    float radius = 20;
+    player->assign<CircleComponent>(radius);
+    player->assign<CircleColliderComponent>(radius);
     player->assign<RigidBodyComponent>(1.0f);
     player->assign<PlayerTag>();
 

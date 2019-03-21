@@ -31,8 +31,10 @@ struct Matrix2
         float c = cos(radians);
         float s = sin(radians);
 
-        m[0][0] = c; m[0][1] = -s;
-        m[1][0] = s; m[1][1] =  c;
+        m[0][0] = c; // cos x 
+        m[0][1] = -s; // - sin y
+        m[1][0] = s; // sin x 
+        m[1][1] =  c; // cos y
     }
 
     Matrix2(float radians, RotationLock rotation_lock ) :  rotation_lock(rotation_lock)

@@ -14,12 +14,12 @@ namespace physics
 
         CollisionCallback Dispatch[Collider::ColliderCount][Collider::ColliderCount] =
         {
-        {
-            CircletoCircle, CircletoPolygon
-        },
-        {
-            PolygontoCircle, PolygontoPolygon
-        },
+            {
+                CircletoCircle, CircletoPolygon
+            },
+            {
+                PolygontoCircle, PolygontoPolygon
+            },
         };
 
         void CircletoCircle( Manifold *m, ::ecs::Entity *a, ::ecs::Entity *b )

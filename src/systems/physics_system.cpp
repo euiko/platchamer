@@ -2,6 +2,7 @@
 #include "../components/polygon_collider_component.hpp"
 #include "../core/physics/ecs/rigid_body.hpp"
 #include "../tags/enemy_tag.hpp"
+#include "../types/collider_entity.hpp"
 
 PhysicsSystem::PhysicsSystem(const float& gravity_scale) : gravity( 0, 10.0f * gravity_scale )
 {
@@ -15,6 +16,7 @@ void PhysicsSystem::configure(Registry* registry)
 {
     registry->subscribe<events::OnComponentAssigned<PolygonColliderComponent>>(this);
     registry->subscribe<events::OnComponentAssigned<RigidBodyComponent>>(this);
+    registry->subscribe<events::OnComponentAssigned<CircleColliderComponent>>(this);
 }
 
 void PhysicsSystem::unconfigure(Registry* registry)
@@ -26,24 +28,32 @@ void PhysicsSystem::tick(Registry* registry, float deltaTime)
 {
     contacts.clear( );
     size_t count = 0;
+    std::vector<ColliderEntity> colliderEntities;
     for(auto colliderEntity: registry->each<PolygonColliderComponent>())
     {
-        ComponentHandle<PolygonColliderComponent> polygonColliderA = colliderEntity->get<PolygonColliderComponent>();
-        auto colliderEntites = registry->each<PolygonColliderComponent>();
-        if(colliderEntites.begin() + count  == colliderEntites.end())
+        colliderEntities.push_back({ colliderEntity, &colliderEntity->get<PolygonColliderComponent>().get() });
+    }
+    for(auto colliderEntity: registry->each<CircleColliderComponent>())
+    {
+        colliderEntities.push_back({ colliderEntity, &colliderEntity->get<CircleColliderComponent>().get() });
+    }
+    for(auto& colliderEntity: colliderEntities)
+    {
+        // auto colliderEntites = registry->each<PolygonColliderComponent>();
+        if(colliderEntities.begin() + count  == colliderEntities.end())
             break;
-        // auto anotherColliderEntityIteration = colliderEntites.begin() + 1;
-        for (auto anotherColliderEntityIteration = colliderEntites.begin() + 1; 
-            anotherColliderEntityIteration != colliderEntites.end(); 
-            ++anotherColliderEntityIteration
-        ){
-            auto anotherColliderEntity = anotherColliderEntityIteration.get();
 
-            if(colliderEntity->get<RigidBodyComponent>()->inverse_mass == 0 
-                && anotherColliderEntity->get<RigidBodyComponent>()->inverse_mass == 0)
+        for (auto entityIdIterator = colliderEntities.begin() + 1; 
+            entityIdIterator != colliderEntities.end(); 
+            ++entityIdIterator
+        ){
+            ColliderEntity anotherColliderEntity = *entityIdIterator;
+
+            if(colliderEntity.entity->get<RigidBodyComponent>()->inverse_mass == 0 
+                && anotherColliderEntity.entity->get<RigidBodyComponent>()->inverse_mass == 0)
                     continue;
-            physics::ecs::Manifold m( colliderEntity, anotherColliderEntity, gravity );
-            m.solve( );
+            physics::ecs::Manifold m( colliderEntity.entity, anotherColliderEntity.entity, gravity );
+            m.solve( colliderEntity.collider, anotherColliderEntity.collider );
             if(m.contact_count)
                 contacts.emplace_back( m );
         };
@@ -64,8 +74,10 @@ void PhysicsSystem::tick(Registry* registry, float deltaTime)
             contacts[i].applyImpulse( );
 
     // Integrate velocities
-    for(auto entity: registry->each<PolygonColliderComponent>())
-        integrateVelocity( entity, m_dt );
+    for(auto& ColliderEntity: colliderEntities)
+    {
+        integrateVelocity( ColliderEntity.entity, m_dt );
+    }
 
     // Correct positions
     for(uint32_t i = 0; i < contacts.size( ); ++i)
@@ -82,18 +94,28 @@ void PhysicsSystem::tick(Registry* registry, float deltaTime)
 
 void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigned<PolygonColliderComponent>& event)
 {
-    physics::ecs::initPolygonVertices(event.entity);
-    
+    physics::ecs::initPolygonVertices(event.entity);    
     physics::ecs::computePolygonMass(event.entity, 1.0f);
+}
 
+void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigned<CircleColliderComponent>& event)
+{
+    physics::ecs::computeCircleMass(event.entity, 1.0f);
 }
 
 void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigned<RigidBodyComponent>& event)
 {
     ComponentHandle<RigidBodyComponent> rigid_body = event.component;
     ComponentHandle<PositionComponent> positionComponent = event.entity->get<PositionComponent>();
+    
+    Collider collider;
+    if(event.entity->has<PolygonColliderComponent>())
+        collider = { event.entity->get<PolygonColliderComponent>()->colliderType };
+    
+    if(event.entity->has<CircleColliderComponent>())
+        collider = { event.entity->get<CircleColliderComponent>()->colliderType };
 
-    physics::ecs::computePolygonMass(event.entity, rigid_body->density);
+    physics::ecs::ComputeMass[collider.colliderType](event.entity, rigid_body->density);
 
     rigid_body->velocity = {0, 0};
     rigid_body->angular_velocity = 0;
@@ -147,4 +169,11 @@ void PhysicsSystem::setOrient(Entity* entity, float radians )
         ComponentHandle<PolygonColliderComponent> polygonCollider = entity->get<PolygonColliderComponent>();
         polygonCollider->orientation_matrix = { radians };
     }
+}
+
+
+template<typename T>
+void PhysicsSystem::solveCollision( Registry* registry)
+{
+
 }
