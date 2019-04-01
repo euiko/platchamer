@@ -2,6 +2,10 @@
 #include "rigid_body.hpp"
 #include "collision.hpp"
 
+#include "../../../tags/player_tag.hpp"
+#include "../../../tags/enemy_tag.hpp"
+#include "collision.hpp"
+
 namespace physics 
 {
     namespace ecs
@@ -41,7 +45,7 @@ namespace physics
                         rigid_body_A->velocity - cross( rigid_body_A->angular_velocity, ra );
 
                 if(rv.sqrLength( ) < (dt * gravity).sqrLength( ) + EPSILON)
-                e = 0.0f;
+                    e = 0.0f;
             }
         }
 
@@ -99,6 +103,15 @@ namespace physics
                     tangentImpulse = t * -j * df;
 
                 ecs::applyImpulse( rigid_body_A, -tangentImpulse, ra );
+
+                // if(
+                //     (entity_A->has<PlayerTag>() && entity_B->has<EnemyTag>())
+                //     || (entity_B->has<PlayerTag>() && entity_A->has<EnemyTag>())
+                // )
+                // {
+                //     printf("Point 1: %f, %f dan Point 2: %f, %f \n", position_A->pos.x, position_A->pos.y, position_B->pos.x, position_B->pos.y);
+                //     continue;
+                // }
                 ecs::applyImpulse( rigid_body_B, tangentImpulse, rb );
             }
         }

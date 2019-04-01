@@ -164,11 +164,17 @@ void PhysicsSystem::setOrient(Entity* entity, float radians )
 {
     ComponentHandle<RigidBodyComponent> rigidBody = entity->get<RigidBodyComponent>();
     rigidBody->orient = radians;
+    Collider* collider;
     if(entity->has<PolygonColliderComponent>())
     {
-        ComponentHandle<PolygonColliderComponent> polygonCollider = entity->get<PolygonColliderComponent>();
-        polygonCollider->orientation_matrix = { radians };
+        collider = &entity->get<PolygonColliderComponent>().get();
     }
+    else if(entity->has<CircleColliderComponent>())
+    {
+        collider = &entity->get<CircleColliderComponent>().get();
+    }
+
+    collider->orientation_matrix = { radians };
 }
 
 

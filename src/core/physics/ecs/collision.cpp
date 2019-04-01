@@ -79,12 +79,12 @@ namespace physics
                 float s = B->m_normals[i].dot( center - B->m_vertices[i] );
 
                 if(s > A->radius)
-                return;
+                    return;
 
                 if(s > separation)
                 {
-                separation = s;
-                faceNormal = i;
+                    separation = s;
+                    faceNormal = i;
                 }
             }
 
@@ -108,7 +108,7 @@ namespace physics
             if(dot1 <= 0.0f)
             {
                 if(distSqr( center, v1 ) > A->radius * A->radius)
-                return;
+                    return;
 
                 m->contact_count = 1;
                 Vect2 n = v1 - center;
@@ -136,7 +136,7 @@ namespace physics
             {
                 Vect2 n = B->m_normals[faceNormal];
                 if(dot( center - v1, n ) > A->radius)
-                return;
+                    return;
 
                 n = B->orientation_matrix * n;
                 m->normal = -n;

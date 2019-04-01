@@ -31,19 +31,22 @@ void PlayerControlSystem::tick(Registry* registry, float deltaTime)
             ComponentHandle<RigidBodyComponent> rigid_body)
         {
             if(keyboards[SDL_SCANCODE_W])
-                rigid_body->velocity.y = -200.0f;
+                rigid_body->velocity.y = -300.0f;
                 // position_component->pos.y -= 20;
-            if(keyboards[SDL_SCANCODE_A])
-                rigid_body->velocity.x = -100.0f;
-            if(keyboards[SDL_SCANCODE_S])
-                rigid_body->velocity.y = 100.0f;
-            if(keyboards[SDL_SCANCODE_D])
-                rigid_body->velocity.x = 100.0f;
-
+            if(keyboards[SDL_SCANCODE_A] && rigid_body->velocity.x > -200.0f)
+                rigid_body->velocity.x -= 10.0f;
+            if(keyboards[SDL_SCANCODE_D] && rigid_body->velocity.y < 200.0f)
+                rigid_body->velocity.x += 10.0f;
             // if(rigid_body->velocity.y < -200.0f) rigid_body->velocity.y = -200.0f; 
             // if(rigid_body->velocity.x > 200.0f) rigid_body->velocity.y = 200.0f; 
             // if(rigid_body->velocity.x < -200.0f) rigid_body->velocity.y = 200.0f; 
 
+
+            // if(rigid_body->velocity.x > 0)
+            //     rigid_body->velocity.x -= 2;
+            // if(rigid_body->velocity.x < 0)
+            //     rigid_body->velocity.x += 2;
+                
             if(keyboards[SDLK_SPACE])
                 makeBullet(registry, entity);
                    

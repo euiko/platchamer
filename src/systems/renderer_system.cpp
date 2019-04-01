@@ -5,9 +5,11 @@ extern "C" {
 }
 #include "renderer_system.hpp"
 #include "../components/position_component.hpp"
+#include "../components/circle_collider_component.hpp"
 #include "../components/polygon_collider_component.hpp"
 #include "../components/polygon_component.hpp"
 #include "../components/circle_component.hpp"
+#include "../tags/player_tag.hpp"
 
 void RendererSystem::render(platchamer::graphics::Window* window, ecs::Registry* registry)
 {
@@ -17,13 +19,21 @@ void RendererSystem::render(platchamer::graphics::Window* window, ecs::Registry*
         setfillstyle(SOLID_FILL, vc->color);
         int bgiPoints[vc->points.size()*2];
         int i = 0;
-        ecs::ComponentHandle<PolygonColliderComponent> polygonCollider = entity->get<PolygonColliderComponent>();
+        Collider* collider;
+        if(entity->has<PolygonColliderComponent>())
+        {
+            collider = &entity->get<PolygonColliderComponent>().get();
+        } else if (entity->has<CircleColliderComponent>())
+        {
+            collider = &entity->get<CircleColliderComponent>().get();
+        }
+
         setcolor(vc->color);
         for(Vect2& point: vc->points) {
             Vect2 v = point;
-            if(polygonCollider.isValid())
+            if(collider != nullptr)
             {
-                v = polygonCollider->orientation_matrix * point;
+                v = collider->orientation_matrix * point;
             }
             v = pc->pos + v;
             bgiPoints[i*2] = v.x;

@@ -45,12 +45,13 @@ Game::Game(const std::string& title, int w, int h, Uint32 flags)
     m_registry->registerSystem(new PolygonSystem());
     m_registry->registerSystem(new PlayerControlSystem());
     m_registry->registerSystem(new BulletSystem());
-    m_registry->registerSystem(new PhysicsSystem(20.0f));
+    m_registry->registerSystem(new PhysicsSystem(50.0f));
     makePlayer(m_registry, getmaxx() / 2-100, getmaxy() / 2);
     makeEnemy(m_registry, getmaxx() / 2 + 100, getmaxy() / 2 - 100);
     makeBlock(m_registry, getmaxx() / 2 + 250, getmaxy() - 300);
     makeBlock(m_registry, getmaxx() / 2 - 400, getmaxy() - 100, 1.00f);
-    makeBlock(m_registry, getmaxx() / 2, getmaxy() - 100);
+    auto bottom = makeBlock(m_registry, getmaxx() / 2, getmaxy() - 100);
+    bottom->get<RigidBodyComponent>()->restitution = 0.4f;
 }
 
 int Game::run() 
@@ -62,6 +63,7 @@ int Game::run()
 
     double currentTime = SDL_GetTicks();
     SDL_SetRenderDrawColor(m_window.getRenderer(), 0, 0, 0, 0);
+    char fps[3];
     // std::unique_ptr<std::thread> renderThread;
     while (m_window.m_isOpen)
     {
@@ -81,8 +83,9 @@ int Game::run()
         }
 
         render();
-
-        std::cout << "TIME: " << time << "\n";
+        sprintf(fps, "%d", (int)(1000/frameTime));
+        outtextxy(40, 40, fps);
+        std::cout << "FPS: " << fps << "\n";
         std::cout << "ACCM: " << accumulator << "\n";
     }
 

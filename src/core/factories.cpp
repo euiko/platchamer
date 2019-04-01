@@ -77,11 +77,26 @@ ecs::Entity* makePlayer(ecs::Registry* registry, float x, float y)
         // {109.64, 54.82},
         // {109.58, 54.65},
     };
+    std::vector<Vect2> circleShape;
 
-    float radius = 20;
-    player->assign<CircleComponent>(radius);
+    float radius = 25;
+    const uint32_t k_segments = 10;
+
+    float theta = 0.0f;
+    float inc = M_PI * 2.0f / (float)k_segments;
+    Vect2 pos = {x,y};
+    for(uint64_t i = 0; i < k_segments; ++i)
+    {
+        theta += inc;
+        Vect2 p( std::cos( theta ), std::sin( theta ) );
+        p *= radius;
+        // p += pos;
+        circleShape.push_back(p);
+    }
+    player->assign<PolygonComponent>(circleShape, 15, 1.0f);
+    // player->assign<PolygonColliderComponent>(circleShape);
     player->assign<CircleColliderComponent>(radius);
-    player->assign<RigidBodyComponent>(1.0f);
+    player->assign<RigidBodyComponent>(3.0f, 7.0f, 5.0f, 5.0f);
     player->assign<PlayerTag>();
 
     return player;
@@ -126,13 +141,13 @@ ecs::Entity* makeEnemy(ecs::Registry* registry, float x, float y)
     enemy->assign<PositionComponent>(x, y, 0.0f);
     std::vector<Vect2> shape = {
         {0, 0},
-        {40, 0},
-        {40, 40},
-        {0, 40},
+        {80, 0},
+        {80, 80},
+        {0, 80},
     };
     enemy->assign<PolygonComponent>(shape, 14, 1.0f);
     enemy->assign<PolygonColliderComponent>(shape);
-    enemy->assign<RigidBodyComponent>(10.0f, 0.7, 0.5f, 0.1f);
+    enemy->assign<RigidBodyComponent>(1.0f, 0.7, 0.5f, 0.1f);
     enemy->assign<EnemyTag>();
     return enemy;
 }
