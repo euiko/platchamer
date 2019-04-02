@@ -104,14 +104,13 @@ namespace physics
 
                 ecs::applyImpulse( rigid_body_A, -tangentImpulse, ra );
 
-                // if(
-                //     (entity_A->has<PlayerTag>() && entity_B->has<EnemyTag>())
-                //     || (entity_B->has<PlayerTag>() && entity_A->has<EnemyTag>())
-                // )
-                // {
-                //     printf("Point 1: %f, %f dan Point 2: %f, %f \n", position_A->pos.x, position_A->pos.y, position_B->pos.x, position_B->pos.y);
-                //     continue;
-                // }
+                if(
+                    (entity_A->has<PlayerTag>() && entity_B->has<EnemyTag>())
+                    || (entity_B->has<PlayerTag>() && entity_A->has<EnemyTag>())
+                )
+                {
+                    tangentImpulse.y = 0.0f;
+                }
                 ecs::applyImpulse( rigid_body_B, tangentImpulse, rb );
             }
         }
