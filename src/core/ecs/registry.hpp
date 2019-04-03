@@ -8,100 +8,16 @@
 #include <stdint.h>
 #include <type_traits>
 
-#ifndef ECS_TICK_TYPE
-#define ECS_TICK_TYPE ecs::DefaultTickData
-#endif
 
-#ifndef ECS_ALLOCATOR_TYPE
-#define ECS_ALLOCATOR_TYPE std::allocator<ecs::Entity>
-#endif
-
-
-#ifndef ECS_NO_RTTI
-
-#include <typeindex>
-#include <typeinfo>
-#define ECS_TYPE_IMPLEMENTATION
-
-#else
-#warning "RTTI Disabled"
-#define ECS_TYPE_IMPLEMENTATION  \
-	ecs::TypeIndex ecs::core::TypeRegistry::nextIndex = 1; \
-	ECS_DEFINE_TYPE(ecs::events::OnEntityCreated); \
-	ECS_DEFINE_TYPE(ecs::events::OnEntityDestroyed); \
-
-#endif
 
 namespace ecs {
 
-#ifndef ECS_NO_RTTI
-	typedef std::type_index TypeIndex;
-
-#define ECS_DECLARE_TYPE
-#define ECS_DEFINE_TYPE(name)
-
-	template<typename T>
-	TypeIndex getTypeIndex()
-	{
-		return std::type_index(typeid(T));
-	}
-
-#else
-	typedef uint32_t TypeIndex;
-
-	namespace core
-	{
-		class TypeRegistry
-		{
-		public:
-			TypeRegistry()
-			{
-				index = nextIndex;
-				++nextIndex;
-			}
-
-			TypeIndex getIndex() const
-			{
-				return index;
-			}
-
-		private:
-			static TypeIndex nextIndex;
-			TypeIndex index;
-		};
-	}
-
-#define ECS_DECLARE_TYPE public: static ecs::core::TypeRegistry __ecs_type_reg
-#define ECS_DEFINE_TYPE(name) ecs::core::TypeRegistry name::__ecs_type_reg
-
-	template<typename T>
-	TypeIndex getTypeIndex()
-	{
-		return T::__ecs_type_reg.getIndex();
-    }
-#endif
-
-
-	class Registry;
-    class Entity;
-
-    typedef float DefaultTickData;
-    typedef ECS_ALLOCATOR_TYPE Allocator;
 
     namespace core {
         template<typename... Types>
 		class EntityComponentView;
 
         class EntityView;
-
-        struct BaseComponentContainer 
-        {
-        public:
-            virtual ~BaseComponentContainer() { }
-			virtual void destroy(Registry* registry) = 0;
-            virtual void removed(Entity* ent) = 0;
-
-        };
 
 
 		class BaseEventSubscriber
@@ -540,104 +456,6 @@ namespace ecs {
 			SubscriberPairAllocator> m_subscribers;
 
         size_t lastEntityId = 0;
-    };
-
-    class Entity 
-    {
-
-	public:
-		friend class Registry;
-
-		const static size_t InvalidEntityId = 0;
-
-		Entity(Registry* registry, size_t id)
-			: m_registry(registry), m_id(id)
-		{
-		}
-
-		~Entity()
-		{
-			removeAll();
-		}
-
-		Registry* getRegistry() const
-		{
-			return m_registry;
-		}
-
-		template<typename T>
-		bool has() const
-		{
-			auto index = getTypeIndex<T>();
-			return m_components.find(index) != m_components.end();
-		}
-
-		template<typename T, typename V, typename... Types>
-		bool has() const
-		{
-			return has<T>() && has<V, Types...>();
-		}
-
-		template<typename T, typename... Args>
-		ComponentHandle<T> assign(Args&&... args);
-
-		template<typename T>
-		bool remove()
-		{
-			auto found = m_components.find(getTypeIndex<T>());
-			if (found != m_components.end())
-			{
-				found->second->removed(this);
-				found->second->destroy(m_registry);
-
-				m_components.erase(found);
-
-				return true;
-			}
-
-			return false;
-		}
-
-		void removeAll()
-		{
-			for (auto pair : m_components)
-			{
-				pair.second->removed(this);
-				pair.second->destroy(m_registry);
-			}
-
-			m_components.clear();
-		}
-
-		template<typename T>
-		ComponentHandle<T> get();
-
-		template<typename... Types>
-		bool with(typename std::common_type<std::function<void(ComponentHandle<Types>...)>>::type view)
-		{
-			if (!has<Types...>())
-				return false;
-
-			view(get<Types>()...); 
-			return true;
-		}
-
-		size_t getEntityId() const
-		{
-			return m_id;
-		}
-
-		bool isPendingDestroy() const
-		{
-			return m_bPendingDestroy;
-        }
-
-    private:
-        
-		std::unordered_map<TypeIndex, core::BaseComponentContainer*> m_components;
-		Registry* m_registry;
-		size_t m_id;
-        bool m_bPendingDestroy = false;
     };
 
 
