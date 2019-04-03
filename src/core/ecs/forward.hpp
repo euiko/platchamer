@@ -88,11 +88,50 @@ namespace ecs
     typedef float DefaultTickData;
     typedef ECS_ALLOCATOR_TYPE Allocator;
 
+	template<typename T>
+	class ComponentHandle;
 
     namespace base 
     {
         struct BaseComponentContainer;
+
+        template<typename... Types>
+		class EntityComponentView;
+
+        class EntityView;
+		
+		class BaseEventSubscriber;
+
+		template<typename... Types>
+		class EntityComponentIterator;
+
+		template<typename... Types>
+		class EntityComponentView;
+
+		class EntityIterator;
+
+        template<typename T>
+		struct ComponentContainer;
     }
+
+	namespace events
+	{
+		struct OnEntityCreated;
+		struct OnEntityDestroyed;
+
+		template<typename T>
+		struct OnComponentAssigned;
+		template<typename T>
+		struct OnComponentRemoved;
+
+		#ifdef ECS_NO_RTTI
+		template<typename T>
+		ECS_DEFINE_TYPE(ecs::events::OnComponentAssigned<T>);
+		template<typename T>
+		ECS_DEFINE_TYPE(ecs::events::OnComponentRemoved<T>);
+		#endif
+	} // events
+	
 }
 
 #endif
