@@ -11,7 +11,15 @@ namespace ecs
 		class EntityComponentView
 		{
 		public:
-			EntityComponentView(const EntityComponentIterator<Types...>& first, const EntityComponentIterator<Types...>& last); // Inline
+			EntityComponentView(const EntityComponentIterator<Types...>& first, const EntityComponentIterator<Types...>& last)
+			: m_firstItr(first), m_lastItr(last)
+            {
+                if (m_firstItr.get() == nullptr || (m_firstItr.get()->isPendingDestroy() && !m_firstItr.includePendingDestroy())
+                    || !m_firstItr.get()->template has<Types...>())
+                {
+                    ++m_firstItr;
+                }
+            }
 
 			const EntityComponentIterator<Types...>& begin() const
 			{

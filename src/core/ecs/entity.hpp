@@ -41,7 +41,34 @@ namespace ecs {
 		}
 
 		template<typename T, typename... Args>
-		ComponentHandle<T> assign(Args&&... args);
+		ComponentHandle<T> assign(Args&&... args)
+		{
+			using ComponentAllocator = std::allocator_traits<Registry::EntityAllocator>::template rebind_alloc<core::ComponentContainer<T>>;
+
+			auto found = m_components.find(getTypeIndex<T>());
+			if (found != m_components.end())
+			{
+				core::ComponentContainer<T>* container = reinterpret_cast<core::ComponentContainer<T>*>(found->second);
+				container->data = T(args...);
+
+				auto handle = ComponentHandle<T>(&container->data);
+				m_registry->emit<events::OnComponentAssigned<T>>({ this, handle });
+				return handle;
+			}
+			else
+			{
+				ComponentAllocator alloc(m_registry->getPrimaryAllocator());
+
+				core::ComponentContainer<T>* container = std::allocator_traits<ComponentAllocator>::allocate(alloc, 1);
+				std::allocator_traits<ComponentAllocator>::construct(alloc, container, T(args...));
+
+				m_components.insert({ getTypeIndex<T>(), container });
+
+				auto handle = ComponentHandle<T>(&container->data);
+				m_registry->emit<events::OnComponentAssigned<T>>({ this, handle });
+				return handle;
+			}
+		}
 
 		template<typename T>
 		bool remove()
@@ -72,7 +99,16 @@ namespace ecs {
 		}
 
 		template<typename T>
-		ComponentHandle<T> get();
+		ComponentHandle<T> get()
+		{
+			auto found = m_components.find(getTypeIndex<T>());
+			if (found != m_components.end())
+			{
+				return ComponentHandle<T>(&reinterpret_cast<core::ComponentContainer<T>*>(found->second)->data);
+			}
+		
+			return ComponentHandle<T>();
+		}
 
 		template<typename... Types>
 		bool with(typename std::common_type<std::function<void(ComponentHandle<Types>...)>>::type view)

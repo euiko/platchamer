@@ -10,14 +10,22 @@ namespace ecs
         class EntityIterator
 		{
 		public:
-			EntityIterator(Registry* registry, size_t index, bool bIsEnd, bool bIncludePendingDestroy); //Inline
+			EntityIterator(class Registry* registry, size_t index, bool bIsEnd, bool bIncludePendingDestroy)
+			: m_bIsEnd(bIsEnd), m_index(index), m_registry(registry), m_bIncludePendingDestroy(bIncludePendingDestroy)
+            {
+                if (index >= m_registry->getCount())
+                    this->m_bIsEnd = true;
+            } //Inline
 
 			size_t getIndex() const
 			{
 				return m_index;
 			}
 
-			bool isEnd() const; // Inline
+			bool isEnd() const
+            {
+                return m_bIsEnd || m_index >= m_registry->getCount();
+            } // Inline
 
 			bool includePendingDestroy() const
 			{
@@ -29,7 +37,13 @@ namespace ecs
 				return m_registry;
 			}
 
-			Entity* get() const;
+			Entity* get() const
+            {
+                if (isEnd())
+                    return nullptr;
+
+                return m_registry->getByIndex(m_index);
+            }
 
 			Entity* operator*() const
 			{
@@ -58,7 +72,19 @@ namespace ecs
 				return m_index != other.m_index;
 			}
 
-			EntityIterator& operator++();
+			EntityIterator& operator++()
+            {
+                ++m_index;
+                while (m_index < m_registry->getCount() && (get() == nullptr || (get()->isPendingDestroy() && !m_bIncludePendingDestroy)))
+                {
+                    ++m_index;
+                }
+
+                if (m_index >= m_registry->getCount())
+                    m_bIsEnd = true;
+
+                return *this;
+            }
 
 		private:
 			bool m_bIsEnd = false;
