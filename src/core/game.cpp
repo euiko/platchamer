@@ -9,29 +9,34 @@ extern "C" {
 #include "game.hpp"
 #include "../libs/stb_image.h"
 #include "factories.hpp"
+#include "../systems/camera_system.hpp"
 #include "../systems/bullet_system.hpp"
 #include "../systems/polygon_system.hpp"
 #include "../systems/physics_system.hpp"
 #include "../systems/player_control_system.hpp"
 #include "../events/keyboard_event.hpp"
 #include "../components/position_component.hpp"
+#include "../components/camera_component.hpp"
 #include "../components/polygon_component.hpp"
 #include "../components/circle_component.hpp"
 #include "../components/polygon_collider_component.hpp"
 #include "../components/circle_collider_component.hpp"
 #include "../components/rigid_body_component.hpp"
+#include "../tags/camera_tag.hpp"
 #include "../tags/player_tag.hpp"
 #include "../tags/enemy_tag.hpp"
 #include "../tags/bullet_tag.hpp"
 
 ECS_TYPE_IMPLEMENTATION;
+ECS_DEFINE_TYPE(PositionComponent);
+ECS_DEFINE_TYPE(CameraComponent);
 ECS_DEFINE_TYPE(PolygonComponent);
 ECS_DEFINE_TYPE(CircleComponent);
 ECS_DEFINE_TYPE(CircleColliderComponent);
-ECS_DEFINE_TYPE(PositionComponent);
 ECS_DEFINE_TYPE(PolygonColliderComponent);
 ECS_DEFINE_TYPE(RigidBodyComponent);
 
+ECS_DEFINE_TYPE(CameraTag);
 ECS_DEFINE_TYPE(PlayerTag);
 ECS_DEFINE_TYPE(EnemyTag);
 ECS_DEFINE_TYPE(BulletTag);
@@ -42,16 +47,20 @@ Game::Game(const std::string& title, int w, int h, Uint32 flags)
     :m_window(title, w, h, flags)
 {
     m_registry = ecs::Registry::createRegistry();
+    m_registry->registerSystem(new CameraSystem());
     m_registry->registerSystem(new PolygonSystem());
     m_registry->registerSystem(new PlayerControlSystem());
     m_registry->registerSystem(new BulletSystem());
     m_registry->registerSystem(new PhysicsSystem(50.0f));
-    makePlayer(m_registry, getmaxx() / 2-100, getmaxy() / 2);
+    ecs::Entity* player = makePlayer(m_registry, getmaxx() / 2-100, getmaxy() / 2);
+    makeCamera(m_registry, player);
     makeEnemy(m_registry, getmaxx() / 2 + 100, getmaxy() / 2 - 100);
+    makeBlock(m_registry, getmaxx() / 2, getmaxy() - 100);
+    makeBlock(m_registry, getmaxx() / 2 + 775, getmaxy() - 100);
     makeBlock(m_registry, getmaxx() / 2 + 250, getmaxy() - 300);
     makeBlock(m_registry, getmaxx() / 2 - 400, getmaxy() - 100, 1.00f);
-    auto bottom = makeBlock(m_registry, getmaxx() / 2, getmaxy() - 100);
-    bottom->get<RigidBodyComponent>()->restitution = 0.4f;
+    makeBlock(m_registry, getmaxx() / 2 + 1175, getmaxy()+100, M_PI/2 );
+    makeBlock(m_registry, getmaxx() / 2 + 1575, getmaxy() - 290);
 }
 
 int Game::run() 

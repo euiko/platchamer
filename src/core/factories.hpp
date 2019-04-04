@@ -11,4 +11,6 @@ ecs::Entity* makeBlock(ecs::Registry* registry, float x, float y, float rotation
 
 ecs::Entity* makeEnemy(ecs::Registry* registry, float x, float y);
 
+ecs::Entity* makeCamera(ecs::Registry* registry, ecs::Entity* looked_object);
+
 #endif

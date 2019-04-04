@@ -2,11 +2,13 @@
 
 #include "../types/vect2.hpp"
 #include "../components/position_component.hpp"
+#include "../components/camera_component.hpp"
 #include "../components/polygon_component.hpp"
 #include "../components/circle_component.hpp"
 #include "../components/polygon_collider_component.hpp"
 #include "../components/circle_collider_component.hpp"
 #include "../components/rigid_body_component.hpp"
+#include "../tags/camera_tag.hpp"
 #include "../tags/player_tag.hpp"
 #include "../tags/enemy_tag.hpp"
 #include "../tags/bullet_tag.hpp"
@@ -150,4 +152,14 @@ ecs::Entity* makeEnemy(ecs::Registry* registry, float x, float y)
     enemy->assign<RigidBodyComponent>(1.0f, 0.7, 0.5f, 0.1f);
     enemy->assign<EnemyTag>();
     return enemy;
+}
+
+
+ecs::Entity* makeCamera(ecs::Registry* registry, ecs::Entity* looked_object)
+{
+    ecs::Entity* camera = registry->create();
+    camera->assign<CameraTag>();
+    camera->assign<PositionComponent>(0.0f,0.0f,0.0f);
+    camera->assign<CameraComponent>(looked_object);
+    return camera;
 }
