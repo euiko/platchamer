@@ -26,7 +26,7 @@
 #else
 #warning "RTTI Disabled"
 #define ECS_TYPE_IMPLEMENTATION  \
-	ecs::TypeIndex ecs::core::TypeRegistry::nextIndex = 1; \
+	ecs::TypeIndex ecs::base::TypeRegistry::nextIndex = 1; \
 	ECS_DEFINE_TYPE(ecs::events::OnEntityCreated); \
 	ECS_DEFINE_TYPE(ecs::events::OnEntityDestroyed); \
 
@@ -50,7 +50,7 @@ namespace ecs
 #else
 	typedef uint32_t TypeIndex;
 
-	namespace core
+	namespace base
 	{
 		class TypeRegistry
 		{
@@ -72,8 +72,8 @@ namespace ecs
 		};
 	}
 
-#define ECS_DECLARE_TYPE public: static ecs::core::TypeRegistry __ecs_type_reg
-#define ECS_DEFINE_TYPE(name) ecs::core::TypeRegistry name::__ecs_type_reg
+#define ECS_DECLARE_TYPE public: static ecs::base::TypeRegistry __ecs_type_reg
+#define ECS_DEFINE_TYPE(name) ecs::base::TypeRegistry name::__ecs_type_reg
 
 	template<typename T>
 	TypeIndex getTypeIndex()
@@ -90,6 +90,11 @@ namespace ecs
 
 	template<typename T>
 	class ComponentHandle;
+
+    template<typename T>
+    class EventSubscriber;
+
+    class EntitySystem;
 
     namespace base 
     {
@@ -112,6 +117,7 @@ namespace ecs
 
         template<typename T>
 		struct ComponentContainer;
+
     }
 
 	namespace events
@@ -124,12 +130,6 @@ namespace ecs
 		template<typename T>
 		struct OnComponentRemoved;
 
-		#ifdef ECS_NO_RTTI
-		template<typename T>
-		ECS_DEFINE_TYPE(ecs::events::OnComponentAssigned<T>);
-		template<typename T>
-		ECS_DEFINE_TYPE(ecs::events::OnComponentRemoved<T>);
-		#endif
 	} // events
 	
 }

@@ -1,7 +1,7 @@
 #ifndef PLAYER_CONTROL_SYSTEM_HPP
 #define PLAYER_CONTROL_SYSTEM_HPP
 
-#include "../core/ecs/registry.hpp"
+#include "../core/ecs.hpp"
 #include "../events/keyboard_event.hpp"
 
 using namespace ecs;

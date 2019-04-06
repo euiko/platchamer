@@ -3,7 +3,7 @@
 
 #include <float.h>
 #include "../../../types/collider.hpp"
-#include "../../ecs/registry.hpp"
+#include "../../ecs.hpp"
 #include "../../../components/rigid_body_component.hpp"
 #include "../../../components/polygon_collider_component.hpp"
 

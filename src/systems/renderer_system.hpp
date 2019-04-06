@@ -1,7 +1,7 @@
 #ifndef RENDER_SYSTEM_HPP
 #define RENDER_SYSTEM_HPP
 
-#include "../core/ecs/registry.hpp"
+#include "../core/ecs.hpp"
 #include "../graphics/window.hpp"
 
 class RendererSystem {

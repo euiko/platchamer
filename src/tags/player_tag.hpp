@@ -1,7 +1,7 @@
 #ifndef PLAYER_TAG_HPP
 #define PLAYER_TAG_HPP
 
-#include "../core/ecs/registry.hpp"
+#include "../core/ecs.hpp"
 
 struct PlayerTag
 {

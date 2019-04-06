@@ -1,8 +1,6 @@
 #ifndef PLATCHAMER_CORE_ECS_COMPONENTHANDLE_HPP
 #define PLATCHAMER_CORE_ECS_COMPONENTHANDLE_HPP
 
-#include "forward.hpp"
-
 namespace ecs
 {
     template<typename T>

@@ -2,7 +2,7 @@
 #define KEYBOARD_EVENT_HPP
 
 #include <SDL2/SDL_events.h>
-#include "../core/ecs/registry.hpp"
+#include "../core/ecs.hpp"
 
 struct KeyboardEvent
 {

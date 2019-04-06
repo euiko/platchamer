@@ -11,95 +11,27 @@ namespace ecs
 		class EntityComponentIterator
 		{
 		public:
-            EntityComponentIterator(Registry* registry, size_t index, bool bIsEnd, bool bIncludePendingDestroy)
-                : m_bIsEnd(bIsEnd), m_index(index), m_registry(registry), m_bIncludePendingDestroy(bIncludePendingDestroy)
-            {
-                if (m_index >= m_registry->getCount())
-                    this->m_bIsEnd = true;
-            }
+            EntityComponentIterator(Registry* registry, size_t index, bool bIsEnd, bool bIncludePendingDestroy);
 
-			size_t getIndex() const
-			{
-				return m_index;
-			}
+			size_t getIndex() const;
 
-			bool isEnd() const
-            {
-                return m_bIsEnd || m_index >= m_registry->getCount();
-            }
+			bool isEnd() const;
 
-			bool includePendingDestroy() const
-			{
-				return m_bIncludePendingDestroy;
-			}
+			bool includePendingDestroy() const;
 
-			Registry* getRegistry() const
-			{
-				return m_registry;
-			}
+			Registry* getRegistry() const;
 
-			Entity* get() const
-            {
-                if (isEnd())
-                    return nullptr;
+			Entity* get() const;
 
-                return m_registry->getByIndex(m_index);
-            }
+			Entity* operator*() const;
 
-			Entity* operator*() const
-			{
-				return get();
-			}
+			bool operator==(const EntityComponentIterator<Types...>& other) const;
 
-			bool operator==(const EntityComponentIterator<Types...>& other) const
-			{
-				if (m_registry != other.m_registry)
-					return false;
+			bool operator!=(const EntityComponentIterator<Types...>& other) const;
 
-				if (isEnd())
-					return other.isEnd();
+			EntityComponentIterator<Types...>& operator++();
 
-				return m_index == other.m_index;
-			}
-
-			bool operator!=(const EntityComponentIterator<Types...>& other) const
-			{
-				if (m_registry != other.m_registry)
-					return true;
-
-				if (isEnd())
-					return !other.isEnd();
-
-				return m_index != other.m_index;
-			}
-
-			EntityComponentIterator<Types...>& operator++()
-            {
-                ++m_index;
-                while (m_index < m_registry->getCount() && (get() == nullptr || !get()->template has<Types...>() || (get()->isPendingDestroy() && !m_bIncludePendingDestroy)))
-                {
-                    ++m_index;
-                }
-
-                if (m_index >= m_registry->getCount())
-                    m_bIsEnd = true;
-
-                return *this;
-            }
-
-			EntityComponentIterator<Types...>& operator+(size_t v)
-            {
-                m_index += v;
-                while (m_index < m_registry->getCount() && (get() == nullptr || !get()->template has<Types...>() || (get()->isPendingDestroy() && !m_bIncludePendingDestroy)))
-                {
-                    ++m_index;
-                }
-
-                if (m_index >= m_registry->getCount())
-                    m_bIsEnd = true;
-
-                return *this;
-            }
+			EntityComponentIterator<Types...>& operator+(size_t v);
 
 		private:
 			bool m_bIsEnd = false;

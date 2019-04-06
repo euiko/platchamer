@@ -1,6 +1,6 @@
 #ifndef POLYGON_SYSTEM_HPP
 #define POLYGON_SYSTEM_HPP
-#include "../core/ecs/registry.hpp"
+#include "../core/ecs.hpp"
 #include "../components/polygon_component.hpp"
 
 using namespace ecs;

@@ -10,81 +10,25 @@ namespace ecs
         class EntityIterator
 		{
 		public:
-			EntityIterator(class Registry* registry, size_t index, bool bIsEnd, bool bIncludePendingDestroy)
-			: m_bIsEnd(bIsEnd), m_index(index), m_registry(registry), m_bIncludePendingDestroy(bIncludePendingDestroy)
-            {
-                if (index >= m_registry->getCount())
-                    this->m_bIsEnd = true;
-            } //Inline
+			EntityIterator(class Registry* registry, size_t index, bool bIsEnd, bool bIncludePendingDestroy);
 
-			size_t getIndex() const
-			{
-				return m_index;
-			}
+			size_t getIndex() const;
 
-			bool isEnd() const
-            {
-                return m_bIsEnd || m_index >= m_registry->getCount();
-            } // Inline
+			bool isEnd() const;
 
-			bool includePendingDestroy() const
-			{
-				return m_bIncludePendingDestroy;
-			}
+			bool includePendingDestroy() const;
 
-			Registry* getRegistry() const
-			{
-				return m_registry;
-			}
+			Registry* getRegistry() const;
 
-			Entity* get() const
-            {
-                if (isEnd())
-                    return nullptr;
+			Entity* get() const;
 
-                return m_registry->getByIndex(m_index);
-            }
+			Entity* operator*() const;
 
-			Entity* operator*() const
-			{
-				return get();
-			}
+			bool operator==(const EntityIterator& other) const;
 
-			bool operator==(const EntityIterator& other) const
-			{
-				if (m_registry != other.m_registry)
-					return false;
+			bool operator!=(const EntityIterator& other) const;
 
-				if (isEnd())
-					return other.isEnd();
-
-				return m_index == other.m_index;
-			}
-
-			bool operator!=(const EntityIterator& other) const
-			{
-				if (m_registry != other.m_registry)
-					return true;
-
-				if (isEnd())
-					return !other.isEnd();
-
-				return m_index != other.m_index;
-			}
-
-			EntityIterator& operator++()
-            {
-                ++m_index;
-                while (m_index < m_registry->getCount() && (get() == nullptr || (get()->isPendingDestroy() && !m_bIncludePendingDestroy)))
-                {
-                    ++m_index;
-                }
-
-                if (m_index >= m_registry->getCount())
-                    m_bIsEnd = true;
-
-                return *this;
-            }
+			EntityIterator& operator++();
 
 		private:
 			bool m_bIsEnd = false;

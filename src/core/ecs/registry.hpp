@@ -1,17 +1,17 @@
 #ifndef ECS_REGISTRY_HPP
 #define ECS_REGISTRY_HPP
 
-#include <unordered_map>
-#include <functional>
-#include <vector>
-#include <algorithm>
-#include <stdint.h>
-#include <type_traits>
 
-#include "forward.hpp"
-#include "base/entity_view.hpp"
+
 #include "entity.hpp"
 #include "entity_system.hpp"
+#include "event_subscriber.hpp"
+#include "events/on_component_assigned.hpp"
+#include "events/on_component_removed.hpp"
+#include "events/on_entity_created.hpp"
+#include "events/on_entity_destroyed.hpp"
+#include "base/entity_view.hpp"
+#include "forward.hpp"
 
 namespace ecs {
 
@@ -41,267 +41,61 @@ namespace ecs {
 			return createRegistry(Allocator());
 		}
         
-		void destroyRegistry()
-		{
-			RegistryAllocator alloc(m_entAlloc);
-			std::allocator_traits<RegistryAllocator>::destroy(alloc, this);
-			std::allocator_traits<RegistryAllocator>::deallocate(alloc, this, 1);
-		}
+		void destroyRegistry();
 
-		Registry(Allocator alloc)
-			: m_entAlloc(alloc), m_systemAlloc(alloc),
-			m_entities({}, EntityPtrAllocator(alloc)),
-			m_systems({}, SystemPtrAllocator(alloc)),
-			m_subscribers({}, 0, std::hash<TypeIndex>(), std::equal_to<TypeIndex>(), SubscriberPtrAllocator(alloc))
-		{
-        }
+		Registry(Allocator alloc);
 
-        ~Registry()
-		{
-			for (auto* ent : m_entities)
-			{
-				if (!ent->isPendingDestroy())
-				{
-					ent->m_bPendingDestroy = true;
-					emit<events::OnEntityDestroyed>({ ent });
-				}
+        ~Registry();
 
-				std::allocator_traits<EntityAllocator>::destroy(m_entAlloc, ent);
-				std::allocator_traits<EntityAllocator>::deallocate(m_entAlloc, ent, 1);
-			}
-
-			for (auto* system : m_systems)
-			{
-				system->unconfigure(this);
-				std::allocator_traits<SystemAllocator>::destroy(m_systemAlloc, system);
-				std::allocator_traits<SystemAllocator>::deallocate(m_systemAlloc, system, 1);
-			}
-		}
-
-        Entity* create()
-		{
-			++lastEntityId;
-			Entity* ent = std::allocator_traits<EntityAllocator>::allocate(m_entAlloc, 1);
-			std::allocator_traits<EntityAllocator>::construct(m_entAlloc, ent, this, lastEntityId);
-			m_entities.push_back(ent);
-
-			emit<events::OnEntityCreated>({ ent });
-
-			return ent;
-        }
+        Entity* create();
         
         void destroy(Entity* ent, bool immediate = false);
 
-        bool cleanup()
-		{
-			size_t count = 0;
-			m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(), [&, this](Entity* ent) {
-				if (ent->isPendingDestroy())
-				{
-					std::allocator_traits<EntityAllocator>::destroy(m_entAlloc, ent);
-					std::allocator_traits<EntityAllocator>::deallocate(m_entAlloc, ent, 1);
-					++count;
-					return true;
-				}
+        bool cleanup();
 
-				return false;
-			}), m_entities.end());
+        void reset();
 
-			return count > 0;
-		}
+        EntitySystem* registerSystem(EntitySystem* system);
+        void unregisterSystem(EntitySystem* system);
 
-        void reset()
-		{
-			for (auto* ent : m_entities)
-			{
-				if (!ent->isPendingDestroy())
-				{
-					ent->m_bPendingDestroy = true;
-					emit<events::OnEntityDestroyed>({ ent });
-				}
-				std::allocator_traits<EntityAllocator>::destroy(m_entAlloc, ent);
-				std::allocator_traits<EntityAllocator>::deallocate(m_entAlloc, ent, 1);
-			}
+		void enableSystem(EntitySystem* system);
 
-			m_entities.clear();
-			lastEntityId = 0;
-		}
-
-        EntitySystem* registerSystem(EntitySystem* system)
-		{
-			m_systems.push_back(system);
-			system->configure(this);
-            return system;
-        }
-        void unregisterSystem(EntitySystem* system)
-		{
-			m_systems.erase(std::remove(m_systems.begin(), m_systems.end(), system), m_systems.end());
-			system->unconfigure(this);
-		}
-
-		void enableSystem(EntitySystem* system)
-		{
-			auto it = std::find(m_disabledSystems.begin(), m_disabledSystems.end(), system);
-			if (it != m_disabledSystems.end())
-			{
-				m_disabledSystems.erase(it);
-				m_systems.push_back(system);
-			}
-		}
-
-		void disableSystem(EntitySystem* system)
-		{
-			auto it = std::find(m_systems.begin(), m_systems.end(), system);
-			if (it != m_systems.end())
-			{
-				m_systems.erase(it);
-				m_disabledSystems.push_back(system);
-			}
-        }
+		void disableSystem(EntitySystem* system);
 
         template<typename T>
-		void subscribe(EventSubscriber<T>* subscriber)
-		{
-			auto index = getTypeIndex<T>();
-			auto found = m_subscribers.find(index);
-			if (found == m_subscribers.end())
-			{
-				std::vector<core::BaseEventSubscriber*, SubscriberPtrAllocator> subList(m_entAlloc);
-				subList.push_back(subscriber);
-
-				m_subscribers.insert({ index, subList });
-			}
-			else
-			{
-				found->second.push_back(subscriber);
-			}
-		}
+		void subscribe(EventSubscriber<T>* subscriber);
 
         template<typename T>
-		void unsubscribe(EventSubscriber<T>* subscriber)
-		{
-			auto index = getTypeIndex<T>();
-			auto found = m_subscribers.find(index);
-			if (found != m_subscribers.end())
-			{
-				found->second.erase(std::remove(found->second.begin(), found->second.end(), subscriber), found->second.end());
-				if (found->second.size() == 0)
-				{
-					m_subscribers.erase(found);
-				}
-			}
-		}
+		void unsubscribe(EventSubscriber<T>* subscriber);
 
-		void unsubscribeAll(void* subscriber)
-		{
-			for (auto kv : m_subscribers)
-			{
-				kv.second.erase(std::remove(kv.second.begin(), kv.second.end(), subscriber), kv.second.end());
-				if (kv.second.size() == 0)
-				{
-					m_subscribers.erase(kv.first);
-				}
-			}
-        }
+		void unsubscribeAll(void* subscriber);
 
         template<typename T>
-		void emit(const T& event)
-		{
-			auto found = m_subscribers.find(getTypeIndex<T>());
-			if (found != m_subscribers.end())
-			{
-				for (auto* base : found->second)
-				{
-					auto* sub = reinterpret_cast<EventSubscriber<T>*>(base);
-					sub->receive(this, event);
-				}
-			}
-        }
+		void emit(const T& event);
 
         template<typename... Types>
-        void each(typename std::common_type<std::function<void(Entity*, ComponentHandle<Types>...)>>::type viewFunc, bool bIncludePendingDestroy)
-		{
-			for (auto* ent : each<Types...>(bIncludePendingDestroy))
-			{
-				viewFunc(ent, ent->template get<Types>()...);
-			}
-		}
+        void each(typename std::common_type<std::function<void(Entity*, ComponentHandle<Types>...)>>::type viewFunc, bool bIncludePendingDestroy = false);
 
-        void all(std::function<void(Entity*)> viewFunc, bool bIncludePendingDestroy = false)
-		{
-			for (auto* ent : all(bIncludePendingDestroy))
-			{
-				viewFunc(ent);
-			}
-		}
+        void all(std::function<void(Entity*)> viewFunc, bool bIncludePendingDestroy = false);
 
         template<typename... Types>
-		base::EntityComponentView<Types...> each(bool bIncludePendingDestroy = false)
-		{
-			base::EntityComponentIterator<Types...> first(this, 0, false, bIncludePendingDestroy);
-			base::EntityComponentIterator<Types...> last(this, getCount(), true, bIncludePendingDestroy);
-			return base::EntityComponentView<Types...>(first, last);
-		}
+		base::EntityComponentView<Types...> each(bool bIncludePendingDestroy = false);
 
-		base::EntityView all(bool bIncludePendingDestroy = false)
-		{
-			base::EntityIterator first(this, 0, false, bIncludePendingDestroy);
-			base::EntityIterator last(this, getCount(), true, bIncludePendingDestroy);
-			return base::EntityView(first, last);
-		}
+		base::EntityView all(bool bIncludePendingDestroy = false);
 
-		size_t getCount() const
-		{
-			return m_entities.size();
-		}
+		size_t getCount() const;
 
-		Entity* getByIndex(size_t idx)
-		{
-			if (idx >= getCount())
-				return nullptr;
+		Entity* getByIndex(size_t idx);
 
-			return m_entities[idx];
-        }
-
-        Entity* getById(size_t id) const
-		{
-			if (id == Entity::InvalidEntityId || id > lastEntityId)
-				return nullptr;
-
-			// We should likely store entities in a map of id -> entity so that this is faster.
-			for (auto* ent : m_entities)
-			{
-				if (ent->getEntityId() == id)
-					return ent;
-			}
-
-			return nullptr;
-		}
+        Entity* getById(size_t id) const;
 
 #ifdef ECS_TICK_TYPE_VOID
-		void tick()
+		void tick();
 #else
-		void tick(ECS_TICK_TYPE data)
+		void tick(ECS_TICK_TYPE data);
 #endif
-		{
-#ifndef ECS_TICK_NO_CLEANUP
-			cleanup();
-#endif
-			for (auto* system : m_systems)
-			{
-#ifdef ECS_TICK_TYPE_VOID
-				system->tick(this);
-#else
-				system->tick(this, data);
-#endif
-			}
-		}
 
-		EntityAllocator& getPrimaryAllocator()
-		{
-			return m_entAlloc;
-        }
-
+		EntityAllocator& getPrimaryAllocator();
 
 	private:
 		EntityAllocator m_entAlloc;
@@ -318,38 +112,6 @@ namespace ecs {
 
         size_t lastEntityId = 0;
     };
-
-	inline void Registry::destroy(Entity* ent, bool immediate)
-	{
-		if (ent == nullptr)
-			return;
-
-		if (ent->isPendingDestroy())
-		{
-			if (immediate)
-			{
-				m_entities.erase(m_entities.begin() + 10);
-				m_entities.erase(std::remove(m_entities.begin(), m_entities.end(), ent), m_entities.end());
-				std::allocator_traits<EntityAllocator>::destroy(m_entAlloc, ent);
-				std::allocator_traits<EntityAllocator>::deallocate(m_entAlloc, ent, 1);
-			}
-
-			return;
-		}
-
-		ent->m_bPendingDestroy = true;
-
-		emit<events::OnEntityDestroyed>({ ent });
-
-		if (immediate)
-		{
-			m_entities.erase(std::remove(m_entities.begin(), m_entities.end(), ent), m_entities.end());
-			std::allocator_traits<EntityAllocator>::destroy(m_entAlloc, ent);
-			std::allocator_traits<EntityAllocator>::deallocate(m_entAlloc, ent, 1);
-		}
-	}
-
-
 
 };
 

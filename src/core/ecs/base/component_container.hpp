@@ -17,20 +17,9 @@ namespace ecs
 			T data;
 
 		protected:
-			virtual void destroy(Registry* registry)
-			{
-				using ComponentAllocator = std::allocator_traits<Registry::EntityAllocator>::template rebind_alloc<ComponentContainer<T>>;
+			virtual void destroy(Registry* registry);
 
-				ComponentAllocator alloc(registry->getPrimaryAllocator());
-				std::allocator_traits<ComponentAllocator>::destroy(alloc, this);
-				std::allocator_traits<ComponentAllocator>::deallocate(alloc, this, 1);
-			}
-
-			virtual void removed(Entity* ent)
-			{
-				auto handle = ComponentHandle<T>(&data);
-				ent->getRegistry()->emit<events::OnComponentRemoved<T>>({ ent, handle });
-			}
+			virtual void removed(Entity* ent);
 		};
     } // base
 } // ecs

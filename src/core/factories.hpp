@@ -1,7 +1,7 @@
 #ifndef CORE_FACTORIES_HPP
 #define CORE_FACTORIES_HPP
 
-#include "ecs/registry.hpp"
+#include "ecs.hpp"
 
 ecs::Entity* makePlayer(ecs::Registry* registry, float x = 0.0f, float y = 0.0f);
 

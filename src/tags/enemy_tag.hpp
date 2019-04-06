@@ -1,7 +1,7 @@
 #ifndef ENEMY_TAG_HPP
 #define ENEMY_TAG_HPP
 
-#include "../core/ecs/registry.hpp"
+#include "../core/ecs.hpp"
 
 struct EnemyTag
 {

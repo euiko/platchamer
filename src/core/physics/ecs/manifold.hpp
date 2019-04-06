@@ -2,7 +2,7 @@
 #define PHYSICS_ECS_MANIFOLD_HPP
 
 
-#include "../../ecs/registry.hpp"
+#include "../../ecs.hpp"
 #include "../../../components/position_component.hpp"
 #include "../../../components/rigid_body_component.hpp"
 #include "../../../components/polygon_collider_component.hpp"

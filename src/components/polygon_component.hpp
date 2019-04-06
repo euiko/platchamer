@@ -2,7 +2,7 @@
 #define VECTOR_COMPONENT_HPP
 
 #include <vector>
-#include "../core/ecs/registry.hpp"
+#include "../core/ecs.hpp"
 #include "../types/vect2.hpp"
 
 struct PolygonComponent

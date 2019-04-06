@@ -7,7 +7,7 @@
 #include <memory>
 #include <SDL2/SDL.h>
 #include "../graphics/window.hpp"
-#include "../core/ecs/registry.hpp"
+#include "../core/ecs.hpp"
 #include "../systems/renderer_system.hpp"
 
 class Game

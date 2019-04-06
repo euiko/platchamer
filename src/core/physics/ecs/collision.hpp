@@ -2,7 +2,7 @@
 #define PHYSICS_ECS_COLLISION_HPP
 
 #include "../../../types/collider.hpp"
-#include "../../ecs/registry.hpp"
+#include "../../ecs.hpp"
 #include "rigid_body.hpp"
 #include "manifold.hpp"
 

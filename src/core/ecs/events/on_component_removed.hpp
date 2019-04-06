@@ -15,6 +15,11 @@ namespace ecs
 			Entity* entity;
 			ComponentHandle<T> component;
 		};
+
+		#ifdef ECS_NO_RTTI
+		template<typename T>
+		ECS_DEFINE_TYPE(ecs::events::OnComponentRemoved<T>);
+		#endif
     } // events
 } // ecs
 

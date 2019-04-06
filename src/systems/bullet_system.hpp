@@ -1,7 +1,7 @@
 #ifndef BULLET_SYSTEM_HPP
 #define BULLET_SYSTEM_HPP
 
-#include "../core/ecs/registry.hpp"
+#include "../core/ecs.hpp"
 
 using namespace ecs;
 class BulletSystem : public EntitySystem

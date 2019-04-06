@@ -2,7 +2,7 @@
 #define CIRCLE_COLLDIER_COMPONENT_HPP
 
 #include "../types/collider.hpp"
-#include "../core/ecs/registry.hpp"
+#include "../core/ecs.hpp"
 
 struct CircleColliderComponent : Collider
 {

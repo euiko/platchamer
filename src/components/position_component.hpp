@@ -2,7 +2,7 @@
 #define POSITION_COMPONENT_HPP
 
 #include "../types/vect2.hpp"
-#include "../core/ecs/registry.hpp"
+#include "../core/ecs.hpp"
 
 struct PositionComponent 
 {
