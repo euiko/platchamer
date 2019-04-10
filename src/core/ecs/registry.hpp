@@ -103,7 +103,7 @@ namespace ecs {
 
 		std::vector<Entity*, EntityPtrAllocator> m_entities;
 		std::vector<EntitySystem*, SystemPtrAllocator> m_systems;
-        	std::vector<EntitySystem*> m_disabledSystems;
+		std::vector<EntitySystem*> m_disabledSystems;
 		std::unordered_map<TypeIndex,
 			std::vector<base::BaseEventSubscriber*, SubscriberPtrAllocator>,
 			std::hash<TypeIndex>,

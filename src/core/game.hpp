@@ -7,7 +7,7 @@
 #include <memory>
 #include <SDL2/SDL.h>
 #include "../graphics/window.hpp"
-#include "../core/ecs.hpp"
+#include "../libs/entcosy/src/entcosy/registry.hpp"
 #include "../systems/renderer_system.hpp"
 
 class Game

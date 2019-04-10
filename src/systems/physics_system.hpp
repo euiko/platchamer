@@ -1,7 +1,7 @@
 #ifndef PHYSICS_SYSTEM_HPP
 #define PHYSICS_SYSTEM_HPP
 
-#include "../core/ecs.hpp"
+#include "../libs/entcosy/src/entcosy/registry.hpp"
 #include "../core/physics/ecs/manifold.hpp"
 #include "../components/polygon_collider_component.hpp"
 #include "../components/circle_collider_component.hpp"

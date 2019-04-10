@@ -1,7 +1,7 @@
 #ifndef ENEMY_TAG_HPP
 #define ENEMY_TAG_HPP
 
-#include "../core/ecs.hpp"
+#include "../libs/entcosy/src/entcosy/registry.hpp"
 
 struct EnemyTag
 {

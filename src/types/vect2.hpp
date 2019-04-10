@@ -129,10 +129,8 @@ inline float dot(const Vect2& a, const Vect2& b)
     return a.x * b.x + a.y * b.y;
 }
 
-// Comparison with tolerance of EPSILON
 inline bool equal( float a, float b )
 {
-    // <= instead of < for NaN comparison safety
     return std::abs( a - b ) <= EPSILON;
 }
 

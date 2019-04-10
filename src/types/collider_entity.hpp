@@ -2,7 +2,7 @@
 #define PLATCHAMER_TYPE_COLLIDERENTITY_HPP
 
 #include "collider.hpp"
-#include "../core/ecs.hpp"
+#include "../libs/entcosy/src/entcosy/registry.hpp"
 
 struct ColliderEntity
 {

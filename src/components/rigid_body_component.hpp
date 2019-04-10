@@ -2,7 +2,7 @@
 #define RIGID_BODY_COMPONENT_HPP
 
 #include "../types/vect2.hpp"
-#include "../core/ecs.hpp"
+#include "../libs/entcosy/src/entcosy/registry.hpp"
 
 struct RigidBodyComponent
 {

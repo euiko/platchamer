@@ -6,7 +6,7 @@
 #include "../types/vect2.hpp"
 #include "../types/matrix2.hpp"
 #include "../types/collider.hpp"
-#include "../core/ecs.hpp"
+#include "../libs/entcosy/src/entcosy/registry.hpp"
 
 #ifndef MaxPolyVertexCount
 #define MaxPolyVertexCount 64

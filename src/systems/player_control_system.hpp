@@ -1,23 +1,22 @@
 #ifndef PLAYER_CONTROL_SYSTEM_HPP
 #define PLAYER_CONTROL_SYSTEM_HPP
 
-#include "../core/ecs.hpp"
+#include "../libs/entcosy/src/entcosy/registry.hpp"
 #include "../events/keyboard_event.hpp"
 
-using namespace ecs;
-class PlayerControlSystem : public EntitySystem,
-public EventSubscriber<KeyboardEvent>
+class PlayerControlSystem : public entcosy::System,
+public entcosy::EventSubscriber<KeyboardEvent>
 {
 public:
 	virtual ~PlayerControlSystem();
 
-	virtual void configure(Registry* registry) override;
+	virtual void configure(entcosy::Registry* registry) override;
 
-	virtual void unconfigure(Registry* registry) override;
+	virtual void unconfigure(entcosy::Registry* registry) override;
 
-	virtual void tick(Registry* registry, float deltaTime) override;
+	virtual void update(entcosy::Registry* registry, float deltaTime) override;
 
-    virtual void receive(Registry* world, const KeyboardEvent& event) override;
+    virtual void receive(entcosy::Registry* world, const KeyboardEvent& event) override;
 };
 
 #endif

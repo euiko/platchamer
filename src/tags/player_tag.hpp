@@ -1,7 +1,7 @@
 #ifndef PLAYER_TAG_HPP
 #define PLAYER_TAG_HPP
 
-#include "../core/ecs.hpp"
+#include "../libs/entcosy/src/entcosy/registry.hpp"
 
 struct PlayerTag
 {

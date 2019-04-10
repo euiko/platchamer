@@ -54,6 +54,6 @@ void PlayerControlSystem::tick(Registry* registry, float deltaTime)
     );
 }
 
-void PlayerControlSystem::receive(Registry* registry, const KeyboardEvent& event)
+void PlayerControlSystem::receive(entcosy::Registry* registry, const KeyboardEvent& event)
 {
 }
