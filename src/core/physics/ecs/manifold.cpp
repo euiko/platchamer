@@ -10,7 +10,7 @@ namespace physics
 {
     namespace ecs
     {
-        Manifold::Manifold( ::ecs::Entity* a, ::ecs::Entity* b, const Vect2& gravity )
+        Manifold::Manifold( std::shared_ptr<entcosy::Entity> a, std::shared_ptr<entcosy::Entity> b, const Vect2& gravity )
             : entity_A(a), entity_B(b)
             , rigid_body_A(a->get<RigidBodyComponent>()), rigid_body_B(b->get<RigidBodyComponent>())
             , polygon_collider_A(a->get<PolygonColliderComponent>()), polygon_collider_B(b->get<PolygonColliderComponent>())

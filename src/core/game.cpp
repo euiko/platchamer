@@ -24,33 +24,33 @@ extern "C" {
 #include "../tags/enemy_tag.hpp"
 #include "../tags/bullet_tag.hpp"
 
-ECS_TYPE_IMPLEMENTATION;
-ECS_DEFINE_TYPE(PolygonComponent);
-ECS_DEFINE_TYPE(CircleComponent);
-ECS_DEFINE_TYPE(CircleColliderComponent);
-ECS_DEFINE_TYPE(PositionComponent);
-ECS_DEFINE_TYPE(PolygonColliderComponent);
-ECS_DEFINE_TYPE(RigidBodyComponent);
+// ECS_TYPE_IMPLEMENTATION;
+ENTCOSY_DEFINE_TYPE(PolygonComponent);
+ENTCOSY_DEFINE_TYPE(CircleComponent);
+ENTCOSY_DEFINE_TYPE(CircleColliderComponent);
+ENTCOSY_DEFINE_TYPE(PositionComponent);
+ENTCOSY_DEFINE_TYPE(PolygonColliderComponent);
+ENTCOSY_DEFINE_TYPE(RigidBodyComponent);
 
-ECS_DEFINE_TYPE(PlayerTag);
-ECS_DEFINE_TYPE(EnemyTag);
-ECS_DEFINE_TYPE(BulletTag);
+ENTCOSY_DEFINE_TYPE(PlayerTag);
+ENTCOSY_DEFINE_TYPE(EnemyTag);
+ENTCOSY_DEFINE_TYPE(BulletTag);
 
-ECS_DEFINE_TYPE(KeyboardEvent);
+ENTCOSY_DEFINE_TYPE(KeyboardEvent);
 
 Game::Game(const std::string& title, int w, int h, Uint32 flags)
     :m_window(title, w, h, flags)
 {
-    m_registry = ecs::Registry::createRegistry();
-    m_registry->registerSystem(new PolygonSystem());
-    m_registry->registerSystem(new PlayerControlSystem());
-    m_registry->registerSystem(new BulletSystem());
-    m_registry->registerSystem(new PhysicsSystem(50.0f));
-    makePlayer(m_registry, getmaxx() / 2-100, getmaxy() / 2);
-    makeEnemy(m_registry, getmaxx() / 2 + 100, getmaxy() / 2 - 100);
-    makeBlock(m_registry, getmaxx() / 2 + 250, getmaxy() - 300);
-    makeBlock(m_registry, getmaxx() / 2 - 400, getmaxy() - 100, 1.00f);
-    auto bottom = makeBlock(m_registry, getmaxx() / 2, getmaxy() - 100);
+    // m_registry = ecs::Registry::createRegistry();
+    m_registry.registerSystem(std::make_shared<PolygonSystem>());
+    m_registry.registerSystem(std::make_shared<PlayerControlSystem>());
+    m_registry.registerSystem(std::make_shared<BulletSystem>());
+    m_registry.registerSystem(std::make_shared<PhysicsSystem>(50.0f));
+    makePlayer(&m_registry, getmaxx() / 2-100, getmaxy() / 2);
+    makeEnemy(&m_registry, getmaxx() / 2 + 100, getmaxy() / 2 - 100);
+    makeBlock(&m_registry, getmaxx() / 2 + 250, getmaxy() - 300);
+    makeBlock(&m_registry, getmaxx() / 2 - 400, getmaxy() - 100, 1.00f);
+    auto bottom = makeBlock(&m_registry, getmaxx() / 2, getmaxy() - 100);
     bottom->get<RigidBodyComponent>()->restitution = 0.4f;
 }
 
@@ -91,8 +91,8 @@ int Game::run()
 
 	
     bgfx::shutdown();
-    m_registry->cleanup();
-    m_registry->destroyRegistry();
+    // m_registry->cleanup();
+    // m_registry->destroyRegistry();
 
     return EXIT_SUCCESS;
 }
@@ -114,7 +114,7 @@ void Game::event()
                 m_window.m_isOpen = false;
                 break;
             default:
-                m_registry->emit<KeyboardEvent>({m_window.m_event.key.keysym.sym});
+                m_registry.emit<KeyboardEvent>({m_window.m_event.key.keysym.sym});
                 break;
             }
             break;
@@ -125,7 +125,7 @@ void Game::event()
 
 void Game::update(double time)
 {
-    m_registry->tick(time);   
+    m_registry.update(time);   
 }
 
 void Game::render()
@@ -133,7 +133,7 @@ void Game::render()
     cleardevice();
     SDL_RenderClear(m_window.getRenderer());
 
-    m_renderer_system.render(&m_window, m_registry);
+    m_renderer_system.render(&m_window, &m_registry);
 
     refresh();
     SDL_RenderPresent(m_window.getRenderer());

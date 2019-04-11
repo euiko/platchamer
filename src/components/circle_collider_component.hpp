@@ -6,7 +6,7 @@
 
 struct CircleColliderComponent : Collider
 {
-    ECS_DECLARE_TYPE;
+    ENTCOSY_DECLARE_TYPE;
 
     CircleColliderComponent(const float& radius) 
         : Collider({CircleCollider, 0.0f}), radius(radius)

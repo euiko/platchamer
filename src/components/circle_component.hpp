@@ -7,7 +7,7 @@
 
 struct CircleComponent
 {
-    ECS_DECLARE_TYPE;
+    ENTCOSY_DECLARE_TYPE;
     CircleComponent(const float& radius, uint32_t color = 0xFF999999, float scale = 1.0f)
         : radius(radius), color(color), scale(scale)
     {

@@ -7,7 +7,7 @@
 struct RigidBodyComponent
 {
     
-    ECS_DECLARE_TYPE;
+    ENTCOSY_DECLARE_TYPE;
 
     RigidBodyComponent(bool is_static = false) 
         : density(1.0f), static_friction(0.5f), dynamic_friction(0.3f),  

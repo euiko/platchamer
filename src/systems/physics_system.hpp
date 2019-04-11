@@ -7,11 +7,10 @@
 #include "../components/circle_collider_component.hpp"
 #include "../components/rigid_body_component.hpp"
 
-using namespace ecs;
-class PhysicsSystem: public EntitySystem,
-    public EventSubscriber<events::OnComponentAssigned<PolygonColliderComponent>>,
-    public EventSubscriber<events::OnComponentAssigned<CircleColliderComponent>>,
-    public EventSubscriber<events::OnComponentAssigned<RigidBodyComponent>>
+class PhysicsSystem: public entcosy::System,
+    public entcosy::EventSubscriber<entcosy::events::OnComponentAssigned<PolygonColliderComponent>>,
+    public entcosy::EventSubscriber<entcosy::events::OnComponentAssigned<CircleColliderComponent>>,
+    public entcosy::EventSubscriber<entcosy::events::OnComponentAssigned<RigidBodyComponent>>
 {
 public:
 
@@ -21,15 +20,15 @@ public:
 
 	virtual ~PhysicsSystem();
 
-	virtual void configure(Registry* registry) override;
+	virtual void configure(entcosy::Registry* registry) override;
 
-	virtual void unconfigure(Registry* registry) override;
+	virtual void unconfigure(entcosy::Registry* registry) override;
 
-	virtual void tick(Registry* registry, float deltaTime) override;
+	virtual void update(entcosy::Registry* registry, float deltaTime) override;
 
-	virtual void receive(Registry* registry, const events::OnComponentAssigned<PolygonColliderComponent>& event) override;
-	virtual void receive(Registry* registry, const events::OnComponentAssigned<CircleColliderComponent>& event) override;
-	virtual void receive(Registry* registry, const events::OnComponentAssigned<RigidBodyComponent>& event) override;
+	virtual void receive(entcosy::Registry* registry, const entcosy::events::OnComponentAssigned<PolygonColliderComponent>& event) override;
+	virtual void receive(entcosy::Registry* registry, const entcosy::events::OnComponentAssigned<CircleColliderComponent>& event) override;
+	virtual void receive(entcosy::Registry* registry, const entcosy::events::OnComponentAssigned<RigidBodyComponent>& event) override;
     
 private:
 	// void applyImpulse(const ComponentHandle<PolygonColliderComponent>& physicsComponent, const Vect2& impulse, const Vect2& contact_vector);
@@ -37,19 +36,19 @@ private:
 	// void applyForce(const ComponentHandle<PolygonColliderComponent>& physicsComponent, const Vect2& f );
 	
 	template<typename T>
-	void solveCollision( Registry* registry );
+	void solveCollision( entcosy::Registry* registry );
 	
-	void integrateForces( ComponentHandle<RigidBodyComponent> rigid_body, float dt );
+	void integrateForces( RigidBodyComponent* rigid_body, float dt );
 	
-	void integrateVelocity( Entity *entity, float dt );
+	void integrateVelocity( std::shared_ptr<entcosy::Entity> entity, float dt );
 
-	void setOrient(Entity* entity, float radians );
+	void setOrient(std::shared_ptr<entcosy::Entity> entity, float radians );
 	
 
 private:
 	float m_dt = 1.0f / 60.0f;
 	uint32_t m_iterations = 10;
-	std::vector<Entity *> bodies;
+	std::vector<std::shared_ptr<entcosy::Entity>> bodies;
 	std::vector<physics::ecs::Manifold> contacts;
 };
 

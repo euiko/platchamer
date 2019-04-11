@@ -11,9 +11,9 @@ namespace physics
 
         ComputeMassCallback ComputeMass[Collider::ColliderCount] = { computeCircleMass, computePolygonMass };
 
-        void initPolygonVertices(::ecs::Entity* entity)
+        void initPolygonVertices(std::shared_ptr<entcosy::Entity> entity)
         {
-            ::ecs::ComponentHandle<PolygonColliderComponent> pollygonCollider = entity->get<PolygonColliderComponent>();
+            PolygonColliderComponent* pollygonCollider = entity->get<PolygonColliderComponent>();
             int count = pollygonCollider->m_vertexCount;
             Vect2 vertices[count];
             std::copy(pollygonCollider->m_vertices.begin(), pollygonCollider->m_vertices.end(), vertices);
@@ -89,10 +89,10 @@ namespace physics
             }
         }
 
-        void computePolygonMass(::ecs::Entity* entity, float density)
+        void computePolygonMass(std::shared_ptr<entcosy::Entity> entity, float density)
         {
-            ::ecs::ComponentHandle<PolygonColliderComponent> collider = entity->get<PolygonColliderComponent>();
-            ::ecs::ComponentHandle<RigidBodyComponent> rigid_body = entity->get<RigidBodyComponent>();
+            PolygonColliderComponent* collider = entity->get<PolygonColliderComponent>();
+            RigidBodyComponent* rigid_body = entity->get<RigidBodyComponent>();
             
             Vect2 c( 0.0f, 0.0f ); 
             float area = 0.0f;
@@ -122,8 +122,8 @@ namespace physics
             for(uint32_t i = 0; i < collider->m_vertexCount; ++i)
                 collider->m_vertices[i] -= c;
             
-            ::ecs::ComponentHandle<PolygonComponent> polygon = entity->get<PolygonComponent>();
-            if(polygon.isValid())
+            PolygonComponent* polygon = entity->get<PolygonComponent>();
+            if(polygon != nullptr)
             {
                 ::std::transform(polygon->points.begin(), polygon->points.end(), polygon->points.begin(), [&](Vect2& point)
                 {
@@ -131,7 +131,7 @@ namespace physics
                 });
             }
 
-            if(rigid_body.isValid())
+            if(rigid_body != nullptr)
             {
                 rigid_body->mass = density * area;
                 rigid_body->inverse_mass = (rigid_body->mass) ? 100.0f / rigid_body->mass : 0.0f;
@@ -140,13 +140,13 @@ namespace physics
             }
         }
 
-        void computeCircleMass(::ecs::Entity* entity, float density)
+        void computeCircleMass(std::shared_ptr<entcosy::Entity> entity, float density)
         {
 
-            ::ecs::ComponentHandle<CircleColliderComponent> collider = entity->get<CircleColliderComponent>();
-            ::ecs::ComponentHandle<RigidBodyComponent> rigid_body = entity->get<RigidBodyComponent>();
+            CircleColliderComponent* collider = entity->get<CircleColliderComponent>();
+            RigidBodyComponent* rigid_body = entity->get<RigidBodyComponent>();
 
-            if(rigid_body.isValid())
+            if(rigid_body != nullptr)
             {
                 rigid_body->mass = M_PI * collider->radius * collider->radius * density;
                 rigid_body->inverse_mass = (rigid_body->mass) ? 100.0f / rigid_body->mass : 0.0f;
@@ -155,19 +155,19 @@ namespace physics
             }
         }
 
-        void applyForce( const ::ecs::ComponentHandle<RigidBodyComponent>& rigid_body, const Vect2& f )
+        void applyForce( RigidBodyComponent* rigid_body, const Vect2& f )
         {
             rigid_body->force += f;
         }
 
-        void applyImpulse ( const ::ecs::ComponentHandle<RigidBodyComponent>& rigid_body, const Vect2& impulse, const Vect2& contactVector )
+        void applyImpulse ( RigidBodyComponent* rigid_body, const Vect2& impulse, const Vect2& contactVector )
         {
             rigid_body->velocity += rigid_body->inverse_mass * impulse;
             float result = cross(contactVector, impulse );
             rigid_body->angular_velocity += rigid_body->inverse_inertia * result;
         }
 
-        Vect2 getPolygonSupport( const ::ecs::ComponentHandle<PolygonColliderComponent> collider, const Vect2& dir )
+        Vect2 getPolygonSupport( PolygonColliderComponent* collider, const Vect2& dir )
         {
             float bestProjection = -FLT_MAX;
             Vect2 bestVertex;

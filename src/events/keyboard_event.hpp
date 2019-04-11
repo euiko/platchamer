@@ -6,7 +6,7 @@
 
 struct KeyboardEvent
 {
-	ECS_DECLARE_TYPE;
+	ENTCOSY_DECLARE_TYPE;
 
 	SDL_Keycode keycode;
 };

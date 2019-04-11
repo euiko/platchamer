@@ -5,7 +5,7 @@
 
 struct EnemyTag
 {
-    ECS_DECLARE_TYPE;
+    ENTCOSY_DECLARE_TYPE;
 };
 
 #endif

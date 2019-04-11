@@ -6,7 +6,7 @@
 
 struct PositionComponent 
 {
-    ECS_DECLARE_TYPE;
+    ENTCOSY_DECLARE_TYPE;
     
     PositionComponent(float x, float y, float rotation = 0) : pos(x, y), rotation(rotation)
     {

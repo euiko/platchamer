@@ -3,23 +3,22 @@
 #include "../libs/entcosy/src/entcosy/registry.hpp"
 #include "../components/polygon_component.hpp"
 
-using namespace ecs;
-class PolygonSystem : public EntitySystem,
-	public EventSubscriber<events::OnComponentAssigned<PolygonComponent>>
+class PolygonSystem : public entcosy::System,
+	public entcosy::EventSubscriber<entcosy::events::OnComponentAssigned<PolygonComponent>>
 {
 public:
 	virtual ~PolygonSystem();
 
-	virtual void configure(Registry* registry) override;
+	virtual void configure(entcosy::Registry* registry) override;
 
-	virtual void unconfigure(Registry* registry) override;
+	virtual void unconfigure(entcosy::Registry* registry) override;
 
-	virtual void tick(Registry* registry, float deltaTime) override;
+	virtual void update(entcosy::Registry* registry, float deltaTime) override;
 
-	virtual void receive(Registry* registry, const events::OnComponentAssigned<PolygonComponent>& event) override;
+	virtual void receive(entcosy::Registry* registry, const entcosy::events::OnComponentAssigned<PolygonComponent>& event) override;
 
 private:
-    Vect2 _calculate_centroid(ComponentHandle<PolygonComponent> pc);
+    Vect2 _calculate_centroid(PolygonComponent* pc);
 
 };
 

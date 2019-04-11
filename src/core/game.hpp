@@ -24,7 +24,7 @@ private:
 
 private:
     platchamer::graphics::Window m_window;
-    ecs::Registry* m_registry;
+    entcosy::Registry m_registry;
     RendererSystem m_renderer_system;
 };
 

@@ -36,6 +36,12 @@ project "platchamer"
         path.join(PLATCHAMER_SRC_DIR, "**"),
         -- path.join(PROJECT_DIR, "include/**.h"),
     }
+
+    excludes {
+        path.join(PLATCHAMER_SRC_DIR, "libs/entcosy/*.cpp"),
+        path.join(PLATCHAMER_SRC_DIR, "libs/entcosy/3rdparty"),
+    }
+
     links {
         -- "xbgi",
         "sdl_bgi",
@@ -47,6 +53,7 @@ project "platchamer"
     
     buildoptions {
         "-std=c++17",
+        "-Wno-c++11-narrowing"
     }
 
     configuration "linux or bsd"

@@ -6,7 +6,7 @@
 
 struct ColliderEntity
 {
-    ecs::Entity* entity;
+    std::shared_ptr<entcosy::Entity> entity;
     Collider* collider;
 };
 

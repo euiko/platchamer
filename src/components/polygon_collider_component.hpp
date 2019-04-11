@@ -20,7 +20,7 @@ struct PolygonColliderComponent : Collider
     {
     }
 
-    ECS_DECLARE_TYPE;
+    ENTCOSY_DECLARE_TYPE;
 
     uint32_t m_vertexCount;
     std::vector<Vect2> m_vertices;

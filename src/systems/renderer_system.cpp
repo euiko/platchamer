@@ -11,10 +11,10 @@ extern "C" {
 #include "../components/circle_component.hpp"
 #include "../tags/player_tag.hpp"
 
-void RendererSystem::render(platchamer::graphics::Window* window, ecs::Registry* registry)
+void RendererSystem::render(platchamer::graphics::Window* window, entcosy::Registry* registry)
 {
-    registry->each<PositionComponent, PolygonComponent>([&](ecs::Entity* entity, 
-        ecs::ComponentHandle<PositionComponent> pc, ecs::ComponentHandle<PolygonComponent> vc) 
+    registry->each<PositionComponent, PolygonComponent>([&](std::shared_ptr<entcosy::Entity> entity, 
+        PositionComponent* pc, PolygonComponent* vc) 
     {
         setfillstyle(SOLID_FILL, vc->color);
         int bgiPoints[vc->points.size()*2];
@@ -22,10 +22,10 @@ void RendererSystem::render(platchamer::graphics::Window* window, ecs::Registry*
         Collider* collider;
         if(entity->has<PolygonColliderComponent>())
         {
-            collider = &entity->get<PolygonColliderComponent>().get();
+            collider = entity->get<PolygonColliderComponent>();
         } else if (entity->has<CircleColliderComponent>())
         {
-            collider = &entity->get<CircleColliderComponent>().get();
+            collider = entity->get<CircleColliderComponent>();
         }
 
         setcolor(vc->color);
@@ -47,8 +47,8 @@ void RendererSystem::render(platchamer::graphics::Window* window, ecs::Registry*
     });
 
 
-    registry->each<PositionComponent, CircleComponent>([&](ecs::Entity* entity, 
-        ecs::ComponentHandle<PositionComponent> positionComponent, ecs::ComponentHandle<CircleComponent> circleComponent) 
+    registry->each<PositionComponent, CircleComponent>([&](std::shared_ptr<entcosy::Entity> entity, 
+        PositionComponent* positionComponent, CircleComponent* circleComponent) 
     {
         setfillstyle(SOLID_FILL, circleComponent->color);
         circle(positionComponent->pos.x * circleComponent->scale , 

@@ -1,14 +1,14 @@
 #ifndef CORE_FACTORIES_HPP
 #define CORE_FACTORIES_HPP
 
-#include "ecs.hpp"
+#include "../libs/entcosy/src/entcosy/registry.hpp"
 
-ecs::Entity* makePlayer(ecs::Registry* registry, float x = 0.0f, float y = 0.0f);
+std::shared_ptr<entcosy::Entity> makePlayer(entcosy::Registry* registry, float x = 0.0f, float y = 0.0f);
 
-ecs::Entity* makeBullet(ecs::Registry* registry, ecs::Entity* player);
+std::shared_ptr<entcosy::Entity> makeBullet(entcosy::Registry* registry, std::shared_ptr<entcosy::Entity> player);
 
-ecs::Entity* makeBlock(ecs::Registry* registry, float x, float y, float rotation = 0.0f);
+std::shared_ptr<entcosy::Entity> makeBlock(entcosy::Registry* registry, float x, float y, float rotation = 0.0f);
 
-ecs::Entity* makeEnemy(ecs::Registry* registry, float x, float y);
+std::shared_ptr<entcosy::Entity> makeEnemy(entcosy::Registry* registry, float x, float y);
 
 #endif
