@@ -167,11 +167,11 @@ void PhysicsSystem::setOrient(std::shared_ptr<entcosy::Entity> entity, float rad
     Collider* collider;
     if(entity->has<PolygonColliderComponent>())
     {
-        collider = &entity->get<PolygonColliderComponent>().get();
+        collider = entity->get<PolygonColliderComponent>();
     }
     else if(entity->has<CircleColliderComponent>())
     {
-        collider = &entity->get<CircleColliderComponent>().get();
+        collider = entity->get<CircleColliderComponent>();
     }
 
     collider->orientation_matrix = { radians };
@@ -179,7 +179,7 @@ void PhysicsSystem::setOrient(std::shared_ptr<entcosy::Entity> entity, float rad
 
 
 template<typename T>
-void PhysicsSystem::solveCollision( Registry* registry)
+void PhysicsSystem::solveCollision( entcosy::Registry* registry)
 {
 
 }

@@ -24,7 +24,7 @@ extern "C" {
 #include "../tags/enemy_tag.hpp"
 #include "../tags/bullet_tag.hpp"
 
-// ECS_TYPE_IMPLEMENTATION;
+ENTCOSY_INITIALIZATION;
 ENTCOSY_DEFINE_TYPE(PolygonComponent);
 ENTCOSY_DEFINE_TYPE(CircleComponent);
 ENTCOSY_DEFINE_TYPE(CircleColliderComponent);

@@ -38,8 +38,8 @@ project "platchamer"
     }
 
     excludes {
-        path.join(PLATCHAMER_SRC_DIR, "libs/entcosy/*.cpp"),
-        path.join(PLATCHAMER_SRC_DIR, "libs/entcosy/3rdparty"),
+        path.join(PLATCHAMER_SRC_DIR, "libs/entcosy/**.cpp"),
+        path.join(PLATCHAMER_SRC_DIR, "libs/entcosy/3rdparty/**"),
     }
 
     links {
