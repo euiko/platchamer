@@ -1,11 +1,11 @@
 #ifndef PLATCHAMER_TAGS_CAMERA_HPP
 #define PLATCHAMER_TAGS_CAMERA_HPP
 
-#include "../core/ecs/registry.hpp"
+#include "../libs/entcosy/src/entcosy/registry.hpp"
 
 struct CameraTag
 {
-    ECS_DECLARE_TYPE;
+    ENTCOSY_DECLARE_TYPE;
 };
 
 #endif

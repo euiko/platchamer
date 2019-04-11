@@ -11,6 +11,6 @@ std::shared_ptr<entcosy::Entity> makeBlock(entcosy::Registry* registry, float x,
 
 std::shared_ptr<entcosy::Entity> makeEnemy(entcosy::Registry* registry, float x, float y);
 
-ecs::Entity* makeCamera(ecs::Registry* registry, ecs::Entity* looked_object);
+std::shared_ptr<entcosy::Entity> makeCamera(entcosy::Registry* registry, std::shared_ptr<entcosy::Entity> looked_object);
 
 #endif

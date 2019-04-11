@@ -1,21 +1,20 @@
 #ifndef PLATCHAMER_SYSTEMS_CAMERA_HPP
 #define PLATCHAMER_SYSTEMS_CAMERA_HPP
 
-#include "../core/ecs/registry.hpp"
+#include "../libs/entcosy/src/entcosy/registry.hpp"
 
-using namespace ecs;
-class CameraSystem : public EntitySystem 
+class CameraSystem : public entcosy::System 
 {
 public:
     CameraSystem();
 
 	virtual ~CameraSystem();
 
-	virtual void configure(Registry* registry) override;
+	virtual void configure(entcosy::Registry* registry) override;
 
-	virtual void unconfigure(Registry* registry) override;
+	virtual void unconfigure(entcosy::Registry* registry) override;
 
-	virtual void tick(Registry* registry, float deltaTime) override;
+	virtual void update(entcosy::Registry* registry, float deltaTime) override;
 };
 
 #endif

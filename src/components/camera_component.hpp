@@ -1,14 +1,14 @@
 #ifndef PLATCHAMER_COMPONENTS_CAMERA_HPP
 #define PLATCHAMER_COMPONENTS_CAMERA_HPP
 
-#include "../core/ecs/registry.hpp"
+#include "../libs/entcosy/src/entcosy/registry.hpp"
 
 struct CameraComponent {
-    ECS_DECLARE_TYPE;
+    ENTCOSY_DECLARE_TYPE;
 
-    ecs::Entity* looked_object;
+    std::shared_ptr<entcosy::Entity> looked_object;
 
-    CameraComponent(ecs::Entity* looked_object) : looked_object(looked_object) 
+    CameraComponent(std::shared_ptr<entcosy::Entity> looked_object) : looked_object(looked_object) 
     {}
 };
 

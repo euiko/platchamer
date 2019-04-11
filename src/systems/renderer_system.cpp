@@ -29,8 +29,8 @@ void RendererSystem::render(platchamer::graphics::Window* window, entcosy::Regis
         {
             collider = entity->get<CircleColliderComponent>();
         }
-        ecs::ComponentHandle<PositionComponent> cameraPosition;
-        registry->each<CameraTag>([&](ecs::Entity* cameraEntity, ecs::ComponentHandle<CameraTag>)
+        PositionComponent* cameraPosition;
+        registry->each<CameraTag>([&](std::shared_ptr<entcosy::Entity> cameraEntity, CameraTag* cameraTag)
         {
             cameraPosition = cameraEntity->get<PositionComponent>();
         });
@@ -42,7 +42,7 @@ void RendererSystem::render(platchamer::graphics::Window* window, entcosy::Regis
             {
                 v = collider->orientation_matrix * point;
             }
-            if(cameraPosition.isValid())
+            if(cameraPosition != nullptr)
             {
                 v = cameraPosition->pos + v;
             }

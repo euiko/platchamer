@@ -155,9 +155,9 @@ std::shared_ptr<entcosy::Entity> makeEnemy(entcosy::Registry* registry, float x,
 }
 
 
-ecs::Entity* makeCamera(ecs::Registry* registry, ecs::Entity* looked_object)
+std::shared_ptr<entcosy::Entity> makeCamera(entcosy::Registry* registry, std::shared_ptr<entcosy::Entity> looked_object)
 {
-    ecs::Entity* camera = registry->create();
+    std::shared_ptr<entcosy::Entity> camera = registry->create();
     camera->assign<CameraTag>();
     camera->assign<PositionComponent>(0.0f,0.0f,0.0f);
     camera->assign<CameraComponent>(looked_object);
