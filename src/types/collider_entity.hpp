@@ -2,11 +2,11 @@
 #define PLATCHAMER_TYPE_COLLIDERENTITY_HPP
 
 #include "collider.hpp"
-#include "../core/ecs/registry.hpp"
+#include "../libs/entcosy/src/entcosy/registry.hpp"
 
 struct ColliderEntity
 {
-    ecs::Entity* entity;
+    std::shared_ptr<entcosy::Entity> entity;
     Collider* collider;
 };
 

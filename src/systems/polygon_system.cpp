@@ -5,24 +5,24 @@ PolygonSystem::~PolygonSystem()
 
 }
 
-void PolygonSystem::configure(Registry* registry) 
+void PolygonSystem::configure(entcosy::Registry* registry) 
 {
-    registry->subscribe<events::OnComponentAssigned<PolygonComponent>>(this);
+    registry->subscribe<entcosy::events::OnComponentAssigned<PolygonComponent>>(this);
 }
 
-void PolygonSystem::unconfigure(Registry* registry)
+void PolygonSystem::unconfigure(entcosy::Registry* registry)
 {
     registry->unsubscribeAll(this);
 }
 
-void PolygonSystem::tick(Registry* registry, float deltaTime)
+void PolygonSystem::update(entcosy::Registry* registry, float deltaTime)
 {
 
 }
 
-void PolygonSystem::receive(Registry* registry, const events::OnComponentAssigned<PolygonComponent>& event)
+void PolygonSystem::receive(entcosy::Registry* registry, const entcosy::events::OnComponentAssigned<PolygonComponent>& event)
 {
-    ComponentHandle<PolygonComponent> pc = event.component;
+    PolygonComponent* pc = event.component;
     for(Vect2& point: pc->points)
     {
         point.x *= pc->scale;
@@ -31,7 +31,7 @@ void PolygonSystem::receive(Registry* registry, const events::OnComponentAssigne
     pc->centroid = _calculate_centroid(pc);
 }
 
-Vect2 PolygonSystem::_calculate_centroid(ComponentHandle<PolygonComponent> pc)
+Vect2 PolygonSystem::_calculate_centroid(PolygonComponent* pc)
 {
     Vect2 centroid = {0, 0};
     float signedArea = 0.0;

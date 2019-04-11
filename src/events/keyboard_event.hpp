@@ -2,11 +2,11 @@
 #define KEYBOARD_EVENT_HPP
 
 #include <SDL2/SDL_events.h>
-#include "../core/ecs/registry.hpp"
+#include "../libs/entcosy/src/entcosy/registry.hpp"
 
 struct KeyboardEvent
 {
-	ECS_DECLARE_TYPE;
+	ENTCOSY_DECLARE_TYPE;
 
 	SDL_Keycode keycode;
 };

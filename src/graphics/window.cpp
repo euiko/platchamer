@@ -27,7 +27,7 @@ namespace platchamer
 
                 auto native_window = wmInfo.info.x11.window;
                 bgfx::PlatformData pd;
-                // // pd.ndt = glfwGetX11Display();
+                // pd.ndt = glfwGetX11Display();
                 pd.nwh = (void*)native_window;
                 pd.context = nullptr;
                 pd.backBuffer = nullptr;

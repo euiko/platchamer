@@ -6,7 +6,7 @@
 #include "../types/vect2.hpp"
 #include "../types/matrix2.hpp"
 #include "../types/collider.hpp"
-#include "../core/ecs/registry.hpp"
+#include "../libs/entcosy/src/entcosy/registry.hpp"
 
 #ifndef MaxPolyVertexCount
 #define MaxPolyVertexCount 64
@@ -20,7 +20,7 @@ struct PolygonColliderComponent : Collider
     {
     }
 
-    ECS_DECLARE_TYPE;
+    ENTCOSY_DECLARE_TYPE;
 
     uint32_t m_vertexCount;
     std::vector<Vect2> m_vertices;

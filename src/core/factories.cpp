@@ -13,9 +13,9 @@
 #include "../tags/enemy_tag.hpp"
 #include "../tags/bullet_tag.hpp"
 
-ecs::Entity* makePlayer(ecs::Registry* registry, float x, float y) 
+std::shared_ptr<entcosy::Entity> makePlayer(entcosy::Registry* registry, float x, float y) 
 {
-    ecs::Entity* player = registry->create();
+    std::shared_ptr<entcosy::Entity> player = registry->create();
     player->assign<PositionComponent>(x, y, 0.0f);
     //Kotak biasa
     std::vector<Vect2> shape = {
@@ -105,10 +105,10 @@ ecs::Entity* makePlayer(ecs::Registry* registry, float x, float y)
 }
 
 
-ecs::Entity* makeBullet(ecs::Registry* registry, ecs::Entity* player)
+std::shared_ptr<entcosy::Entity> makeBullet(entcosy::Registry* registry, std::shared_ptr<entcosy::Entity> player)
 {
-    ecs::Entity* bullet = registry->create();
-    ecs::ComponentHandle<PositionComponent> pc = player->get<PositionComponent>();
+    std::shared_ptr<entcosy::Entity> bullet = registry->create();
+    PositionComponent* pc = player->get<PositionComponent>();
     bullet->assign<PositionComponent>(pc->pos.x, pc->pos.y, 0.0f);
     std::vector<Vect2> shape = {
         {75, 50},
@@ -121,9 +121,9 @@ ecs::Entity* makeBullet(ecs::Registry* registry, ecs::Entity* player)
     return bullet;
 }
 
-ecs::Entity* makeBlock(ecs::Registry* registry, float x, float y, float rotation)
+std::shared_ptr<entcosy::Entity> makeBlock(entcosy::Registry* registry, float x, float y, float rotation)
 {
-    ecs::Entity* block = registry->create();
+    std::shared_ptr<entcosy::Entity> block = registry->create();
     block->assign<PositionComponent>(x, y, rotation);
     std::vector<Vect2> shape = {
         {0, 0},
@@ -137,9 +137,9 @@ ecs::Entity* makeBlock(ecs::Registry* registry, float x, float y, float rotation
     return block;
 }
 
-ecs::Entity* makeEnemy(ecs::Registry* registry, float x, float y)
+std::shared_ptr<entcosy::Entity> makeEnemy(entcosy::Registry* registry, float x, float y)
 {
-    ecs::Entity* enemy = registry->create();
+    std::shared_ptr<entcosy::Entity> enemy = registry->create();
     enemy->assign<PositionComponent>(x, y, 0.0f);
     std::vector<Vect2> shape = {
         {0, 0},

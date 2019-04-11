@@ -1,7 +1,7 @@
 #ifndef RENDER_SYSTEM_HPP
 #define RENDER_SYSTEM_HPP
 
-#include "../core/ecs/registry.hpp"
+#include "../libs/entcosy/src/entcosy/registry.hpp"
 #include "../graphics/window.hpp"
 
 class RendererSystem {
@@ -9,7 +9,7 @@ class RendererSystem {
         RendererSystem() = default;
         ~RendererSystem() = default;
 
-        void render(platchamer::graphics::Window* window, ecs::Registry* registry);
+        void render(platchamer::graphics::Window* window, entcosy::Registry* registry);
         
 };
 

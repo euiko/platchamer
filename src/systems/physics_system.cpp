@@ -12,30 +12,30 @@ PhysicsSystem::~PhysicsSystem()
 {
 }
 
-void PhysicsSystem::configure(Registry* registry)
+void PhysicsSystem::configure(entcosy::Registry* registry)
 {
-    registry->subscribe<events::OnComponentAssigned<PolygonColliderComponent>>(this);
-    registry->subscribe<events::OnComponentAssigned<RigidBodyComponent>>(this);
-    registry->subscribe<events::OnComponentAssigned<CircleColliderComponent>>(this);
+    registry->subscribe<entcosy::events::OnComponentAssigned<PolygonColliderComponent>>(this);
+    registry->subscribe<entcosy::events::OnComponentAssigned<RigidBodyComponent>>(this);
+    registry->subscribe<entcosy::events::OnComponentAssigned<CircleColliderComponent>>(this);
 }
 
-void PhysicsSystem::unconfigure(Registry* registry)
+void PhysicsSystem::unconfigure(entcosy::Registry* registry)
 {
     registry->unsubscribeAll(this);
 }
 
-void PhysicsSystem::tick(Registry* registry, float deltaTime)
+void PhysicsSystem::update(entcosy::Registry* registry, float deltaTime)
 {
     contacts.clear( );
     size_t count = 0;
     std::vector<ColliderEntity> colliderEntities;
     for(auto colliderEntity: registry->each<PolygonColliderComponent>())
     {
-        colliderEntities.push_back({ colliderEntity, &colliderEntity->get<PolygonColliderComponent>().get() });
+        colliderEntities.push_back({ colliderEntity, colliderEntity->get<PolygonColliderComponent>() });
     }
     for(auto colliderEntity: registry->each<CircleColliderComponent>())
     {
-        colliderEntities.push_back({ colliderEntity, &colliderEntity->get<CircleColliderComponent>().get() });
+        colliderEntities.push_back({ colliderEntity, colliderEntity->get<CircleColliderComponent>() });
     }
     for(auto& colliderEntity: colliderEntities)
     {
@@ -86,27 +86,27 @@ void PhysicsSystem::tick(Registry* registry, float deltaTime)
     // Clear all forces
     for(auto entity: registry->each<RigidBodyComponent>())
     {
-        ComponentHandle<RigidBodyComponent> rigidBodyB = entity->get<RigidBodyComponent>();
+        RigidBodyComponent* rigidBodyB = entity->get<RigidBodyComponent>();
         rigidBodyB->force= { 0, 0 };
         rigidBodyB->torque = 0;
     }
 }
 
-void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigned<PolygonColliderComponent>& event)
+void PhysicsSystem::receive(entcosy::Registry* registry, const entcosy::events::OnComponentAssigned<PolygonColliderComponent>& event)
 {
     physics::ecs::initPolygonVertices(event.entity);    
     physics::ecs::computePolygonMass(event.entity, 1.0f);
 }
 
-void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigned<CircleColliderComponent>& event)
+void PhysicsSystem::receive(entcosy::Registry* registry, const entcosy::events::OnComponentAssigned<CircleColliderComponent>& event)
 {
     physics::ecs::computeCircleMass(event.entity, 1.0f);
 }
 
-void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigned<RigidBodyComponent>& event)
+void PhysicsSystem::receive(entcosy::Registry* registry, const entcosy::events::OnComponentAssigned<RigidBodyComponent>& event)
 {
-    ComponentHandle<RigidBodyComponent> rigid_body = event.component;
-    ComponentHandle<PositionComponent> positionComponent = event.entity->get<PositionComponent>();
+    RigidBodyComponent* rigid_body = event.component;
+    PositionComponent* positionComponent = event.entity->get<PositionComponent>();
     
     Collider collider;
     if(event.entity->has<PolygonColliderComponent>())
@@ -127,7 +127,7 @@ void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigne
         rigid_body->dynamic_friction = 0.7f;
     if(rigid_body->restitution == 0.0f)
         rigid_body->restitution = 0.2f;
-    if(positionComponent.isValid())
+    if(positionComponent != nullptr)
         setOrient( event.entity, positionComponent->rotation );
     if (rigid_body->is_static)
     {
@@ -138,7 +138,7 @@ void PhysicsSystem::receive(Registry* registry, const events::OnComponentAssigne
     }
 }
 
-void PhysicsSystem::integrateForces( ComponentHandle<RigidBodyComponent> rigid_body, float dt )
+void PhysicsSystem::integrateForces( RigidBodyComponent* rigid_body, float dt )
 {
     if(rigid_body->inverse_mass == 0.0f)
         return;
@@ -147,31 +147,31 @@ void PhysicsSystem::integrateForces( ComponentHandle<RigidBodyComponent> rigid_b
 
 }
 
-void PhysicsSystem::integrateVelocity( Entity* entity, float dt )
+void PhysicsSystem::integrateVelocity( std::shared_ptr<entcosy::Entity> entity, float dt )
 {
-    ComponentHandle<RigidBodyComponent> rigid_body = entity->get<RigidBodyComponent>();
+    RigidBodyComponent* rigid_body = entity->get<RigidBodyComponent>();
     if(rigid_body->inverse_mass == 0.0f)
         return;
 
-    ComponentHandle<PositionComponent> position = entity->get<PositionComponent>();
+    PositionComponent* position = entity->get<PositionComponent>();
     position->pos += rigid_body->velocity * dt;
     rigid_body->orient += rigid_body->angular_velocity * dt;
     setOrient( entity, rigid_body->orient );
     integrateForces( rigid_body, dt );
 }
 
-void PhysicsSystem::setOrient(Entity* entity, float radians )
+void PhysicsSystem::setOrient(std::shared_ptr<entcosy::Entity> entity, float radians )
 {
-    ComponentHandle<RigidBodyComponent> rigidBody = entity->get<RigidBodyComponent>();
+    RigidBodyComponent* rigidBody = entity->get<RigidBodyComponent>();
     rigidBody->orient = radians;
     Collider* collider;
     if(entity->has<PolygonColliderComponent>())
     {
-        collider = &entity->get<PolygonColliderComponent>().get();
+        collider = entity->get<PolygonColliderComponent>();
     }
     else if(entity->has<CircleColliderComponent>())
     {
-        collider = &entity->get<CircleColliderComponent>().get();
+        collider = entity->get<CircleColliderComponent>();
     }
 
     collider->orientation_matrix = { radians };
@@ -179,7 +179,7 @@ void PhysicsSystem::setOrient(Entity* entity, float radians )
 
 
 template<typename T>
-void PhysicsSystem::solveCollision( Registry* registry)
+void PhysicsSystem::solveCollision( entcosy::Registry* registry)
 {
 
 }

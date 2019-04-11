@@ -7,3 +7,9 @@
 [submodule "3rdparty/bgfx"]
 	path = 3rdparty/bgfx
 	url = https://github.com/bkaradzic/bgfx.git
+[submodule "3rdparty/imgui"]
+	path = 3rdparty/imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "src/libs/entcosy"]
+	path = src/libs/entcosy
+	url = git@github.com:euiko/entcosy.git

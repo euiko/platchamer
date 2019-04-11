@@ -1,21 +1,20 @@
 #ifndef BULLET_SYSTEM_HPP
 #define BULLET_SYSTEM_HPP
 
-#include "../core/ecs/registry.hpp"
+#include "../libs/entcosy/src/entcosy/registry.hpp"
 
-using namespace ecs;
-class BulletSystem : public EntitySystem
+class BulletSystem : public entcosy::System
 {
 public:
     BulletSystem();
 
 	virtual ~BulletSystem();
 
-	virtual void configure(Registry* registry) override;
+	virtual void configure(entcosy::Registry* registry) override;
 
-	virtual void unconfigure(Registry* registry) override;
+	virtual void unconfigure(entcosy::Registry* registry) override;
 
-	virtual void tick(Registry* registry, float deltaTime) override;
+	virtual void update(entcosy::Registry* registry, float deltaTime) override;
 
 };
 

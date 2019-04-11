@@ -1,11 +1,11 @@
 #ifndef PLAYER_TAG_HPP
 #define PLAYER_TAG_HPP
 
-#include "../core/ecs/registry.hpp"
+#include "../libs/entcosy/src/entcosy/registry.hpp"
 
 struct PlayerTag
 {
-    ECS_DECLARE_TYPE;
+    ENTCOSY_DECLARE_TYPE;
 };
 
 #endif

@@ -2,7 +2,7 @@
 #define PHYSICS_ECS_MANIFOLD_HPP
 
 
-#include "../../ecs/registry.hpp"
+#include "../../../libs/entcosy/src/entcosy/registry.hpp"
 #include "../../../components/position_component.hpp"
 #include "../../../components/rigid_body_component.hpp"
 #include "../../../components/polygon_collider_component.hpp"
@@ -13,7 +13,7 @@ namespace physics
     {
         struct Manifold
         {
-            Manifold( ::ecs::Entity* a, ::ecs::Entity* b, const Vect2& gravity = { 0.0f, 10.0f } );
+            Manifold( std::shared_ptr<entcosy::Entity> a, std::shared_ptr<entcosy::Entity> b, const Vect2& gravity = { 0.0f, 10.0f } );
 
             void solve( Collider* collider_A, Collider* collider_B );                 // Generate contact information
             void initialize( void );            // Precalculations for impulse solving
@@ -21,17 +21,17 @@ namespace physics
             void positionalCorrection( void );  // Naive correction of positional penetration
             void infiniteMassCorrection( void );
 
-            ::ecs::Entity* entity_A;
-            ::ecs::Entity* entity_B;
+            std::shared_ptr<entcosy::Entity> entity_A;
+            std::shared_ptr<entcosy::Entity> entity_B;
 
-            ::ecs::ComponentHandle<RigidBodyComponent> rigid_body_A;
-            ::ecs::ComponentHandle<RigidBodyComponent> rigid_body_B;
+            RigidBodyComponent* rigid_body_A;
+            RigidBodyComponent* rigid_body_B;
 
-            ::ecs::ComponentHandle<PolygonColliderComponent> polygon_collider_A;
-            ::ecs::ComponentHandle<PolygonColliderComponent> polygon_collider_B;
+            PolygonColliderComponent* polygon_collider_A;
+            PolygonColliderComponent* polygon_collider_B;
 
-            ::ecs::ComponentHandle<PositionComponent> position_A;
-            ::ecs::ComponentHandle<PositionComponent> position_B;
+            PositionComponent* position_A;
+            PositionComponent* position_B;
 
             float penetration;     // Depth of penetration from collision
             Vect2 normal;          // From A to B

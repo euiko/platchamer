@@ -22,13 +22,13 @@ namespace physics
             },
         };
 
-        void CircletoCircle( Manifold *m, ::ecs::Entity *a, ::ecs::Entity *b )
+        void CircletoCircle( Manifold *m, std::shared_ptr<entcosy::Entity> a, std::shared_ptr<entcosy::Entity> b )
         {
-            ::ecs::ComponentHandle<CircleColliderComponent> A = a->get<CircleColliderComponent>();
-            ::ecs::ComponentHandle<CircleColliderComponent> B = b->get<CircleColliderComponent>();
+            CircleColliderComponent* A = a->get<CircleColliderComponent>();
+            CircleColliderComponent* B = b->get<CircleColliderComponent>();
 
-            ::ecs::ComponentHandle<PositionComponent> positionA = a->get<PositionComponent>();
-            ::ecs::ComponentHandle<PositionComponent> positionB = b->get<PositionComponent>();
+            PositionComponent* positionA = a->get<PositionComponent>();
+            PositionComponent* positionB = b->get<PositionComponent>();
 
             Vect2 normal = positionA->pos - positionB->pos;
 
@@ -59,13 +59,13 @@ namespace physics
             }
         }
 
-        void CircletoPolygon( Manifold *m, ::ecs::Entity *a, ::ecs::Entity *b )
+        void CircletoPolygon( Manifold *m, std::shared_ptr<entcosy::Entity> a, std::shared_ptr<entcosy::Entity> b )
         {
-            ::ecs::ComponentHandle<CircleColliderComponent> A = a->get<CircleColliderComponent>();
-            ::ecs::ComponentHandle<PolygonColliderComponent> B = b->get<PolygonColliderComponent>();
+            CircleColliderComponent* A = a->get<CircleColliderComponent>();
+            PolygonColliderComponent* B = b->get<PolygonColliderComponent>();
 
-            ::ecs::ComponentHandle<PositionComponent> positionA = a->get<PositionComponent>();
-            ::ecs::ComponentHandle<PositionComponent> positionB = b->get<PositionComponent>();
+            PositionComponent* positionA = a->get<PositionComponent>();
+            PositionComponent* positionB = b->get<PositionComponent>();
 
             m->contact_count = 0;
 
@@ -145,19 +145,19 @@ namespace physics
             }
         }
 
-        void PolygontoCircle( Manifold *m, ::ecs::Entity *a, ::ecs::Entity *b )
+        void PolygontoCircle( Manifold *m, std::shared_ptr<entcosy::Entity> a, std::shared_ptr<entcosy::Entity> b )
         {
             CircletoPolygon( m, b, a );
             m->normal = -m->normal;
         }
 
-        float FindAxisLeastPenetration( uint32_t *faceIndex, ::ecs::Entity *entity_A, ::ecs::Entity *entity_B )
+        float FindAxisLeastPenetration( uint32_t *faceIndex, std::shared_ptr<entcosy::Entity> entity_A, std::shared_ptr<entcosy::Entity> entity_B )
         {
             float bestDistance = -FLT_MAX;
             uint32_t bestIndex;
             
-            ::ecs::ComponentHandle<PolygonColliderComponent> polygonColliderA = entity_A->get<PolygonColliderComponent>();
-            ::ecs::ComponentHandle<PolygonColliderComponent> polygonColliderB = entity_B->get<PolygonColliderComponent>();
+            PolygonColliderComponent* polygonColliderA = entity_A->get<PolygonColliderComponent>();
+            PolygonColliderComponent* polygonColliderB = entity_B->get<PolygonColliderComponent>();
             
             for(uint32_t i = 0; i < polygonColliderA->m_vertexCount; ++i)
             {
@@ -185,12 +185,12 @@ namespace physics
             return bestDistance;
         }
 
-        void FindIncidentFace( Vect2 *v, ::ecs::Entity *ref_entity, ::ecs::Entity *inc_entity, uint32_t referenceIndex )
+        void FindIncidentFace( Vect2 *v, std::shared_ptr<entcosy::Entity> ref_entity, std::shared_ptr<entcosy::Entity> inc_entity, uint32_t referenceIndex )
         {
-            ::ecs::ComponentHandle<PolygonColliderComponent> polygonColliderRef = ref_entity->get<PolygonColliderComponent>();
+            PolygonColliderComponent* polygonColliderRef = ref_entity->get<PolygonColliderComponent>();
 
-            ::ecs::ComponentHandle<PolygonColliderComponent> polygonColliderInc = inc_entity->get<PolygonColliderComponent>();
-            ::ecs::ComponentHandle<PositionComponent> positionInc = inc_entity->get<PositionComponent>();
+            PolygonColliderComponent* polygonColliderInc = inc_entity->get<PolygonColliderComponent>();
+            PositionComponent* positionInc = inc_entity->get<PositionComponent>();
             Vect2 referenceNormal = polygonColliderRef->m_normals[referenceIndex];
 
             referenceNormal = polygonColliderRef->orientation_matrix * referenceNormal;
@@ -241,10 +241,10 @@ namespace physics
             return sp;
         }
 
-        void PolygontoPolygon( Manifold *m, ::ecs::Entity *a, ::ecs::Entity *b )
+        void PolygontoPolygon( Manifold *m, std::shared_ptr<entcosy::Entity> a, std::shared_ptr<entcosy::Entity> b )
         {
-            ::ecs::ComponentHandle<PolygonColliderComponent> A = a->get<PolygonColliderComponent>();
-            ::ecs::ComponentHandle<PolygonColliderComponent> B = b->get<PolygonColliderComponent>();
+            PolygonColliderComponent* A = a->get<PolygonColliderComponent>();
+            PolygonColliderComponent* B = b->get<PolygonColliderComponent>();
             m->contact_count = 0;
 
             uint32_t faceA; 
@@ -260,8 +260,8 @@ namespace physics
             uint32_t referenceIndex;
             bool flip;
 
-            ::ecs::Entity *refEntity; // Reference
-            ::ecs::Entity *incEntity; // Incident
+            std::shared_ptr<entcosy::Entity> refEntity; // Reference
+            std::shared_ptr<entcosy::Entity> incEntity; // Incident
 
             if(biasGreaterThan( penetrationA, penetrationB ))
             {
@@ -282,8 +282,8 @@ namespace physics
             Vect2 incidentFace[2];
             FindIncidentFace( incidentFace, refEntity, incEntity, referenceIndex );
 
-            ::ecs::ComponentHandle<PolygonColliderComponent> polygonColliderRef = refEntity->get<PolygonColliderComponent>();
-            ::ecs::ComponentHandle<PositionComponent> positionRef = refEntity->get<PositionComponent>();
+            PolygonColliderComponent* polygonColliderRef = refEntity->get<PolygonColliderComponent>();
+            PositionComponent* positionRef = refEntity->get<PositionComponent>();
 
             Vect2 v1 = polygonColliderRef->m_vertices[referenceIndex];
             referenceIndex = referenceIndex + 1 == polygonColliderRef->m_vertexCount ? 0 : referenceIndex + 1;

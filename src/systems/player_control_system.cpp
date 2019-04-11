@@ -13,22 +13,22 @@ PlayerControlSystem::~PlayerControlSystem()
 
 }
 
-void PlayerControlSystem::configure(Registry* registry) 
+void PlayerControlSystem::configure(entcosy::Registry* registry) 
 {
     registry->subscribe<KeyboardEvent>(this);    
 }
 
-void PlayerControlSystem::unconfigure(Registry* registry)
+void PlayerControlSystem::unconfigure(entcosy::Registry* registry)
 {
     registry->unsubscribeAll(this);
 }
 
-void PlayerControlSystem::tick(Registry* registry, float deltaTime)
+void PlayerControlSystem::update(entcosy::Registry* registry, float deltaTime)
 {
     const Uint8 *keyboards = SDL_GetKeyboardState(NULL);
     registry->each<PlayerTag, RigidBodyComponent>(
-        [&](Entity* entity, ComponentHandle<PlayerTag> player_tag, 
-            ComponentHandle<RigidBodyComponent> rigid_body)
+        [&](std::shared_ptr<entcosy::Entity> entity, PlayerTag* player_tag, 
+            RigidBodyComponent* rigid_body)
         {
             if(keyboards[SDL_SCANCODE_W])
                 rigid_body->velocity.y = -300.0f;
@@ -54,6 +54,7 @@ void PlayerControlSystem::tick(Registry* registry, float deltaTime)
     );
 }
 
-void PlayerControlSystem::receive(Registry* registry, const KeyboardEvent& event)
+void PlayerControlSystem::receive(entcosy::Registry* registry, const KeyboardEvent& event)
 {
+
 }
