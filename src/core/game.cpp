@@ -62,7 +62,7 @@ Game::Game(const std::string& title, int w, int h, Uint32 flags)
     makeBlock(&m_registry, getmaxx() / 2 + 250, getmaxy() - 300);
     makeBlock(&m_registry, getmaxx() / 2 - 400, getmaxy() - 100, 1.00f);
     makeBlock(&m_registry, getmaxx() / 2 + 1175, getmaxy()+100, M_PI/2 );
-makeBlock(&m_registry, getmaxx() / 2 + 1575, getmaxy() - 290);
+    makeBlock(&m_registry, getmaxx() / 2 + 1575, getmaxy() - 290);
 }
 
 int Game::run() 
@@ -74,7 +74,7 @@ int Game::run()
 
     double currentTime = SDL_GetTicks();
     SDL_SetRenderDrawColor(m_window.getRenderer(), 0, 0, 0, 0);
-    char fps[3];
+    // char fps[3];
     // std::unique_ptr<std::thread> renderThread;
     while (m_window.m_isOpen)
     {
@@ -94,10 +94,10 @@ int Game::run()
         }
 
         render();
-        sprintf(fps, "%d", (int)(1000/frameTime));
-        outtextxy(40, 40, fps);
-        std::cout << "FPS: " << fps << "\n";
-        std::cout << "ACCM: " << accumulator << "\n";
+        // sprintf(fps, "%d", (int)(1000/frameTime));
+        // outtextxy(40, 40, fps);
+        // std::cout << "FPS: " << fps << "\n";
+        // std::cout << "ACCM: " << accumulator << "\n";
     }
 
 	

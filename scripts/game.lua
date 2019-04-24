@@ -2,6 +2,7 @@ group "3rdparty"
 -- dofile "3rdparty/xbgi.lua"
 dofile "3rdparty/sdl_bgi.lua"
 dofile "3rdparty/sdl2.lua"
+dofile "3rdparty/cereal.lua"
 
 dofile(path.join(BX_DIR, "scripts/bx.lua"))
 dofile(path.join(BGFX_DIR, "scripts/bgfx.lua"))
@@ -28,6 +29,7 @@ project "platchamer"
         path.join(BGFX_DIR, "include"),
         path.join(BX_DIR, "include"),
         path.join(BIMG_DIR, "include"),
+        CEREAL_INCLUDE_DIR,
         -- XBGI_SRC_DIR,
         -- path.join(XBGI_SRC_DIR, "common"),
     }

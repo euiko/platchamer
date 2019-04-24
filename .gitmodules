@@ -13,3 +13,6 @@
 [submodule "src/libs/entcosy"]
 	path = src/libs/entcosy
 	url = git@github.com:euiko/entcosy.git
+[submodule "3rdparty/cereal"]
+	path = 3rdparty/cereal
+	url = https://github.com/USCiLab/cereal.git
