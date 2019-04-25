@@ -14,6 +14,8 @@ extern "C" {
 #include "../systems/polygon_system.hpp"
 #include "../systems/physics_system.hpp"
 #include "../systems/player_control_system.hpp"
+#include "../events/reset_player_state_event.hpp"
+#include "../events/collide_event.hpp"
 #include "../events/keyboard_event.hpp"
 #include "../components/position_component.hpp"
 #include "../components/camera_component.hpp"
@@ -23,6 +25,7 @@ extern "C" {
 #include "../components/circle_collider_component.hpp"
 #include "../components/rigid_body_component.hpp"
 #include "../tags/camera_tag.hpp"
+#include "../tags/ground_tag.hpp"
 #include "../tags/player_tag.hpp"
 #include "../tags/enemy_tag.hpp"
 #include "../tags/bullet_tag.hpp"
@@ -39,9 +42,12 @@ ENTCOSY_DEFINE_TYPE(RigidBodyComponent);
 ENTCOSY_DEFINE_TYPE(CameraTag);
 ENTCOSY_DEFINE_TYPE(PlayerTag);
 ENTCOSY_DEFINE_TYPE(EnemyTag);
+ENTCOSY_DEFINE_TYPE(GroundTag);
 ENTCOSY_DEFINE_TYPE(BulletTag);
 
 ENTCOSY_DEFINE_TYPE(KeyboardEvent);
+ENTCOSY_DEFINE_TYPE(CollideEvent);
+ENTCOSY_DEFINE_TYPE(ResetPlayerStateEvent);
 
 Game::Game(const std::string& title, int w, int h, Uint32 flags)
     :m_window(title, w, h, flags)
@@ -50,9 +56,9 @@ Game::Game(const std::string& title, int w, int h, Uint32 flags)
     // m_registry = ecs::Registry::createRegistry();
     m_registry.registerSystem(std::make_shared<CameraSystem>());
     m_registry.registerSystem(std::make_shared<PolygonSystem>());
+    m_registry.registerSystem(std::make_shared<PhysicsSystem>(50.0f));
     m_registry.registerSystem(std::make_shared<PlayerControlSystem>());
     m_registry.registerSystem(std::make_shared<BulletSystem>());
-    m_registry.registerSystem(std::make_shared<PhysicsSystem>(50.0f));
     
     std::shared_ptr<entcosy::Entity> player = makePlayer(&m_registry, getmaxx() / 2-100, getmaxy() / 2);
     makeCamera(&m_registry, player);
@@ -136,6 +142,7 @@ void Game::event()
 
 void Game::update(double time)
 {
+    m_registry.emit<ResetPlayerStateEvent>({});
     m_registry.update(time);   
 }
 

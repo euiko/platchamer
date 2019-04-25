@@ -1,12 +1,11 @@
-#ifndef PLAYER_TAG_HPP
-#define PLAYER_TAG_HPP
+#ifndef PLATCHAMER_TAGS_ROUNDTAG_HPP
+#define PLATCHAMER_TAGS_GROUNDTAG_HPP
 
 #include "../libs/entcosy/src/entcosy/registry.hpp"
 
-struct PlayerTag
+struct GroundTag
 {
     ENTCOSY_DECLARE_TYPE;
-    bool isGround = true;
 };
 
 #endif

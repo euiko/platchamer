@@ -5,7 +5,7 @@ solution "platchamer_sln"
 		"Release",
 	}
 	platforms {
-		"native",
+		"x64",
 	}
 
 	language "C++"

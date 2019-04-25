@@ -48,7 +48,7 @@ private:
 private:
 	float m_dt = 1.0f / 60.0f;
 	uint32_t m_iterations = 10;
-	std::vector<std::shared_ptr<entcosy::Entity>> bodies;
+	// std::vector<std::shared_ptr<entcosy::Entity>> bodies;
 	std::vector<physics::ecs::Manifold> contacts;
 };
 

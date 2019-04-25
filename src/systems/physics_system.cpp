@@ -1,6 +1,7 @@
 #include "physics_system.hpp"
 #include "../components/polygon_collider_component.hpp"
 #include "../core/physics/ecs/rigid_body.hpp"
+#include "../events/collide_event.hpp"
 #include "../tags/enemy_tag.hpp"
 #include "../types/collider_entity.hpp"
 
@@ -54,8 +55,16 @@ void PhysicsSystem::update(entcosy::Registry* registry, float deltaTime)
                     continue;
             physics::ecs::Manifold m( colliderEntity.entity, anotherColliderEntity.entity, gravity );
             m.solve( colliderEntity.collider, anotherColliderEntity.collider );
-            if(m.contact_count)
+            if(m.contact_count) 
+            {
                 contacts.emplace_back( m );
+                registry->emit<CollideEvent>({colliderEntity.entity, anotherColliderEntity.entity, true});
+            }else
+            {
+                registry->emit<CollideEvent>({colliderEntity.entity, anotherColliderEntity.entity, false});
+            }
+            
+                
         };
         count++;
     }
