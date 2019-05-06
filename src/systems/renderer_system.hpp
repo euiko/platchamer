@@ -9,8 +9,8 @@ class RendererSystem {
         RendererSystem() = default;
         ~RendererSystem() = default;
 
-        void render(platchamer::graphics::Window* window, entcosy::Registry* registry);
-        
+        void render(platchamer::graphics::Window* window, std::shared_ptr<entcosy::Registry> registry);
+
 };
 
 #endif

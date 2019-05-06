@@ -4,16 +4,24 @@
 #include "../types/collider.hpp"
 #include "../libs/entcosy/src/entcosy/registry.hpp"
 
-struct CircleColliderComponent : Collider
+struct CircleColliderComponent : public Collider
 {
     ENTCOSY_DECLARE_TYPE;
 
-    CircleColliderComponent(const float& radius) 
+    CircleColliderComponent() : radius(0) { }
+
+    CircleColliderComponent(const float& radius)
         : Collider({CircleCollider, 0.0f}), radius(radius)
     {
     }
 
     float radius;
+
+    template<class Archive>
+    void serialize(Archive &ar)
+    {
+        ar(cereal::base_class<Collider>( this ), radius);
+    }
 };
 
 #endif

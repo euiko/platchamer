@@ -2,6 +2,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <vector>
+#include <fstream>
 #include <bgfx/bgfx.h>
 extern "C" {
     #include <sdl_bgi/graphics.h>
@@ -45,33 +46,54 @@ ENTCOSY_DEFINE_TYPE(EnemyTag);
 ENTCOSY_DEFINE_TYPE(GroundTag);
 ENTCOSY_DEFINE_TYPE(BulletTag);
 
-ENTCOSY_DEFINE_TYPE(KeyboardEvent);
-ENTCOSY_DEFINE_TYPE(CollideEvent);
-ENTCOSY_DEFINE_TYPE(ResetPlayerStateEvent);
+ENTCOSY_REGISTER_TYPE(KeyboardEvent);
+ENTCOSY_REGISTER_TYPE(CollideEvent);
+ENTCOSY_REGISTER_TYPE(ResetPlayerStateEvent);
+
+// CEREAL_REGISTER_TYPE(CircleColliderComponent);
+// CEREAL_REGISTER_TYPE(PolygonColliderComponent);
+// CEREAL_REGISTER_POLYMORPHIC_RELATION(Collider, CircleColliderComponent);
+// CEREAL_REGISTER_POLYMORPHIC_RELATION(Collider, PolygonColliderComponent);
 
 Game::Game(const std::string& title, int w, int h, Uint32 flags)
     :m_window(title, w, h, flags)
 {
+    // m_registry = std::make_shared<entcosy::Registry>();
 
-    // m_registry = ecs::Registry::createRegistry();
-    m_registry.registerSystem(std::make_shared<CameraSystem>());
-    m_registry.registerSystem(std::make_shared<PolygonSystem>());
-    m_registry.registerSystem(std::make_shared<PhysicsSystem>(50.0f));
-    m_registry.registerSystem(std::make_shared<PlayerControlSystem>());
-    m_registry.registerSystem(std::make_shared<BulletSystem>());
-    
-    std::shared_ptr<entcosy::Entity> player = makePlayer(&m_registry, getmaxx() / 2-100, getmaxy() / 2);
-    makeCamera(&m_registry, player);
-    makeEnemy(&m_registry, getmaxx() / 2 + 100, getmaxy() / 2 - 100);
-    makeBlock(&m_registry, getmaxx() / 2, getmaxy() - 100);
-    makeBlock(&m_registry, getmaxx() / 2 + 775, getmaxy() - 100);
-    makeBlock(&m_registry, getmaxx() / 2 + 250, getmaxy() - 300);
-    makeBlock(&m_registry, getmaxx() / 2 - 400, getmaxy() - 100, 1.00f);
-    makeBlock(&m_registry, getmaxx() / 2 + 1175, getmaxy()+100, M_PI/2 );
-    makeBlock(&m_registry, getmaxx() / 2 + 1575, getmaxy() - 290);
+    {
+        std::cout << "Loading... \n";
+        std::ifstream is("level.bin", std::ios::binary);
+        cereal::BinaryInputArchive archive(is);
+        archive(m_registry);
+        is.close();
+        std::cout << "Loaded \n";
+    }
+
+    m_registry->registerSystem(std::make_shared<CameraSystem>());
+    m_registry->registerSystem(std::make_shared<PolygonSystem>());
+    m_registry->registerSystem(std::make_shared<PhysicsSystem>(50.0f));
+    m_registry->registerSystem(std::make_shared<PlayerControlSystem>());
+    m_registry->registerSystem(std::make_shared<BulletSystem>());
+
+    // std::shared_ptr<entcosy::Entity> player = makePlayer(m_registry, getmaxx() / 2-100, getmaxy() / 2);
+    // makeCamera(m_registry, player);
+    // makeEnemy(m_registry, getmaxx() / 2 + 100, getmaxy() / 2 - 100);
+    // makeBlock(m_registry, getmaxx() / 2, getmaxy() - 100);
+    // makeBlock(m_registry, getmaxx() / 2 + 775, getmaxy() - 100);
+    // makeBlock(m_registry, getmaxx() / 2 + 250, getmaxy() - 300);
+    // makeBlock(m_registry, getmaxx() / 2 - 400, getmaxy() - 100, 1.00f);
+    // makeBlock(m_registry, getmaxx() / 2 + 1175, getmaxy()+100, M_PI/2 );
+    // makeBlock(m_registry, getmaxx() / 2 + 1575, getmaxy() - 290);
+
+    // {
+    //     std::ofstream os("level.bin", std::ios::binary);
+    //     cereal::BinaryOutputArchive archive(os);
+    //     archive(m_registry);
+    //     os.close();
+    // }
 }
 
-int Game::run() 
+int Game::run()
 {
     double time = 0;
     double accumulator = 0.0;
@@ -80,6 +102,7 @@ int Game::run()
 
     double currentTime = SDL_GetTicks();
     SDL_SetRenderDrawColor(m_window.getRenderer(), 0, 0, 0, 0);
+
     // char fps[3];
     // std::unique_ptr<std::thread> renderThread;
     while (m_window.m_isOpen)
@@ -106,7 +129,7 @@ int Game::run()
         // std::cout << "ACCM: " << accumulator << "\n";
     }
 
-	
+
     bgfx::shutdown();
     // m_registry->cleanup();
     // m_registry->destroyRegistry();
@@ -131,7 +154,7 @@ void Game::event()
                 m_window.m_isOpen = false;
                 break;
             default:
-                m_registry.emit<KeyboardEvent>({m_window.m_event.key.keysym.sym});
+                m_registry->emit<KeyboardEvent>({m_window.m_event.key.keysym.sym});
                 break;
             }
             break;
@@ -142,8 +165,8 @@ void Game::event()
 
 void Game::update(double time)
 {
-    m_registry.emit<ResetPlayerStateEvent>({});
-    m_registry.update(time);   
+    m_registry->emit<ResetPlayerStateEvent>({});
+    m_registry->update(time);
 }
 
 void Game::render()
@@ -151,7 +174,7 @@ void Game::render()
     cleardevice();
     SDL_RenderClear(m_window.getRenderer());
 
-    m_renderer_system.render(&m_window, &m_registry);
+    m_renderer_system.render(&m_window, m_registry);
 
     refresh();
     SDL_RenderPresent(m_window.getRenderer());

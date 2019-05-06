@@ -14,15 +14,15 @@ public entcosy::EventSubscriber<ResetPlayerStateEvent>
 public:
 	virtual ~PlayerControlSystem();
 
-	virtual void configure(entcosy::Registry* registry) override;
+	virtual void configure(std::shared_ptr<entcosy::Registry> registry) override;
 
-	virtual void unconfigure(entcosy::Registry* registry) override;
+	virtual void unconfigure(std::shared_ptr<entcosy::Registry> registry) override;
 
-	virtual void update(entcosy::Registry* registry, float deltaTime) override;
+	virtual void update(std::shared_ptr<entcosy::Registry> registry, float deltaTime) override;
 
-    virtual void receive(entcosy::Registry* registry, const KeyboardEvent& event) override;
-    virtual void receive(entcosy::Registry* registry, const CollideEvent& event) override;
-    virtual void receive(entcosy::Registry* registry, const ResetPlayerStateEvent& event) override;
+    virtual void receive(std::shared_ptr<entcosy::Registry> registry, const KeyboardEvent& event) override;
+    virtual void receive(std::shared_ptr<entcosy::Registry> registry, const CollideEvent& event) override;
+    virtual void receive(std::shared_ptr<entcosy::Registry> registry, const ResetPlayerStateEvent& event) override;
 };
 
 #endif

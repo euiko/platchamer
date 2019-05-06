@@ -5,22 +5,22 @@ PolygonSystem::~PolygonSystem()
 
 }
 
-void PolygonSystem::configure(entcosy::Registry* registry) 
+void PolygonSystem::configure(std::shared_ptr<entcosy::Registry> registry)
 {
     registry->subscribe<entcosy::events::OnComponentAssigned<PolygonComponent>>(this);
 }
 
-void PolygonSystem::unconfigure(entcosy::Registry* registry)
+void PolygonSystem::unconfigure(std::shared_ptr<entcosy::Registry> registry)
 {
     registry->unsubscribeAll(this);
 }
 
-void PolygonSystem::update(entcosy::Registry* registry, float deltaTime)
+void PolygonSystem::update(std::shared_ptr<entcosy::Registry> registry, float deltaTime)
 {
 
 }
 
-void PolygonSystem::receive(entcosy::Registry* registry, const entcosy::events::OnComponentAssigned<PolygonComponent>& event)
+void PolygonSystem::receive(std::shared_ptr<entcosy::Registry> registry, const entcosy::events::OnComponentAssigned<PolygonComponent>& event)
 {
     PolygonComponent* pc = event.component;
     for(Vect2& point: pc->points)

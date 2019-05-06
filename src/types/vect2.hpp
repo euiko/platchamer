@@ -22,12 +22,12 @@ struct Vect2 {
     float sqrLength() {
         return x * x + y * y;
     }
-    
+
     Vect2 operator* (float s)
     {
         return Vect2(this->x * s, this->y * s);
     }
-    
+
     void operator*=( float s )
     {
         x *= s;
@@ -39,12 +39,12 @@ struct Vect2 {
         return Vect2( x / s, y / s );
     }
 
-    Vect2 operator+ (float s) 
+    Vect2 operator+ (float s)
     {
         return Vect2(this->x + s, this->y + s);
     }
 
-    Vect2 operator+ (const Vect2& v) 
+    Vect2 operator+ (const Vect2& v)
     {
         return Vect2(this->x + v.x, this->y + v.y);
     }
@@ -65,12 +65,12 @@ struct Vect2 {
         return Vect2( x - v.x, y - v.y );
     }
 
-    Vect2 operator- (float s) 
+    Vect2 operator- (float s)
     {
         return Vect2(this->x - s, this->y - s);
     }
 
-    Vect2 operator- (const Vect2& v) 
+    Vect2 operator- (const Vect2& v)
     {
         return Vect2(this->x - v.x, this->y - v.y);
     }
@@ -81,7 +81,7 @@ struct Vect2 {
         x -= v.x;
         y -= v.y;
     }
-    void normalize() 
+    void normalize()
     {
         float len = length();
         if(len > EPSILON)
@@ -89,22 +89,30 @@ struct Vect2 {
             float inv_len = 1 / len;
             x *= inv_len; y *= inv_len;
         }
-        
+
     }
-    
-    float dot(Vect2 b) 
+
+    float dot(Vect2 b)
     {
         return x * b.x + y * b.y;
     }
-    
-    float cross(const Vect2& b) 
+
+    float cross(const Vect2& b)
     {
         return x * b.y - y * b.x;
     }
-    
-    Vect2 cross(float s) 
+
+    Vect2 cross(float s)
     {
         return Vect2(s * y, -s * x);
+    }
+
+
+
+    template<class Archive>
+    void serialize(Archive &ar)
+    {
+        ar(x,y);
     }
 };
 
@@ -113,18 +121,18 @@ inline Vect2 operator*( float s, const Vect2& v )
   return Vect2( s * v.x, s * v.y );
 };
 
-inline Vect2 cross(float s, Vect2 a) 
+inline Vect2 cross(float s, Vect2 a)
 {
     return Vect2(-s * a.y, s * a.x);
 };
 
-inline float cross(const Vect2& a, const Vect2& b) 
+inline float cross(const Vect2& a, const Vect2& b)
 {
     return a.x * b.y - a.y * b.x;
 };
 
 
-inline float dot(const Vect2& a, const Vect2& b) 
+inline float dot(const Vect2& a, const Vect2& b)
 {
     return a.x * b.x + a.y * b.y;
 }

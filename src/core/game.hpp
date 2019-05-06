@@ -24,7 +24,7 @@ private:
 
 private:
     platchamer::graphics::Window m_window;
-    entcosy::Registry m_registry;
+    std::shared_ptr<entcosy::Registry> m_registry;
     RendererSystem m_renderer_system;
 };
 

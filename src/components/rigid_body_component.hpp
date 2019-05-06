@@ -6,18 +6,18 @@
 
 struct RigidBodyComponent
 {
-    
+
     ENTCOSY_DECLARE_TYPE;
 
-    RigidBodyComponent(bool is_static = false) 
-        : density(1.0f), static_friction(0.5f), dynamic_friction(0.3f),  
+    RigidBodyComponent(bool is_static = false)
+        : density(1.0f), static_friction(0.5f), dynamic_friction(0.3f),
         restitution(0.2f), is_static(is_static)
     {
     }
 
-    RigidBodyComponent(float density, float static_friction = 0.5f, 
+    RigidBodyComponent(float density, float static_friction = 0.5f,
         float dynamic_friction = 0.3f, float restitution = 0.2f, bool is_static = false
-    ) : density(density), static_friction(static_friction), dynamic_friction(dynamic_friction),  
+    ) : density(density), static_friction(static_friction), dynamic_friction(dynamic_friction),
         restitution(restitution), is_static(is_static)
     {
     }
@@ -30,7 +30,7 @@ struct RigidBodyComponent
 
     bool is_static;
     float density;
-    
+
     float inertia;
     float inverse_inertia;
     float mass;
@@ -39,6 +39,15 @@ struct RigidBodyComponent
     float static_friction;
     float dynamic_friction;
     float restitution;
+
+
+    template<class Archive>
+    void serialize(Archive &ar)
+    {
+        ar(velocity, angular_velocity, torque, orient, force, is_static, density, inertia,
+            inverse_inertia, mass, inverse_mass, static_friction, dynamic_friction, restitution
+        );
+    }
 };
 
 #endif

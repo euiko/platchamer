@@ -6,6 +6,12 @@
 struct GroundTag
 {
     ENTCOSY_DECLARE_TYPE;
+
+    template<class Archive>
+    void serialize(Archive &ar)
+    {
+
+    }
 };
 
 #endif

@@ -14,57 +14,57 @@ PlayerControlSystem::~PlayerControlSystem()
 
 }
 
-void PlayerControlSystem::configure(entcosy::Registry* registry) 
+void PlayerControlSystem::configure(std::shared_ptr<entcosy::Registry> registry)
 {
-    registry->subscribe<ResetPlayerStateEvent>(this);    
-    registry->subscribe<KeyboardEvent>(this);    
-    registry->subscribe<CollideEvent>(this);    
+    registry->subscribe<ResetPlayerStateEvent>(this);
+    registry->subscribe<KeyboardEvent>(this);
+    registry->subscribe<CollideEvent>(this);
 }
 
-void PlayerControlSystem::unconfigure(entcosy::Registry* registry)
+void PlayerControlSystem::unconfigure(std::shared_ptr<entcosy::Registry> registry)
 {
     registry->unsubscribeAll(this);
 }
 
-void PlayerControlSystem::update(entcosy::Registry* registry, float deltaTime)
+void PlayerControlSystem::update(std::shared_ptr<entcosy::Registry> registry, float deltaTime)
 {
     const Uint8 *keyboards = SDL_GetKeyboardState(NULL);
     registry->each<PlayerTag, RigidBodyComponent>(
-        [&](std::shared_ptr<entcosy::Entity> entity, PlayerTag* playerTag, 
+        [&](std::shared_ptr<entcosy::Entity> entity, PlayerTag* playerTag,
             RigidBodyComponent* rigidBody)
         {
-            if(keyboards[SDL_SCANCODE_W] && playerTag->isGround)
+            if(keyboards[SDL_SCANCODE_W] && playerTag->is_ground)
                 rigidBody->velocity.y = -300.0f;
                 // position_component->pos.y -= 20;
             if(keyboards[SDL_SCANCODE_A] && rigidBody->velocity.x > -200.0f)
                 rigidBody->velocity.x -= 10.0f;
             if(keyboards[SDL_SCANCODE_D] && rigidBody->velocity.y < 200.0f)
                 rigidBody->velocity.x += 10.0f;
-            std::cout << playerTag->isGround << " = ";
-            // if(rigidBody->velocity.y < -200.0f) rigidBody->velocity.y = -200.0f; 
-            // if(rigidBody->velocity.x > 200.0f) rigidBody->velocity.y = 200.0f; 
-            // if(rigidBody->velocity.x < -200.0f) rigidBody->velocity.y = 200.0f; 
+            std::cout << playerTag->is_ground << " = ";
+            // if(rigidBody->velocity.y < -200.0f) rigidBody->velocity.y = -200.0f;
+            // if(rigidBody->velocity.x > 200.0f) rigidBody->velocity.y = 200.0f;
+            // if(rigidBody->velocity.x < -200.0f) rigidBody->velocity.y = 200.0f;
 
 
             // if(rigidBody->velocity.x > 0)
             //     rigidBody->velocity.x -= 2;
             // if(rigidBody->velocity.x < 0)
             //     rigidBody->velocity.x += 2;
-                
+
             if(keyboards[SDLK_SPACE])
                 makeBullet(registry, entity);
-                   
+
         }
     );
 }
 
-void PlayerControlSystem::receive(entcosy::Registry* registry, const KeyboardEvent& event)
+void PlayerControlSystem::receive(std::shared_ptr<entcosy::Registry> registry, const KeyboardEvent& event)
 {
 
 }
 
 
-void PlayerControlSystem::receive(entcosy::Registry* registry, const CollideEvent& event)
+void PlayerControlSystem::receive(std::shared_ptr<entcosy::Registry> registry, const CollideEvent& event)
 {
     if(
         (event.entityA->has<PlayerTag>() && event.entityB->has<GroundTag>()) ||
@@ -73,18 +73,18 @@ void PlayerControlSystem::receive(entcosy::Registry* registry, const CollideEven
     {
         registry->each<PlayerTag>([&](std::shared_ptr<entcosy::Entity> entity, PlayerTag *playerTag)
         {
-            playerTag->isGround = playerTag->isGround || event.isCollide;
-            std::cout << playerTag->isGround << " ";
+            playerTag->is_ground = playerTag->is_ground || event.isCollide;
+            std::cout << playerTag->is_ground << " ";
         });
     }
 }
 
 
-void PlayerControlSystem::receive(entcosy::Registry* registry, const ResetPlayerStateEvent& event) 
+void PlayerControlSystem::receive(std::shared_ptr<entcosy::Registry> registry, const ResetPlayerStateEvent& event)
 {
     std::cout << "\n===================================\n";
     registry->each<PlayerTag>([&](std::shared_ptr<entcosy::Entity> entity, PlayerTag *playerTag)
     {
-        playerTag->isGround = 0;
+        playerTag->is_ground = 0;
     });
 }

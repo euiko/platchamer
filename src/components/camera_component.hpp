@@ -8,8 +8,15 @@ struct CameraComponent {
 
     std::shared_ptr<entcosy::Entity> looked_object;
 
-    CameraComponent(std::shared_ptr<entcosy::Entity> looked_object) : looked_object(looked_object) 
+    CameraComponent() : looked_object(nullptr) { }
+    CameraComponent(std::shared_ptr<entcosy::Entity> looked_object) : looked_object(looked_object)
     {}
+
+    template<class Archive>
+    void serialize(Archive &ar)
+    {
+        ar(looked_object);
+    }
 };
 
 

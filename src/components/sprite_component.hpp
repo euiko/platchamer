@@ -5,7 +5,12 @@
 
 struct SpriteComponent
 {
-    
+
+    template<class Archive>
+    void serialize(Archive &ar)
+    {
+
+    }
 };
 
 #endif // SPRITE_COMPONENT_HPP

@@ -14,7 +14,7 @@
 #include "../tags/enemy_tag.hpp"
 #include "../tags/bullet_tag.hpp"
 
-std::shared_ptr<entcosy::Entity> makePlayer(entcosy::Registry* registry, float x, float y) 
+std::shared_ptr<entcosy::Entity> makePlayer(std::shared_ptr<entcosy::Registry> registry, float x, float y)
 {
     std::shared_ptr<entcosy::Entity> player = registry->create();
     player->assign<PositionComponent>(x, y, 0.0f);
@@ -51,7 +51,7 @@ std::shared_ptr<entcosy::Entity> makePlayer(entcosy::Registry* registry, float x
 }
 
 
-std::shared_ptr<entcosy::Entity> makeBullet(entcosy::Registry* registry, std::shared_ptr<entcosy::Entity> player)
+std::shared_ptr<entcosy::Entity> makeBullet(std::shared_ptr<entcosy::Registry> registry, std::shared_ptr<entcosy::Entity> player)
 {
     std::shared_ptr<entcosy::Entity> bullet = registry->create();
     PositionComponent* pc = player->get<PositionComponent>();
@@ -67,7 +67,7 @@ std::shared_ptr<entcosy::Entity> makeBullet(entcosy::Registry* registry, std::sh
     return bullet;
 }
 
-std::shared_ptr<entcosy::Entity> makeBlock(entcosy::Registry* registry, float x, float y, float rotation)
+std::shared_ptr<entcosy::Entity> makeBlock(std::shared_ptr<entcosy::Registry> registry, float x, float y, float rotation)
 {
     std::shared_ptr<entcosy::Entity> block = registry->create();
     block->assign<GroundTag>();
@@ -84,7 +84,7 @@ std::shared_ptr<entcosy::Entity> makeBlock(entcosy::Registry* registry, float x,
     return block;
 }
 
-std::shared_ptr<entcosy::Entity> makeEnemy(entcosy::Registry* registry, float x, float y)
+std::shared_ptr<entcosy::Entity> makeEnemy(std::shared_ptr<entcosy::Registry> registry, float x, float y)
 {
     std::shared_ptr<entcosy::Entity> enemy = registry->create();
     enemy->assign<PositionComponent>(x, y, 0.0f);
@@ -102,7 +102,7 @@ std::shared_ptr<entcosy::Entity> makeEnemy(entcosy::Registry* registry, float x,
 }
 
 
-std::shared_ptr<entcosy::Entity> makeCamera(entcosy::Registry* registry, std::shared_ptr<entcosy::Entity> looked_object)
+std::shared_ptr<entcosy::Entity> makeCamera(std::shared_ptr<entcosy::Registry> registry, std::shared_ptr<entcosy::Entity> looked_object)
 {
     std::shared_ptr<entcosy::Entity> camera = registry->create();
     camera->assign<CameraTag>();

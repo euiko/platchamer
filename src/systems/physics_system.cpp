@@ -13,19 +13,19 @@ PhysicsSystem::~PhysicsSystem()
 {
 }
 
-void PhysicsSystem::configure(entcosy::Registry* registry)
+void PhysicsSystem::configure(std::shared_ptr<entcosy::Registry> registry)
 {
     registry->subscribe<entcosy::events::OnComponentAssigned<PolygonColliderComponent>>(this);
     registry->subscribe<entcosy::events::OnComponentAssigned<RigidBodyComponent>>(this);
     registry->subscribe<entcosy::events::OnComponentAssigned<CircleColliderComponent>>(this);
 }
 
-void PhysicsSystem::unconfigure(entcosy::Registry* registry)
+void PhysicsSystem::unconfigure(std::shared_ptr<entcosy::Registry> registry)
 {
     registry->unsubscribeAll(this);
 }
 
-void PhysicsSystem::update(entcosy::Registry* registry, float deltaTime)
+void PhysicsSystem::update(std::shared_ptr<entcosy::Registry> registry, float deltaTime)
 {
     contacts.clear( );
     size_t count = 0;
@@ -44,18 +44,18 @@ void PhysicsSystem::update(entcosy::Registry* registry, float deltaTime)
         if(colliderEntities.begin() + count  == colliderEntities.end())
             break;
 
-        for (auto entityIdIterator = colliderEntities.begin() + 1; 
-            entityIdIterator != colliderEntities.end(); 
+        for (auto entityIdIterator = colliderEntities.begin() + 1;
+            entityIdIterator != colliderEntities.end();
             ++entityIdIterator
         ){
             ColliderEntity anotherColliderEntity = *entityIdIterator;
 
-            if(colliderEntity.entity->get<RigidBodyComponent>()->inverse_mass == 0 
+            if(colliderEntity.entity->get<RigidBodyComponent>()->inverse_mass == 0
                 && anotherColliderEntity.entity->get<RigidBodyComponent>()->inverse_mass == 0)
                     continue;
             physics::ecs::Manifold m( colliderEntity.entity, anotherColliderEntity.entity, gravity );
             m.solve( colliderEntity.collider, anotherColliderEntity.collider );
-            if(m.contact_count) 
+            if(m.contact_count)
             {
                 contacts.emplace_back( m );
                 registry->emit<CollideEvent>({colliderEntity.entity, anotherColliderEntity.entity, true});
@@ -63,8 +63,8 @@ void PhysicsSystem::update(entcosy::Registry* registry, float deltaTime)
             {
                 registry->emit<CollideEvent>({colliderEntity.entity, anotherColliderEntity.entity, false});
             }
-            
-                
+
+
         };
         count++;
     }
@@ -101,26 +101,26 @@ void PhysicsSystem::update(entcosy::Registry* registry, float deltaTime)
     }
 }
 
-void PhysicsSystem::receive(entcosy::Registry* registry, const entcosy::events::OnComponentAssigned<PolygonColliderComponent>& event)
+void PhysicsSystem::receive(std::shared_ptr<entcosy::Registry> registry, const entcosy::events::OnComponentAssigned<PolygonColliderComponent>& event)
 {
-    physics::ecs::initPolygonVertices(event.entity);    
+    physics::ecs::initPolygonVertices(event.entity);
     physics::ecs::computePolygonMass(event.entity, 1.0f);
 }
 
-void PhysicsSystem::receive(entcosy::Registry* registry, const entcosy::events::OnComponentAssigned<CircleColliderComponent>& event)
+void PhysicsSystem::receive(std::shared_ptr<entcosy::Registry> registry, const entcosy::events::OnComponentAssigned<CircleColliderComponent>& event)
 {
     physics::ecs::computeCircleMass(event.entity, 1.0f);
 }
 
-void PhysicsSystem::receive(entcosy::Registry* registry, const entcosy::events::OnComponentAssigned<RigidBodyComponent>& event)
+void PhysicsSystem::receive(std::shared_ptr<entcosy::Registry> registry, const entcosy::events::OnComponentAssigned<RigidBodyComponent>& event)
 {
     RigidBodyComponent* rigid_body = event.component;
     PositionComponent* positionComponent = event.entity->get<PositionComponent>();
-    
+
     Collider collider;
     if(event.entity->has<PolygonColliderComponent>())
         collider = { event.entity->get<PolygonColliderComponent>()->colliderType };
-    
+
     if(event.entity->has<CircleColliderComponent>())
         collider = { event.entity->get<CircleColliderComponent>()->colliderType };
 
@@ -188,7 +188,7 @@ void PhysicsSystem::setOrient(std::shared_ptr<entcosy::Entity> entity, float rad
 
 
 template<typename T>
-void PhysicsSystem::solveCollision( entcosy::Registry* registry)
+void PhysicsSystem::solveCollision( std::shared_ptr<entcosy::Registry> registry)
 {
 
 }

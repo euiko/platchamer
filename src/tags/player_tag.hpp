@@ -6,7 +6,13 @@
 struct PlayerTag
 {
     ENTCOSY_DECLARE_TYPE;
-    bool isGround = true;
+    bool is_ground = true;
+
+    template<class Archive>
+    void serialize(Archive &ar)
+    {
+        ar(is_ground);
+    }
 };
 
 #endif

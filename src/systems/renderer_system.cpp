@@ -13,10 +13,10 @@ extern "C" {
 #include "../tags/camera_tag.hpp"
 #include "../tags/player_tag.hpp"
 
-void RendererSystem::render(platchamer::graphics::Window* window, entcosy::Registry* registry)
+void RendererSystem::render(platchamer::graphics::Window* window, std::shared_ptr<entcosy::Registry> registry)
 {
-    registry->each<PositionComponent, PolygonComponent>([&](std::shared_ptr<entcosy::Entity> entity, 
-        PositionComponent* pc, PolygonComponent* vc) 
+    registry->each<PositionComponent, PolygonComponent>([&](std::shared_ptr<entcosy::Entity> entity,
+        PositionComponent* pc, PolygonComponent* vc)
     {
         setfillstyle(SOLID_FILL, vc->color);
         int bgiPoints[vc->points.size()*2];
@@ -58,11 +58,11 @@ void RendererSystem::render(platchamer::graphics::Window* window, entcosy::Regis
     });
 
 
-    registry->each<PositionComponent, CircleComponent>([&](std::shared_ptr<entcosy::Entity> entity, 
-        PositionComponent* positionComponent, CircleComponent* circleComponent) 
+    registry->each<PositionComponent, CircleComponent>([&](std::shared_ptr<entcosy::Entity> entity,
+        PositionComponent* positionComponent, CircleComponent* circleComponent)
     {
         setfillstyle(SOLID_FILL, circleComponent->color);
-        circle(positionComponent->pos.x * circleComponent->scale , 
+        circle(positionComponent->pos.x * circleComponent->scale ,
             positionComponent->pos.y * circleComponent->scale, circleComponent->radius);
     });
 }
