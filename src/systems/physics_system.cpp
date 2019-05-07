@@ -27,7 +27,6 @@ void PhysicsSystem::unconfigure(std::shared_ptr<entcosy::Registry> registry)
 
 void PhysicsSystem::update(std::shared_ptr<entcosy::Registry> registry, float deltaTime)
 {
-    contacts.clear( );
     size_t count = 0;
     std::vector<ColliderEntity> colliderEntities;
     for(auto colliderEntity: registry->each<PolygonColliderComponent>())
@@ -99,6 +98,8 @@ void PhysicsSystem::update(std::shared_ptr<entcosy::Registry> registry, float de
         rigidBodyB->force= { 0, 0 };
         rigidBodyB->torque = 0;
     }
+
+    contacts.clear( );
 }
 
 void PhysicsSystem::receive(std::shared_ptr<entcosy::Registry> registry, const entcosy::events::OnComponentAssigned<PolygonColliderComponent>& event)

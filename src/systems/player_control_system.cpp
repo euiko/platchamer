@@ -3,6 +3,7 @@ extern "C" {
 }
 
 #include "player_control_system.hpp"
+#include "../core/game.hpp"
 #include "../core/factories.hpp"
 #include "../components/position_component.hpp"
 #include "../components/rigid_body_component.hpp"
@@ -40,7 +41,7 @@ void PlayerControlSystem::update(std::shared_ptr<entcosy::Registry> registry, fl
                 rigidBody->velocity.x -= 10.0f;
             if(keyboards[SDL_SCANCODE_D] && rigidBody->velocity.y < 200.0f)
                 rigidBody->velocity.x += 10.0f;
-            std::cout << playerTag->is_ground << " = ";
+            // std::cout << playerTag->is_ground << " = ";
             // if(rigidBody->velocity.y < -200.0f) rigidBody->velocity.y = -200.0f;
             // if(rigidBody->velocity.x > 200.0f) rigidBody->velocity.y = 200.0f;
             // if(rigidBody->velocity.x < -200.0f) rigidBody->velocity.y = 200.0f;
@@ -74,7 +75,7 @@ void PlayerControlSystem::receive(std::shared_ptr<entcosy::Registry> registry, c
         registry->each<PlayerTag>([&](std::shared_ptr<entcosy::Entity> entity, PlayerTag *playerTag)
         {
             playerTag->is_ground = playerTag->is_ground || event.isCollide;
-            std::cout << playerTag->is_ground << " ";
+            // std::cout << playerTag->is_ground << " ";
         });
     }
 }
@@ -82,7 +83,7 @@ void PlayerControlSystem::receive(std::shared_ptr<entcosy::Registry> registry, c
 
 void PlayerControlSystem::receive(std::shared_ptr<entcosy::Registry> registry, const ResetPlayerStateEvent& event)
 {
-    std::cout << "\n===================================\n";
+    // std::cout << "\n===================================\n";
     registry->each<PlayerTag>([&](std::shared_ptr<entcosy::Entity> entity, PlayerTag *playerTag)
     {
         playerTag->is_ground = 0;

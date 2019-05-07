@@ -10,11 +10,6 @@ extern "C" {
 #include "game.hpp"
 #include "../libs/stb_image.h"
 #include "factories.hpp"
-#include "../systems/camera_system.hpp"
-#include "../systems/bullet_system.hpp"
-#include "../systems/polygon_system.hpp"
-#include "../systems/physics_system.hpp"
-#include "../systems/player_control_system.hpp"
 #include "../events/reset_player_state_event.hpp"
 #include "../events/collide_event.hpp"
 #include "../events/keyboard_event.hpp"
@@ -59,21 +54,24 @@ Game::Game(const std::string& title, int w, int h, Uint32 flags)
     :m_window(title, w, h, flags)
 {
     // m_registry = std::make_shared<entcosy::Registry>();
+    level_manager.load("level.bin");
 
-    {
-        std::cout << "Loading... \n";
-        std::ifstream is("level.bin", std::ios::binary);
-        cereal::BinaryInputArchive archive(is);
-        archive(m_registry);
-        is.close();
-        std::cout << "Loaded \n";
-    }
+    // std::cout << " Use count: " << level_manager.getRegistry().use_count() << "\n";
+    // level_manager.getRegistry()->clear();
 
-    m_registry->registerSystem(std::make_shared<CameraSystem>());
-    m_registry->registerSystem(std::make_shared<PolygonSystem>());
-    m_registry->registerSystem(std::make_shared<PhysicsSystem>(50.0f));
-    m_registry->registerSystem(std::make_shared<PlayerControlSystem>());
-    m_registry->registerSystem(std::make_shared<BulletSystem>());
+    // {
+    //     std::ifstream is("level.bin", std::ios::binary);
+    //     cereal::BinaryInputArchive archive(is);
+    //     archive(m_registry);
+    //     // m_registry->clear();
+    //     is.close();
+    // }
+    // std::cout << " Use count: " << m_registry.use_count() << "\n";
+    // m_registry->registerSystem(std::make_shared<CameraSystem>());
+    // m_registry->registerSystem(std::make_shared<PolygonSystem>());
+    // m_registry->registerSystem(std::make_shared<PhysicsSystem>(50.0f));
+    // m_registry->registerSystem(std::make_shared<PlayerControlSystem>());
+    // m_registry->registerSystem(std::make_shared<BulletSystem>());
 
     // std::shared_ptr<entcosy::Entity> player = makePlayer(m_registry, getmaxx() / 2-100, getmaxy() / 2);
     // makeCamera(m_registry, player);
@@ -139,6 +137,7 @@ int Game::run()
 
 void Game::event()
 {
+    level_manager.swap();
     while (SDL_PollEvent(&m_window.m_event) != 0)
     {
         switch (m_window.m_event.type)
@@ -153,8 +152,11 @@ void Game::event()
             case SDLK_ESCAPE:
                 m_window.m_isOpen = false;
                 break;
+            case SDLK_r:
+                level_manager.load("level.bin");
+                break;
             default:
-                m_registry->emit<KeyboardEvent>({m_window.m_event.key.keysym.sym});
+                level_manager.getRegistry()->emit<KeyboardEvent>({m_window.m_event.key.keysym.sym});
                 break;
             }
             break;
@@ -165,8 +167,10 @@ void Game::event()
 
 void Game::update(double time)
 {
-    m_registry->emit<ResetPlayerStateEvent>({});
-    m_registry->update(time);
+    // std::cout << "Use count: " << level_manager.getRegistry().use_count() << "\n";
+    std::shared_ptr<entcosy::Registry> registry = level_manager.getRegistry();
+    registry->emit<ResetPlayerStateEvent>({});
+    registry->update(time);
 }
 
 void Game::render()
@@ -174,7 +178,7 @@ void Game::render()
     cleardevice();
     SDL_RenderClear(m_window.getRenderer());
 
-    m_renderer_system.render(&m_window, m_registry);
+    m_renderer_system.render(&m_window, level_manager.getRegistry());
 
     refresh();
     SDL_RenderPresent(m_window.getRenderer());
