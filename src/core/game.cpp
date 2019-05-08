@@ -1,9 +1,12 @@
-
-#define STB_IMAGE_IMPLEMENTATION
-
 #include <vector>
 #include <fstream>
+#include <imgui/imgui.h>
+#include <imgui-sdl/imgui_sdl.h>
+#include "../utils/imgui_impl_sdl.h"
+#include "../utils/imgui_impl_opengl3.h"
+#include <GL/glew.h>
 #include <bgfx/bgfx.h>
+#include <SDL2/SDL_mouse.h>
 extern "C" {
     #include <sdl_bgi/graphics.h>
 }
@@ -101,6 +104,7 @@ int Game::run()
     double currentTime = SDL_GetTicks();
     SDL_SetRenderDrawColor(m_window.getRenderer(), 0, 0, 0, 0);
 
+    ImGuiIO& io = ImGui::GetIO();
     // char fps[3];
     // std::unique_ptr<std::thread> renderThread;
     while (m_window.m_isOpen)
@@ -120,7 +124,8 @@ int Game::run()
             time += deltaTime;
         }
 
-        render();
+        render(io);
+        // SDL_RenderPresent(m_window.getRenderer());
         // sprintf(fps, "%d", (int)(1000/frameTime));
         // outtextxy(40, 40, fps);
         // std::cout << "FPS: " << fps << "\n";
@@ -140,26 +145,38 @@ void Game::event()
     level_manager.swap();
     while (SDL_PollEvent(&m_window.m_event) != 0)
     {
+
+        ImGui_ImplSDL2_ProcessEvent(&m_window.m_event);
         switch (m_window.m_event.type)
         {
-        case SDL_QUIT:
-            m_window.m_isOpen = false;
-            break;
-
-        case SDL_KEYDOWN:
-            switch (m_window.m_event.key.keysym.sym)
-            {
-            case SDLK_ESCAPE:
+            case SDL_QUIT: {
                 m_window.m_isOpen = false;
                 break;
-            case SDLK_r:
-                level_manager.load("level.bin");
-                break;
-            default:
-                level_manager.getRegistry()->emit<KeyboardEvent>({m_window.m_event.key.keysym.sym});
+            }
+            case SDL_MOUSEWHEEL: {
+                if (m_window.m_event.wheel.y > 0) {
+                    m_mouseWheel = 1;
+                }
+                if (m_window.m_event.wheel.y < 0) {
+                    m_mouseWheel = -1;
+                }
                 break;
             }
-            break;
+            case SDL_KEYDOWN: {
+                switch (m_window.m_event.key.keysym.sym)
+                {
+                case SDLK_ESCAPE:
+                    m_window.m_isOpen = false;
+                    break;
+                case SDLK_r:
+                    level_manager.load("level.bin");
+                    break;
+                default:
+                    level_manager.getRegistry()->emit<KeyboardEvent>({m_window.m_event.key.keysym.sym});
+                    break;
+                }
+                break;
+            }
         }
 
     }
@@ -173,13 +190,48 @@ void Game::update(double time)
     registry->update(time);
 }
 
-void Game::render()
+void Game::render(ImGuiIO& io)
 {
     cleardevice();
     SDL_RenderClear(m_window.getRenderer());
 
-    m_renderer_system.render(&m_window, level_manager.getRegistry());
+    bool my_tool_active;
 
+    ImVec4 clear_color = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
+    m_renderer_system.render(&m_window, level_manager.getRegistry());
     refresh();
+
+    ImGui_ImplSDL2_NewFrame(m_window.getWindow());
+    ImGui::NewFrame();
+    ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);
+    if (ImGui::BeginMenuBar())
+    {
+        if (ImGui::BeginMenu("File"))
+        {
+            if (ImGui::MenuItem("Open..", "Ctrl+O")) { /* Do stuff */ }
+            if (ImGui::MenuItem("Save", "Ctrl+S"))   { /* Do stuff */ }
+            if (ImGui::MenuItem("Close", "Ctrl+W"))  { my_tool_active = false; }
+            ImGui::EndMenu();
+        }
+        ImGui::EndMenuBar();
+    }
+    // Edit a color (stored as ~4 floats)
+    ImGui::ColorEdit4("Color", &color);
+
+    // Plot some values
+    const float my_values[] = { 0.2f, 0.1f, 1.0f, 0.5f, 0.9f, 2.2f };
+    ImGui::PlotLines("Frame Times", my_values, IM_ARRAYSIZE(my_values));
+
+    // Display contents in a scrolling region
+    ImGui::TextColored(ImVec4(1,1,0,1), "Important Stuff");
+    ImGui::BeginChild("Scrolling");
+    for (int n = 0; n < 50; n++)
+        ImGui::Text("%04d: Some text", n);
+    ImGui::EndChild();
+    ImGui::End();
+
+    ImGui::Render();
+    ImGuiSDL::Render(ImGui::GetDrawData());
+
     SDL_RenderPresent(m_window.getRenderer());
 }
