@@ -3,7 +3,11 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/src/libs/entcosy/src/**",
+                "${workspaceFolder}/3rdparty/**",
+                "${workspaceFolder}/include/**",
+                "${workspaceFolder}/3rdparty/bgfx/3rdparty"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

@@ -31,6 +31,7 @@ namespace platchamer
         private:
             SDL_Window* m_window;
             SDL_Renderer* m_renderer;
+            SDL_Texture* m_bgiTexture;
         };
     } // graphics
 } // platchamer

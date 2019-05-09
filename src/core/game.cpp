@@ -23,11 +23,15 @@ extern "C" {
 #include "../components/polygon_collider_component.hpp"
 #include "../components/circle_collider_component.hpp"
 #include "../components/rigid_body_component.hpp"
+#include "../components/ui/game_ui_component.hpp"
+#include "../components/ui/menu_ui_component.hpp"
 #include "../tags/camera_tag.hpp"
 #include "../tags/ground_tag.hpp"
 #include "../tags/player_tag.hpp"
 #include "../tags/enemy_tag.hpp"
 #include "../tags/bullet_tag.hpp"
+#include "../systems/ui/game_ui_system.hpp"
+#include "../systems/ui/menu_ui_system.hpp"
 
 ENTCOSY_INITIALIZATION;
 ENTCOSY_DEFINE_TYPE(CameraComponent);
@@ -38,11 +42,15 @@ ENTCOSY_DEFINE_TYPE(PositionComponent);
 ENTCOSY_DEFINE_TYPE(PolygonColliderComponent);
 ENTCOSY_DEFINE_TYPE(RigidBodyComponent);
 
+
 ENTCOSY_DEFINE_TYPE(CameraTag);
 ENTCOSY_DEFINE_TYPE(PlayerTag);
 ENTCOSY_DEFINE_TYPE(EnemyTag);
 ENTCOSY_DEFINE_TYPE(GroundTag);
 ENTCOSY_DEFINE_TYPE(BulletTag);
+
+ENTCOSY_DEFINE_TYPE(GameUiComponent);
+ENTCOSY_DEFINE_TYPE(MenuUiComponent);
 
 ENTCOSY_REGISTER_TYPE(KeyboardEvent);
 ENTCOSY_REGISTER_TYPE(CollideEvent);
@@ -56,8 +64,8 @@ ENTCOSY_REGISTER_TYPE(ResetPlayerStateEvent);
 Game::Game(const std::string& title, int w, int h, Uint32 flags)
     :m_window(title, w, h, flags)
 {
-    // m_registry = std::make_shared<entcosy::Registry>();
-    level_manager.load("level.bin");
+    m_registry = std::make_shared<entcosy::Registry>();
+    // level_manager.load("level.bin");
 
     // std::cout << " Use count: " << level_manager.getRegistry().use_count() << "\n";
     // level_manager.getRegistry()->clear();
@@ -70,28 +78,31 @@ Game::Game(const std::string& title, int w, int h, Uint32 flags)
     //     is.close();
     // }
     // std::cout << " Use count: " << m_registry.use_count() << "\n";
-    // m_registry->registerSystem(std::make_shared<CameraSystem>());
-    // m_registry->registerSystem(std::make_shared<PolygonSystem>());
-    // m_registry->registerSystem(std::make_shared<PhysicsSystem>(50.0f));
-    // m_registry->registerSystem(std::make_shared<PlayerControlSystem>());
-    // m_registry->registerSystem(std::make_shared<BulletSystem>());
+    m_registry->registerSystem(std::make_shared<CameraSystem>());
+    m_registry->registerSystem(std::make_shared<PolygonSystem>());
+    m_registry->registerSystem(std::make_shared<PhysicsSystem>(50.0f));
+    m_registry->registerSystem(std::make_shared<PlayerControlSystem>());
+    m_registry->registerSystem(std::make_shared<BulletSystem>());
 
-    // std::shared_ptr<entcosy::Entity> player = makePlayer(m_registry, getmaxx() / 2-100, getmaxy() / 2);
-    // makeCamera(m_registry, player);
-    // makeEnemy(m_registry, getmaxx() / 2 + 100, getmaxy() / 2 - 100);
-    // makeBlock(m_registry, getmaxx() / 2, getmaxy() - 100);
-    // makeBlock(m_registry, getmaxx() / 2 + 775, getmaxy() - 100);
-    // makeBlock(m_registry, getmaxx() / 2 + 250, getmaxy() - 300);
-    // makeBlock(m_registry, getmaxx() / 2 - 400, getmaxy() - 100, 1.00f);
-    // makeBlock(m_registry, getmaxx() / 2 + 1175, getmaxy()+100, M_PI/2 );
-    // makeBlock(m_registry, getmaxx() / 2 + 1575, getmaxy() - 290);
+    m_registry->registerUi(std::make_shared<MenuUiSystem>());
+    m_registry->registerUi(std::make_shared<GameUiSystem>());
 
-    // {
-    //     std::ofstream os("level.bin", std::ios::binary);
-    //     cereal::BinaryOutputArchive archive(os);
-    //     archive(m_registry);
-    //     os.close();
-    // }
+    std::shared_ptr<entcosy::Entity> player = makePlayer(m_registry, getmaxx() / 2-100, getmaxy() / 2);
+    makeCamera(m_registry, player);
+    makeEnemy(m_registry, getmaxx() / 2 + 100, getmaxy() / 2 - 100);
+    makeBlock(m_registry, getmaxx() / 2, getmaxy() - 100);
+    makeBlock(m_registry, getmaxx() / 2 + 775, getmaxy() - 100);
+    makeBlock(m_registry, getmaxx() / 2 + 250, getmaxy() - 300);
+    makeBlock(m_registry, getmaxx() / 2 - 400, getmaxy() - 100, 1.00f);
+    makeBlock(m_registry, getmaxx() / 2 + 1175, getmaxy()+100, M_PI/2 );
+    makeBlock(m_registry, getmaxx() / 2 + 1575, getmaxy() - 290);
+
+    {
+        std::ofstream os("level.bin", std::ios::binary);
+        cereal::BinaryOutputArchive archive(os);
+        archive(m_registry);
+        os.close();
+    }
 }
 
 int Game::run()
@@ -130,10 +141,8 @@ int Game::run()
         // outtextxy(40, 40, fps);
         // std::cout << "FPS: " << fps << "\n";
         // std::cout << "ACCM: " << accumulator << "\n";
-    }
+    };
 
-
-    bgfx::shutdown();
     // m_registry->cleanup();
     // m_registry->destroyRegistry();
 
@@ -171,8 +180,14 @@ void Game::event()
                 case SDLK_r:
                     level_manager.load("level.bin");
                     break;
+                case SDLK_c:
+                    m_registry->changeUi<MenuUiComponent>();
+                    break;
+                case SDLK_v:
+                    m_registry->changeUi<GameUiComponent>();
+                    break;
                 default:
-                    level_manager.getRegistry()->emit<KeyboardEvent>({m_window.m_event.key.keysym.sym});
+                    m_registry->emit<KeyboardEvent>({m_window.m_event.key.keysym.sym});
                     break;
                 }
                 break;
@@ -185,7 +200,7 @@ void Game::event()
 void Game::update(double time)
 {
     // std::cout << "Use count: " << level_manager.getRegistry().use_count() << "\n";
-    std::shared_ptr<entcosy::Registry> registry = level_manager.getRegistry();
+    std::shared_ptr<entcosy::Registry> registry = m_registry;
     registry->emit<ResetPlayerStateEvent>({});
     registry->update(time);
 }
@@ -195,41 +210,13 @@ void Game::render(ImGuiIO& io)
     cleardevice();
     SDL_RenderClear(m_window.getRenderer());
 
-    bool my_tool_active;
 
-    ImVec4 clear_color = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
-    m_renderer_system.render(&m_window, level_manager.getRegistry());
+    m_renderer_system.render(&m_window, m_registry);
     refresh();
 
     ImGui_ImplSDL2_NewFrame(m_window.getWindow());
     ImGui::NewFrame();
-    ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);
-    if (ImGui::BeginMenuBar())
-    {
-        if (ImGui::BeginMenu("File"))
-        {
-            if (ImGui::MenuItem("Open..", "Ctrl+O")) { /* Do stuff */ }
-            if (ImGui::MenuItem("Save", "Ctrl+S"))   { /* Do stuff */ }
-            if (ImGui::MenuItem("Close", "Ctrl+W"))  { my_tool_active = false; }
-            ImGui::EndMenu();
-        }
-        ImGui::EndMenuBar();
-    }
-    // Edit a color (stored as ~4 floats)
-    ImGui::ColorEdit4("Color", &color);
-
-    // Plot some values
-    const float my_values[] = { 0.2f, 0.1f, 1.0f, 0.5f, 0.9f, 2.2f };
-    ImGui::PlotLines("Frame Times", my_values, IM_ARRAYSIZE(my_values));
-
-    // Display contents in a scrolling region
-    ImGui::TextColored(ImVec4(1,1,0,1), "Important Stuff");
-    ImGui::BeginChild("Scrolling");
-    for (int n = 0; n < 50; n++)
-        ImGui::Text("%04d: Some text", n);
-    ImGui::EndChild();
-    ImGui::End();
-
+    m_registry->renderUi();
     ImGui::Render();
     ImGuiSDL::Render(ImGui::GetDrawData());
 

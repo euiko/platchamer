@@ -27,6 +27,7 @@ project "platchamer"
 
     PLATCHAMER_SRC_DIR = path.join(PROJECT_DIR, "src")
     PLATCHAMER_INC_DIR = path.join(PROJECT_DIR, "include")
+    ENTCOSY_SRC_DIR = path.join(PLATCHAMER_SRC_DIR, "libs/entcosy/src")
 
     includedirs {
         "/usr/include",
@@ -38,6 +39,7 @@ project "platchamer"
         path.join(BGFX_DIR, "examples"),
         PLATCHAMER_INC_DIR,
         PLATCHAMER_SRC_DIR,
+        ENTCOSY_SRC_DIR,
         CEREAL_INCLUDE_DIR,
         FREETYPE2_INC_DIR,
         IMGUI_SDL_DIR,

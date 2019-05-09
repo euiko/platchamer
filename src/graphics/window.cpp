@@ -41,6 +41,7 @@ namespace platchamer
             }
 
             m_renderer = bgi_renderer;
+            m_bgiTexture = bgi_texture;
 
             configureSdl();
             sdlSetWindow();
@@ -58,13 +59,13 @@ namespace platchamer
 
         Window::~Window()
         {
-            closegraph();
-            // Cleanup
             ImGuiSDL::Deinitialize();
             ImGui_ImplOpenGL3_Shutdown();
             ImGui_ImplSDL2_Shutdown();
             ImGui::DestroyContext();
             SDL_GL_DeleteContext(gl_context);
+            bgfx::shutdown();
+            closegraph();
         }
 
         SDL_Renderer* Window::getRenderer() const noexcept

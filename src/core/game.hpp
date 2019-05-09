@@ -18,6 +18,7 @@ class Game
 {
 public:
     static LevelManager level_manager;
+
     Game(const std::string& title, int w, int h, Uint32 flags);
     ~Game() = default;
     int run();
