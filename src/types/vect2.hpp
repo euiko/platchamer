@@ -2,6 +2,7 @@
 #define TYPES_VECT2_HPP
 
 #include <math.h>
+#include <rttr/type>
 
 const float EPSILON = 0.0001f;
 
@@ -107,13 +108,13 @@ struct Vect2 {
         return Vect2(s * y, -s * x);
     }
 
-
-
     template<class Archive>
     void serialize(Archive &ar)
     {
         ar(x,y);
     }
+
+    RTTR_ENABLE();
 };
 
 inline Vect2 operator*( float s, const Vect2& v )

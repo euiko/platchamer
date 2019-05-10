@@ -6,9 +6,12 @@
 
 struct KeyboardEvent
 {
-	ENTCOSY_DECLARE_TYPE;
+
+    KeyboardEvent(const SDL_Keycode &keycode) : keycode(keycode) { }
 
 	SDL_Keycode keycode;
+
+    RTTR_ENABLE();
 };
 
 #endif

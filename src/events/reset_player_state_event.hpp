@@ -7,6 +7,8 @@
 struct ResetPlayerStateEvent
 {
 	ENTCOSY_DECLARE_TYPE;
+
+    RTTR_ENABLE();
 };
 
 #endif

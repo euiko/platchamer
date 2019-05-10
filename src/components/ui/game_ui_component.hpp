@@ -9,7 +9,7 @@ struct GameUiComponent
 
     int health;
     float color;
-    bool is_tool_active;
+    bool is_tool_active = true;
 
     template<class Archive>
     void serialize(Archive &ar)

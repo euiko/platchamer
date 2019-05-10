@@ -13,48 +13,8 @@ extern "C" {
 #include "game.hpp"
 #include "../libs/stb_image.h"
 #include "factories.hpp"
-#include "../events/reset_player_state_event.hpp"
-#include "../events/collide_event.hpp"
-#include "../events/keyboard_event.hpp"
-#include "../components/position_component.hpp"
-#include "../components/camera_component.hpp"
-#include "../components/polygon_component.hpp"
-#include "../components/circle_component.hpp"
-#include "../components/polygon_collider_component.hpp"
-#include "../components/circle_collider_component.hpp"
-#include "../components/rigid_body_component.hpp"
-#include "../components/ui/game_ui_component.hpp"
-#include "../components/ui/menu_ui_component.hpp"
-#include "../tags/camera_tag.hpp"
-#include "../tags/ground_tag.hpp"
-#include "../tags/player_tag.hpp"
-#include "../tags/enemy_tag.hpp"
-#include "../tags/bullet_tag.hpp"
 #include "../systems/ui/game_ui_system.hpp"
 #include "../systems/ui/menu_ui_system.hpp"
-
-ENTCOSY_INITIALIZATION;
-ENTCOSY_DEFINE_TYPE(CameraComponent);
-ENTCOSY_DEFINE_TYPE(PolygonComponent);
-ENTCOSY_DEFINE_TYPE(CircleComponent);
-ENTCOSY_DEFINE_TYPE(CircleColliderComponent);
-ENTCOSY_DEFINE_TYPE(PositionComponent);
-ENTCOSY_DEFINE_TYPE(PolygonColliderComponent);
-ENTCOSY_DEFINE_TYPE(RigidBodyComponent);
-
-
-ENTCOSY_DEFINE_TYPE(CameraTag);
-ENTCOSY_DEFINE_TYPE(PlayerTag);
-ENTCOSY_DEFINE_TYPE(EnemyTag);
-ENTCOSY_DEFINE_TYPE(GroundTag);
-ENTCOSY_DEFINE_TYPE(BulletTag);
-
-ENTCOSY_DEFINE_TYPE(GameUiComponent);
-ENTCOSY_DEFINE_TYPE(MenuUiComponent);
-
-ENTCOSY_REGISTER_TYPE(KeyboardEvent);
-ENTCOSY_REGISTER_TYPE(CollideEvent);
-ENTCOSY_REGISTER_TYPE(ResetPlayerStateEvent);
 
 // CEREAL_REGISTER_TYPE(CircleColliderComponent);
 // CEREAL_REGISTER_TYPE(PolygonColliderComponent);
@@ -96,6 +56,7 @@ Game::Game(const std::string& title, int w, int h, Uint32 flags)
     makeBlock(m_registry, getmaxx() / 2 - 400, getmaxy() - 100, 1.00f);
     makeBlock(m_registry, getmaxx() / 2 + 1175, getmaxy()+100, M_PI/2 );
     makeBlock(m_registry, getmaxx() / 2 + 1575, getmaxy() - 290);
+    makeThorn(m_registry, getmaxx() / 2 + 1575, getmaxy() - 350);
 
     {
         std::ofstream os("level.bin", std::ios::binary);
@@ -129,7 +90,11 @@ int Game::run()
         while (accumulator >= deltaTime)
         {
             event();
-            update(accumulator);
+
+            if(m_registry->isUiActive<MenuUiComponent>())
+            {
+                update(accumulator);
+            }
 
             accumulator -= deltaTime;
             time += deltaTime;

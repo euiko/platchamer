@@ -2,7 +2,7 @@ group "3rdparty"
 -- dofile "3rdparty/xbgi.lua"
 dofile "3rdparty/sdl_bgi.lua"
 dofile "3rdparty/sdl2.lua"
-dofile "3rdparty/cereal.lua"
+-- dofile "3rdparty/cereal.lua"
 
 dofile(path.join(BX_DIR, "scripts/bx.lua"))
 dofile(path.join(BGFX_DIR, "scripts/bgfx.lua"))
@@ -10,6 +10,7 @@ dofile(path.join(BIMG_DIR, "scripts/bimg.lua"))
 dofile "3rdparty/freetype2.lua"
 dofile "3rdparty/imgui.lua"
 dofile "3rdparty/imgui-sdl.lua"
+dofile(path.join(PROJECT_DIR, "src/libs/entcosy/scripts/entcosy.lua"))
 
 bgfxProject("", "StaticLib", {})
 
@@ -28,6 +29,8 @@ project "platchamer"
     PLATCHAMER_SRC_DIR = path.join(PROJECT_DIR, "src")
     PLATCHAMER_INC_DIR = path.join(PROJECT_DIR, "include")
     ENTCOSY_SRC_DIR = path.join(PLATCHAMER_SRC_DIR, "libs/entcosy/src")
+
+    -- print(CEREAL_INCLUDE_DIR)
 
     includedirs {
         "/usr/include",
@@ -61,6 +64,8 @@ project "platchamer"
 
     links {
         -- "xbgi",
+        "rttr",
+        "entcosy",
         "imgui_sdl",
         "imgui",
         "freetype2",

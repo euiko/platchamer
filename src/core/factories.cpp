@@ -13,10 +13,11 @@
 #include "../tags/player_tag.hpp"
 #include "../tags/enemy_tag.hpp"
 #include "../tags/bullet_tag.hpp"
+#include "../tags/thorn_tag.hpp"
 
 std::shared_ptr<entcosy::Entity> makePlayer(std::shared_ptr<entcosy::Registry> registry, float x, float y)
 {
-    std::shared_ptr<entcosy::Entity> player = registry->create();
+    std::shared_ptr<entcosy::Entity> player = registry->create("Player");
     player->assign<PositionComponent>(x, y, 0.0f);
     //Kotak biasa
     std::vector<Vect2> shape = {
@@ -69,7 +70,7 @@ std::shared_ptr<entcosy::Entity> makeBullet(std::shared_ptr<entcosy::Registry> r
 
 std::shared_ptr<entcosy::Entity> makeBlock(std::shared_ptr<entcosy::Registry> registry, float x, float y, float rotation)
 {
-    std::shared_ptr<entcosy::Entity> block = registry->create();
+    std::shared_ptr<entcosy::Entity> block = registry->create("Block");
     block->assign<GroundTag>();
     block->assign<PositionComponent>(x, y, rotation);
     std::vector<Vect2> shape = {
@@ -86,7 +87,8 @@ std::shared_ptr<entcosy::Entity> makeBlock(std::shared_ptr<entcosy::Registry> re
 
 std::shared_ptr<entcosy::Entity> makeEnemy(std::shared_ptr<entcosy::Registry> registry, float x, float y)
 {
-    std::shared_ptr<entcosy::Entity> enemy = registry->create();
+    std::shared_ptr<entcosy::Entity> enemy = registry->create("Cube");
+    enemy->assign<GroundTag>();
     enemy->assign<PositionComponent>(x, y, 0.0f);
     std::vector<Vect2> shape = {
         {0, 0},
@@ -101,10 +103,86 @@ std::shared_ptr<entcosy::Entity> makeEnemy(std::shared_ptr<entcosy::Registry> re
     return enemy;
 }
 
+std::shared_ptr<entcosy::Entity> makeThorn(std::shared_ptr<entcosy::Registry> registry, float x, float y)
+{
+    std::shared_ptr<entcosy::Entity> thorn = registry->create("Thorn");
+    thorn->assign<GroundTag>();
+    thorn->assign<PositionComponent>(x, y, 0.0f);
+    std::vector<Vect2> shape = {
+        { 45, 26 },
+        { 34, 20 },
+        { 34, 20 },
+        { 37, 16 },
+        { 37, 16 },
+        { 36, 16 },
+        { 33, 18 },
+        { 30, 17 },
+        { 29, 15 },
+        { 30, 11 },
+        { 30, 10 },
+        { 29, 10 },
+        { 26, 14 },
+        { 24, 15 },
+        { 22, 13 },
+        { 21, 8 },
+        { 21, 8 },
+        { 20, 8 },
+        { 19, 13 },
+        { 17, 15 },
+        { 15, 14 },
+        { 12, 10 },
+        { 11, 10 },
+        { 11, 11 },
+        { 12, 15 },
+        { 11, 17 },
+        { 9, 18 },
+        { 5, 16 },
+        { 4, 16 },
+        { 4, 16 },
+        { 4, 16 },
+        { 7, 20 },
+        { 7, 23 },
+        { 7, 23 },
+        { 5, 24 },
+        { 0, 24 },
+        { 0, 24 },
+        { 0, 25 },
+        { 4, 27 },
+        { 6, 29 },
+        { 4, 31 },
+        { 0, 33 },
+        { 0, 34 },
+        { 0, 34 },
+        { 8, 34 },
+        { 7, 35 },
+        { 7, 38 },
+        { 9, 38 },
+        { 10, 38 },
+        { 14, 34 },
+        { 27, 34 },
+        { 31, 38 },
+        { 33, 38 },
+        { 34, 38 },
+        { 34, 35 },
+        { 33, 34 },
+        { 36, 34 },
+        { 38, 33 },
+        { 37, 32 },
+        { 44, 30 },
+        { 46, 28 },
+        { 45, 26 }
+    };
+    PolygonComponent* pc = thorn->assign<PolygonComponent>(shape, 4, 4.0f);
+    thorn->assign<PolygonColliderComponent>(pc->points);
+    thorn->assign<RigidBodyComponent>(1.0f, 0.7, 0.5f, 0.1f, true);
+    thorn->assign<ThornTag>();
+    return thorn;
+}
+
 
 std::shared_ptr<entcosy::Entity> makeCamera(std::shared_ptr<entcosy::Registry> registry, std::shared_ptr<entcosy::Entity> looked_object)
 {
-    std::shared_ptr<entcosy::Entity> camera = registry->create();
+    std::shared_ptr<entcosy::Entity> camera = registry->create("Camera");
     camera->assign<CameraTag>();
     camera->assign<PositionComponent>(0.0f,0.0f,0.0f);
     camera->assign<CameraComponent>(looked_object);

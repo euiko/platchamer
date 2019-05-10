@@ -7,8 +7,10 @@ extern "C" {
 #include "../core/factories.hpp"
 #include "../components/position_component.hpp"
 #include "../components/rigid_body_component.hpp"
+#include "../components/ui/game_ui_component.hpp"
 #include "../tags/player_tag.hpp"
 #include "../tags/ground_tag.hpp"
+#include "../tags/thorn_tag.hpp"
 
 PlayerControlSystem::~PlayerControlSystem()
 {
@@ -77,6 +79,15 @@ void PlayerControlSystem::receive(std::shared_ptr<entcosy::Registry> registry, c
             playerTag->is_ground = playerTag->is_ground || event.isCollide;
             // std::cout << playerTag->is_ground << " ";
         });
+    }
+    if(
+        (event.entityA->has<PlayerTag>() && event.entityB->has<ThornTag>()) ||
+        (event.entityB->has<PlayerTag>() && event.entityA->has<ThornTag>())
+    )
+    {
+        std::cout << event.isCollide << "\n";
+        if(event.isCollide)
+            registry->changeUi<GameUiComponent>();
     }
 }
 

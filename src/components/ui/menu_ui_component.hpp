@@ -3,20 +3,6 @@
 
 #include <entcosy/registry.hpp>
 
-struct MenuUiComponent
-{
-    ENTCOSY_DECLARE_TYPE;
-
-    int health;
-    float color;
-    bool is_tool_active;
-
-    template<class Archive>
-    void serialize(Archive &ar)
-    {
-
-    }
-};
 
 
 #endif

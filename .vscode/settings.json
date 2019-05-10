@@ -60,7 +60,8 @@
         "algorithm": "cpp",
         "bitset": "cpp",
         "unordered_set": "cpp",
-        "iomanip": "cpp"
+        "iomanip": "cpp",
+        "type": "cpp"
     },
     "search.usePCRE2": true
 }
