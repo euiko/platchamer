@@ -55,8 +55,8 @@ RTTR_REGISTRATION {
         .constructor<>() ( rttr::policy::ctor::as_raw_ptr )
         .constructor<>() ( rttr::policy::ctor::as_object )
         .constructor<float, float>()
-        .property("x", &Vect2::x)
-        .property("y", &Vect2::y);
+        .property("x", &Vect2::x) ( rttr::policy::prop::as_reference_wrapper )
+        .property("y", &Vect2::y) ( rttr::policy::prop::as_reference_wrapper );
 
     rttr::registration::class_<MenuUiComponent>("MenuUiComponent")
         .constructor<>() ( rttr::policy::ctor::as_raw_ptr )

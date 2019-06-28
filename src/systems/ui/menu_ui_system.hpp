@@ -98,6 +98,14 @@ class MenuUiSystem : public entcosy::UiSystem<MenuUiComponent>
                     {
                         property.set_value(ui_state->current_variant, val);
                     }
+                } else if(valueVariant.is_type<bool>())
+                {
+                    bool val = (bool)valueVariant.to_int();
+                    // std::cout << val << "\n";
+                    if(ImGui::InputInt(property.get_name().data(), &val, 1.0f))
+                    {
+                        property.set_value(ui_state->current_variant, val);
+                    }
                 }
             }
             ImGui::End();
