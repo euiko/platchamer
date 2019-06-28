@@ -22,3 +22,6 @@
 [submodule "3rdparty/libfreetype2"]
 	path = 3rdparty/libfreetype2
 	url = https://github.com/servo/libfreetype2.git
+[submodule "3rdparty/sdl2"]
+	path = 3rdparty/sdl2
+	url = https://github.com/spurious/SDL-mirror.git
